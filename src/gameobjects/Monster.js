@@ -2,16 +2,14 @@ import { Physics } from "phaser";
 
 export class Monster extends Physics.Arcade.Sprite {
     speed = 100;
-    health = 3; // 몬스터의 초기 체력
+    health = 3;
     isStunned = false;
     stunDuration = 1000; // 1초간 기절
 
     constructor(scene, x, y) {
         super(scene, x, y, "monster");
-        console.log("Monster created with health:", this.health); // 디버깅용 로그 추가
         scene.add.existing(this);
         scene.physics.add.existing(this);
-
         this.setScale(2);
         this.setFlipX(true);
         this.body.setSize(20, 20);
@@ -23,8 +21,8 @@ export class Monster extends Physics.Arcade.Sprite {
 
     hit(damage) {
         this.health -= damage;
-        console.log("Monster hit. Remaining health:", this.health); // 디버깅용 로그 추가
-        // Flash the monster red when hit
+        console.log("Monster hit. Remaining health:", this.health);
+
         this.scene.tweens.add({
             targets: this,
             tint: 0xff0000,
@@ -33,7 +31,7 @@ export class Monster extends Physics.Arcade.Sprite {
         });
 
         if (this.health <= 0) {
-            console.log("Monster destroyed"); // 디버깅용 로그 추가
+            console.log("Monster destroyed");
             this.destroy();
         } else {
             this.stun();
@@ -43,7 +41,7 @@ export class Monster extends Physics.Arcade.Sprite {
     stun() {
         if (!this.isStunned) {
             this.isStunned = true;
-            this.setTint(0x0000ff); // Blue tint to indicate stun
+            this.setTint(0x0000ff);
 
             this.scene.time.delayedCall(this.stunDuration, () => {
                 this.isStunned = false;
@@ -57,10 +55,8 @@ export class Monster extends Physics.Arcade.Sprite {
             this.x -= this.speed * (delta / 1000);
         }
 
-        // Remove the monster if it goes off screen
         if (this.x < -this.width) {
             this.destroy();
         }
     }
 }
-
