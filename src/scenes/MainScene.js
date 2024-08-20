@@ -63,16 +63,17 @@ export class MainScene extends Scene {
     }
 
     hitMonster(egg, monster) {
-        egg.setActive(false);
-        egg.setVisible(false);
-
-        monster.hit(1); // 몬스터에게 1의 데미지를 줍니다.
+        console.log("Egg hit monster. Damage:", egg.damage);
+        monster.hit(egg.damage);
 
         this.points += 10;
         // Update score display
+
+        egg.destroy(); // egg를 완전히 제거합니다.
     }
 
     gameOver() {
+        console.log("Game Over called"); // 디버깅용 로그 추가
         this.scene.start("GameOverScene", { points: this.points });
     }
 

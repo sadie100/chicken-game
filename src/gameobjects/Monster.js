@@ -8,7 +8,7 @@ export class Monster extends Physics.Arcade.Sprite {
 
     constructor(scene, x, y) {
         super(scene, x, y, "monster");
-
+        console.log("Monster created with health:", this.health); // 디버깅용 로그 추가
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
@@ -23,7 +23,7 @@ export class Monster extends Physics.Arcade.Sprite {
 
     hit(damage) {
         this.health -= damage;
-
+        console.log("Monster hit. Remaining health:", this.health); // 디버깅용 로그 추가
         // Flash the monster red when hit
         this.scene.tweens.add({
             targets: this,
@@ -33,6 +33,7 @@ export class Monster extends Physics.Arcade.Sprite {
         });
 
         if (this.health <= 0) {
+            console.log("Monster destroyed"); // 디버깅용 로그 추가
             this.destroy();
         } else {
             this.stun();
@@ -62,3 +63,4 @@ export class Monster extends Physics.Arcade.Sprite {
         }
     }
 }
+

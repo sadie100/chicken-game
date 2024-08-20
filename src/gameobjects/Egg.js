@@ -1,44 +1,19 @@
-import { GameObjects, Math } from "phaser";
-
-export class Egg extends GameObjects.Image {
-    speed;
-    characterType;
-    damage;
-
+export class Egg extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y) {
         super(scene, x, y, "egg");
-        this.setScale(0.5);
+        this.damage = 1; // 기본 데미지 값
     }
 
-    fire(x, y, characterType, damage, speed) {
-        this.characterType = characterType;
-        this.damage = damage;
-        this.speed = Phaser.Math.GetSpeed(speed, 1);
-
-        this.setPosition(x, y);
+    fire(x, y, speed) {
+        this.body.reset(x, y);
         this.setActive(true);
         this.setVisible(true);
-
-        // Set egg tint based on character type
-        switch (characterType) {
-            case "duck":
-                this.setTint(0xffff00); // Yellow
-                break;
-            case "mallard":
-                this.setTint(0x00ff00); // Green
-                break;
-            case "chicken":
-                this.setTint(0xffffff); // White
-                break;
-        }
+        this.setVelocityX(speed);
     }
 
     update(time, delta) {
-        this.x += this.speed * delta;
-
-        if (this.x > this.scene.scale.width) {
-            this.setActive(false);
-            this.setVisible(false);
+        if (this.x > this.scene.game.config.width) {
+            this.destroy();
         }
     }
 }
