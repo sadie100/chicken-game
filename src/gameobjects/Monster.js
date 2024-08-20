@@ -2,9 +2,9 @@ import { Physics } from "phaser";
 
 export class Monster extends Physics.Arcade.Sprite {
     speed = 100;
-    health = 3;
+    health = 3; // 몬스터의 초기 체력
     isStunned = false;
-    stunDuration = 2000; // 2 seconds
+    stunDuration = 1000; // 1초간 기절
 
     constructor(scene, x, y) {
         super(scene, x, y, "monster");
@@ -13,9 +13,12 @@ export class Monster extends Physics.Arcade.Sprite {
         scene.physics.add.existing(this);
 
         this.setScale(2);
-        this.body.setSize(20, 20); // Adjust hitbox size as needed
+        this.setFlipX(true);
+        this.body.setSize(20, 20);
 
-        this.play("monster_walk");
+        if (this.scene.anims.exists("monster_walk")) {
+            this.play("monster_walk");
+        }
     }
 
     hit(damage) {
@@ -31,6 +34,8 @@ export class Monster extends Physics.Arcade.Sprite {
 
         if (this.health <= 0) {
             this.destroy();
+        } else {
+            this.stun();
         }
     }
 
@@ -38,12 +43,10 @@ export class Monster extends Physics.Arcade.Sprite {
         if (!this.isStunned) {
             this.isStunned = true;
             this.setTint(0x0000ff); // Blue tint to indicate stun
-            this.play("monster_idle");
 
             this.scene.time.delayedCall(this.stunDuration, () => {
                 this.isStunned = false;
                 this.clearTint();
-                this.play("monster_walk");
             });
         }
     }
@@ -51,11 +54,11 @@ export class Monster extends Physics.Arcade.Sprite {
     update(time, delta) {
         if (!this.isStunned) {
             this.x -= this.speed * (delta / 1000);
+        }
 
-            // Remove the monster if it goes off screen
-            if (this.x < -this.width) {
-                this.destroy();
-            }
+        // Remove the monster if it goes off screen
+        if (this.x < -this.width) {
+            this.destroy();
         }
     }
 }

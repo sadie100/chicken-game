@@ -41,14 +41,14 @@ export class MainScene extends Scene {
         // Collision detection
         this.physics.add.overlap(
             this.player.eggs,
-            this.cats,
-            this.hitCat,
+            this.monsters,
+            this.hitMonster,
             null,
             this
         );
         this.physics.add.overlap(
             this.player,
-            this.cats,
+            this.monsters,
             this.gameOver,
             null,
             this
@@ -66,11 +66,8 @@ export class MainScene extends Scene {
         egg.setActive(false);
         egg.setVisible(false);
 
-        if (egg.characterType === "chicken") {
-            monster.stun();
-        }
+        monster.hit(1); // 몬스터에게 1의 데미지를 줍니다.
 
-        monster.hit(egg.damage);
         this.points += 10;
         // Update score display
     }

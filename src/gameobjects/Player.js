@@ -3,19 +3,16 @@ import { Egg } from "./Egg";
 
 export class Player extends Physics.Arcade.Sprite {
     scene = null;
-    currentCharacter = 0;
-    characters = ["duck", "mallard", "chicken"];
     eggs = null;
     isMoving = false;
 
     constructor({ scene }) {
-        super(scene, 200, scene.scale.height - 100, "duck");
+        super(scene, 200, scene.scale.height - 100, "chicken_idle");
         this.scene = scene;
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
-        this.setTexture(this.characters[this.currentCharacter]);
-        this.playIdleAnimation();
+        this.setScale(2); // 크기를 2배로 키웁니다 (필요에 따라 조정)
 
         // Eggs group
         this.eggs = this.scene.physics.add.group({
@@ -24,32 +21,21 @@ export class Player extends Physics.Arcade.Sprite {
             runChildUpdate: true,
         });
 
-        // Add key listener for character switch
-        this.scene.input.keyboard.on("keydown-TAB", this.switchCharacter, this);
-    }
-
-    switchCharacter() {
-        this.currentCharacter =
-            (this.currentCharacter + 1) % this.characters.length;
-        this.setTexture(this.characters[this.currentCharacter]);
         this.playIdleAnimation();
     }
 
     playIdleAnimation() {
-        const character = this.characters[this.currentCharacter];
-        if (character === "chicken") {
-            this.play("chicken_idle", true);
-        } else {
-            this.play(`${character}_idle_normal`, true);
-        }
+        this.play("chicken_idle", true);
     }
 
     playWalkAnimation() {
-        const character = this.characters[this.currentCharacter];
-        if (character === "chicken") {
-            this.play("chicken_walk", true);
-        } else {
-            this.play(`${character}_walk_normal`, true);
+        this.play("chicken_walk", true);
+    }
+
+    fire() {
+        const egg = this.eggs.get();
+        if (egg) {
+            egg.fire(this.x, this.y, "chicken", 1, 400);
         }
     }
 
@@ -73,26 +59,7 @@ export class Player extends Physics.Arcade.Sprite {
         }
     }
 
-    fire() {
-        const egg = this.eggs.get();
-        if (egg) {
-            const character = this.characters[this.currentCharacter];
-            switch (character) {
-                case "duck":
-                    egg.fire(this.x, this.y, "duck", 2, 300);
-                    break;
-                case "mallard":
-                    egg.fire(this.x, this.y, "mallard", 0.5, 600);
-                    break;
-                case "chicken":
-                    egg.fire(this.x, this.y, "chicken", 1, 400);
-                    break;
-            }
-        }
-    }
-
     update() {
-        // Update logic
+        // Update logic if needed
     }
 }
-
