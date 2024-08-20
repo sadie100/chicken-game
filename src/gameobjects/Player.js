@@ -1,102 +1,68 @@
-import { GameObjects, Physics } from "phaser";
-import { Bullet } from "./Bullet";
+import { Physics } from "phaser";
+import { Egg } from "./Egg";
 
-export class Player extends Physics.Arcade.Image {
-    
-    // Player states: waiting, start, can_move
-    state = "waiting";
-    propulsion_fire = null;
+export class Player extends Physics.Arcade.Sprite {
     scene = null;
-    bullets = null;
+    currentCharacter = 0;
+    characters = ["duck", "mallard", "chicken"];
+    eggs = null;
 
-    constructor({scene}) {
-        super(scene, -190, 100, "player");
+    constructor({ scene }) {
+        super(scene, 200, scene.scale.height - 100, "duck");
         this.scene = scene;
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
-        this.propulsion_fire = this.scene.add.sprite(this.x - 32, this.y, "propulsion-fire");
-        this.propulsion_fire.play("fire");
+        this.setTexture(this.characters[this.currentCharacter]);
 
-        // Bullets group to create pool
-        this.bullets = this.scene.physics.add.group({
-            classType: Bullet,
+        // Eggs group
+        this.eggs = this.scene.physics.add.group({
+            classType: Egg,
             maxSize: 100,
-            runChildUpdate: true
+            runChildUpdate: true,
         });
+
+        // Add key listener for character switch
+        this.scene.input.keyboard.on("keydown-TAB", this.switchCharacter, this);
     }
 
-    start() {
-        this.state = "start";
-        const propulsion_fires_trail = [];
+    switchCharacter() {
+        this.currentCharacter =
+            (this.currentCharacter + 1) % this.characters.length;
+        this.setTexture(this.characters[this.currentCharacter]);
+    }
 
-        // Effect to move the player from left to right
-        this.scene.tweens.add({
-            targets: this,
-            x: 200,
-            duration: 800,
-            delay: 1000,
-            ease: "Power2",
-            yoyo: false,
-            onUpdate: () => {
-                // Just a little trail FX
-                const propulsion = this.scene.add.sprite(this.x - 32, this.y, "propulsion-fire");
-                propulsion.play("fire");
-                propulsion_fires_trail.push(propulsion);
-            },
-            onComplete: () => {
-                // Destroy all the trail FX
-                propulsion_fires_trail.forEach((propulsion, i) => {
-                    this.scene.tweens.add({
-                        targets: propulsion,
-                        alpha: 0,
-                        scale: 0.5,
-                        duration: 200 + (i * 2),
-                        ease: "Power2",
-                        onComplete: () => {
-                            propulsion.destroy();
-                        }
-                    });
-                });
-
-                this.propulsion_fire.setPosition(this.x - 32, this.y);
-
-                // When all tween are finished, the player can move
-                this.state = "can_move";
+    fire() {
+        const egg = this.eggs.get();
+        if (egg) {
+            const character = this.characters[this.currentCharacter];
+            switch (character) {
+                case "duck":
+                    egg.fire(this.x, this.y, "duck", 2, 300);
+                    break;
+                case "mallard":
+                    egg.fire(this.x, this.y, "mallard", 0.5, 600);
+                    break;
+                case "chicken":
+                    egg.fire(this.x, this.y, "chicken", 1, 400);
+                    break;
             }
-        });
+        }
     }
 
     move(direction) {
-        if(this.state === "can_move") {
-            if (direction === "up" && this.y - 10 > 0) {
-                this.y -= 5;
-                this.updatePropulsionFire();
-            } else if (direction === "down" && this.y + 75 < this.scene.scale.height) {
-                this.y += 5;
-                this.updatePropulsionFire();
-            }
+        if (direction === "up" && this.y - 10 > 0) {
+            this.y -= 5;
+        } else if (
+            direction === "down" &&
+            this.y + 75 < this.scene.scale.height
+        ) {
+            this.y += 5;
         }
-    }
-
-    fire(x, y) {
-        if (this.state === "can_move") {
-            // Create bullet
-            const bullet = this.bullets.get();
-            if (bullet) {
-                bullet.fire(this.x + 16, this.y + 5, x, y);
-            }
-        }
-    }
-
-    updatePropulsionFire() {
-        this.propulsion_fire.setPosition(this.x - 32, this.y);
     }
 
     update() {
-        // Sinusoidal movement up and down up and down 2px
-        this.y += Math.sin(this.scene.time.now / 200) * 0.10;
-        this.propulsion_fire.y = this.y;
+        // Update logic
     }
-
 }
+
