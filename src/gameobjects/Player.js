@@ -6,6 +6,7 @@ export class Player extends Physics.Arcade.Sprite {
     currentCharacter = 0;
     characters = ["duck", "mallard", "chicken"];
     eggs = null;
+    isMoving = false;
 
     constructor({ scene }) {
         super(scene, 200, scene.scale.height - 100, "duck");
@@ -14,6 +15,7 @@ export class Player extends Physics.Arcade.Sprite {
         this.scene.physics.add.existing(this);
 
         this.setTexture(this.characters[this.currentCharacter]);
+        this.playIdleAnimation();
 
         // Eggs group
         this.eggs = this.scene.physics.add.group({
@@ -30,6 +32,46 @@ export class Player extends Physics.Arcade.Sprite {
         this.currentCharacter =
             (this.currentCharacter + 1) % this.characters.length;
         this.setTexture(this.characters[this.currentCharacter]);
+        this.playIdleAnimation();
+    }
+
+    playIdleAnimation() {
+        const character = this.characters[this.currentCharacter];
+        if (character === "chicken") {
+            this.play("chicken_idle");
+        } else {
+            this.play(`${character}_idle_normal`);
+        }
+    }
+
+    playWalkAnimation() {
+        const character = this.characters[this.currentCharacter];
+        if (character === "chicken") {
+            this.play("chicken_walk");
+        } else {
+            this.play(`${character}_walk_normal`);
+        }
+    }
+
+    move(direction) {
+        if (direction === "up" && this.y - 10 > 0) {
+            this.y -= 5;
+            this.isMoving = true;
+        } else if (
+            direction === "down" &&
+            this.y + 75 < this.scene.scale.height
+        ) {
+            this.y += 5;
+            this.isMoving = true;
+        } else {
+            this.isMoving = false;
+        }
+
+        if (this.isMoving) {
+            this.playWalkAnimation();
+        } else {
+            this.playIdleAnimation();
+        }
     }
 
     fire() {
@@ -47,17 +89,6 @@ export class Player extends Physics.Arcade.Sprite {
                     egg.fire(this.x, this.y, "chicken", 1, 400);
                     break;
             }
-        }
-    }
-
-    move(direction) {
-        if (direction === "up" && this.y - 10 > 0) {
-            this.y -= 5;
-        } else if (
-            direction === "down" &&
-            this.y + 75 < this.scene.scale.height
-        ) {
-            this.y += 5;
         }
     }
 

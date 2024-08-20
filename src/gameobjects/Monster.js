@@ -1,25 +1,27 @@
 import { Physics } from "phaser";
 
-export class Cat extends Physics.Arcade.Sprite {
+export class Monster extends Physics.Arcade.Sprite {
     speed = 100;
     health = 3;
     isStunned = false;
     stunDuration = 2000; // 2 seconds
 
     constructor(scene, x, y) {
-        super(scene, x, y, "cat");
+        super(scene, x, y, "monster");
 
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
         this.setScale(2);
         this.body.setSize(20, 20); // Adjust hitbox size as needed
+
+        this.play("monster_walk");
     }
 
     hit(damage) {
         this.health -= damage;
 
-        // Flash the cat red when hit
+        // Flash the monster red when hit
         this.scene.tweens.add({
             targets: this,
             tint: 0xff0000,
@@ -36,10 +38,12 @@ export class Cat extends Physics.Arcade.Sprite {
         if (!this.isStunned) {
             this.isStunned = true;
             this.setTint(0x0000ff); // Blue tint to indicate stun
+            this.play("monster_idle");
 
             this.scene.time.delayedCall(this.stunDuration, () => {
                 this.isStunned = false;
                 this.clearTint();
+                this.play("monster_walk");
             });
         }
     }
@@ -48,7 +52,7 @@ export class Cat extends Physics.Arcade.Sprite {
         if (!this.isStunned) {
             this.x -= this.speed * (delta / 1000);
 
-            // Remove the cat if it goes off screen
+            // Remove the monster if it goes off screen
             if (this.x < -this.width) {
                 this.destroy();
             }

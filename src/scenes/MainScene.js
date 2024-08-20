@@ -1,10 +1,10 @@
 import { Scene } from "phaser";
 import { Player } from "../gameobjects/Player";
-import { Cat } from "../gameobjects/Cat";
+import { Monster } from "../gameobjects/Monster";
 
 export class MainScene extends Scene {
     player = null;
-    cats = null;
+    monsters = null;
     cursors = null;
     points = 0;
 
@@ -18,16 +18,16 @@ export class MainScene extends Scene {
         // Player
         this.player = new Player({ scene: this });
 
-        // Cats group
-        this.cats = this.physics.add.group({
-            classType: Cat,
+        // Monsters group
+        this.monsters = this.physics.add.group({
+            classType: Monster,
             runChildUpdate: true,
         });
 
-        // Spawn cats
+        // Spawn monsters
         this.time.addEvent({
             delay: 2000,
-            callback: this.spawnCat,
+            callback: this.spawnMonster,
             callbackScope: this,
             loop: true,
         });
@@ -55,22 +55,22 @@ export class MainScene extends Scene {
         );
     }
 
-    spawnCat() {
+    spawnMonster() {
         const x = this.scale.width;
         const y = Phaser.Math.Between(50, this.scale.height - 50);
-        const cat = new Cat(this, x, y);
-        this.cats.add(cat);
+        const monster = new Monster(this, x, y);
+        this.monsters.add(monster);
     }
 
-    hitCat(egg, cat) {
+    hitMonster(egg, monster) {
         egg.setActive(false);
         egg.setVisible(false);
 
         if (egg.characterType === "chicken") {
-            cat.stun();
+            monster.stun();
         }
 
-        cat.hit(egg.damage);
+        monster.hit(egg.damage);
         this.points += 10;
         // Update score display
     }
