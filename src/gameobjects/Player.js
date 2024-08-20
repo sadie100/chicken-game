@@ -38,36 +38,35 @@ export class Player extends Physics.Arcade.Sprite {
     playIdleAnimation() {
         const character = this.characters[this.currentCharacter];
         if (character === "chicken") {
-            this.play("chicken_idle");
+            this.play("chicken_idle", true);
         } else {
-            this.play(`${character}_idle_normal`);
+            this.play(`${character}_idle_normal`, true);
         }
     }
 
     playWalkAnimation() {
         const character = this.characters[this.currentCharacter];
         if (character === "chicken") {
-            this.play("chicken_walk");
+            this.play("chicken_walk", true);
         } else {
-            this.play(`${character}_walk_normal`);
+            this.play(`${character}_walk_normal`, true);
         }
     }
 
     move(direction) {
+        let moved = false;
         if (direction === "up" && this.y - 10 > 0) {
             this.y -= 5;
-            this.isMoving = true;
+            moved = true;
         } else if (
             direction === "down" &&
             this.y + 75 < this.scene.scale.height
         ) {
             this.y += 5;
-            this.isMoving = true;
-        } else {
-            this.isMoving = false;
+            moved = true;
         }
 
-        if (this.isMoving) {
+        if (moved) {
             this.playWalkAnimation();
         } else {
             this.playIdleAnimation();

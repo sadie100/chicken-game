@@ -8,14 +8,16 @@ export class Preloader extends Phaser.Scene {
         this.load.image("farm_background", "farm_background.png");
         this.load.image("farm_floor", "farm_floor.png");
 
-        // Load spritesheets
+        // 스프라이트 시트 로드 설정 수정
         this.load.spritesheet("duck", "duck.png", {
             frameWidth: 32,
             frameHeight: 32,
+            endFrame: 17,
         });
         this.load.spritesheet("mallard", "mallard.png", {
             frameWidth: 32,
             frameHeight: 32,
+            endFrame: 17,
         });
         this.load.spritesheet("chicken_idle", "chicken_idle.png", {
             frameWidth: 48,
@@ -71,80 +73,10 @@ export class Preloader extends Phaser.Scene {
 
     createAnimations() {
         // Duck animations
-        this.anims.create({
-            key: "duck_idle_normal",
-            frames: this.anims.generateFrameNumbers("duck", {
-                start: 0,
-                end: 1,
-            }),
-            frameRate: 5,
-            repeat: -1,
-        });
-        this.anims.create({
-            key: "duck_walk_normal",
-            frames: this.anims.generateFrameNumbers("duck", {
-                start: 2,
-                end: 7,
-            }),
-            frameRate: 10,
-            repeat: -1,
-        });
-        this.anims.create({
-            key: "duck_idle_bounce",
-            frames: this.anims.generateFrameNumbers("duck", {
-                start: 8,
-                end: 11,
-            }),
-            frameRate: 5,
-            repeat: -1,
-        });
-        this.anims.create({
-            key: "duck_walk_bounce",
-            frames: this.anims.generateFrameNumbers("duck", {
-                start: 12,
-                end: 17,
-            }),
-            frameRate: 10,
-            repeat: -1,
-        });
+        this.createCharacterAnimations("duck");
 
-        // Mallard animations (same as duck, but with 'mallard' key)
-        this.anims.create({
-            key: "mallard_idle_normal",
-            frames: this.anims.generateFrameNumbers("mallard", {
-                start: 0,
-                end: 1,
-            }),
-            frameRate: 5,
-            repeat: -1,
-        });
-        this.anims.create({
-            key: "mallard_walk_normal",
-            frames: this.anims.generateFrameNumbers("mallard", {
-                start: 2,
-                end: 7,
-            }),
-            frameRate: 10,
-            repeat: -1,
-        });
-        this.anims.create({
-            key: "mallard_idle_bounce",
-            frames: this.anims.generateFrameNumbers("mallard", {
-                start: 8,
-                end: 11,
-            }),
-            frameRate: 5,
-            repeat: -1,
-        });
-        this.anims.create({
-            key: "mallard_walk_bounce",
-            frames: this.anims.generateFrameNumbers("mallard", {
-                start: 12,
-                end: 17,
-            }),
-            frameRate: 10,
-            repeat: -1,
-        });
+        // Mallard animations
+        this.createCharacterAnimations("mallard");
 
         // Chicken animations
         this.anims.create({
@@ -181,6 +113,41 @@ export class Preloader extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers("monster", {
                 start: 5,
                 end: 8,
+            }),
+            frameRate: 10,
+            repeat: -1,
+        });
+    }
+
+    createCharacterAnimations(character) {
+        this.anims.create({
+            key: `${character}_idle_normal`,
+            frames: this.anims.generateFrameNumbers(character, {
+                frames: [0, 1],
+            }),
+            frameRate: 2,
+            repeat: -1,
+        });
+        this.anims.create({
+            key: `${character}_walk_normal`,
+            frames: this.anims.generateFrameNumbers(character, {
+                frames: [2, 3, 4, 5, 6, 7],
+            }),
+            frameRate: 10,
+            repeat: -1,
+        });
+        this.anims.create({
+            key: `${character}_idle_bounce`,
+            frames: this.anims.generateFrameNumbers(character, {
+                frames: [8, 9, 10, 11],
+            }),
+            frameRate: 5,
+            repeat: -1,
+        });
+        this.anims.create({
+            key: `${character}_walk_bounce`,
+            frames: this.anims.generateFrameNumbers(character, {
+                frames: [12, 13, 14, 15, 16, 17],
             }),
             frameRate: 10,
             repeat: -1,
