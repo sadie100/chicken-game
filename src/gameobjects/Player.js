@@ -5,7 +5,8 @@ export class Player extends Physics.Arcade.Sprite {
     scene = null;
     eggs = null;
     isMoving = false;
-    lives = 5; // 초기 목숨 개수
+    lives = 5;
+    isInvulnerable = false;
 
     constructor({ scene }) {
         super(scene, 200, scene.scale.height - 100, "chicken_idle");
@@ -13,9 +14,12 @@ export class Player extends Physics.Arcade.Sprite {
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
-        this.setScale(2); // 크기를 2배로 키웁니다 (필요에 따라 조정)
+        this.setScale(2);
 
-        // Eggs group
+        // 충돌 영역 조정
+        this.body.setSize(this.width * 0.3, this.height * 0.5); // 크기를 원본의 50%로 조정
+        this.body.setOffset(this.width * 0.35, this.height * 0.5); // 오프셋 설정
+
         this.eggs = this.scene.physics.add.group({
             classType: Egg,
             maxSize: 100,
@@ -71,11 +75,30 @@ export class Player extends Physics.Arcade.Sprite {
     }
 
     loseLife() {
+        if (this.isInvulnerable) return this.lives;
+
         this.lives--;
-        if (this.lives <= 0) {
-            this.scene.gameOver();
-        }
+        this.flashRed();
         return this.lives;
+    }
+
+    flashRed() {
+        this.isInvulnerable = true;
+        this.scene.tweens.add({
+            targets: this,
+            tint: 0xff0000,
+            duration: 50,
+            yoyo: true,
+            repeat: 3,
+            onComplete: () => {
+                this.clearTint();
+                this.isInvulnerable = false;
+            },
+        });
+    }
+
+    isInvulnerable() {
+        return this.isInvulnerable;
     }
 
     getLives() {

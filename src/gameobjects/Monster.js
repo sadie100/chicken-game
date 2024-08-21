@@ -12,7 +12,10 @@ export class Monster extends Physics.Arcade.Sprite {
         scene.physics.add.existing(this);
         this.setScale(2);
         this.setFlipX(true);
-        this.body.setSize(20, 20);
+
+        // 충돌 영역 조정
+        this.body.setSize(this.width * 0.5, this.height * 0.5); // 크기를 원본의 60%로 조정
+        this.body.setOffset(this.width * 0.25, this.height * 0.5); // 오프셋 설정
 
         if (this.scene.anims.exists("monster_walk")) {
             this.play("monster_walk");
@@ -60,3 +63,4 @@ export class Monster extends Physics.Arcade.Sprite {
         }
     }
 }
+
