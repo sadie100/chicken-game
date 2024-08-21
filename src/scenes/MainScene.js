@@ -15,10 +15,11 @@ export class MainScene extends Scene {
     minSpawnDelay = 500;
     spawnReductionRate = 100;
     gameTime = 0;
-    initialMonsterSpeed = 150; // Pig의 초기 속도를 150으로 변경
-    currentMonsterSpeed = 150; // 현재 몬스터 속도도 150으로 시작
+    initialMonsterSpeed = 100; // Pig의 초기 속도를 100으로 변경
+    currentMonsterSpeed = 100; // 현재 몬스터 속도도 100으로 시작
     monsterSpeedIncreaseRate = 5;
     catUnlockTime = 60; // Cat이 등장하는 시간 (초)
+    difficultyIncreaseInterval = 5; // 난이도 증가 주기를 5초로 설정
 
     constructor() {
         super("MainScene");
@@ -99,8 +100,8 @@ export class MainScene extends Scene {
     updateGameTime() {
         this.gameTime++;
 
-        // 10초마다 스폰 주기 감소 및 몬스터 속도 증가
-        if (this.gameTime % 10 === 0) {
+        // 5초마다 스폰 주기 감소 및 몬스터 속도 증가
+        if (this.gameTime % this.difficultyIncreaseInterval === 0) {
             // 스폰 주기 감소
             let newDelay = this.spawnTimer.delay - this.spawnReductionRate;
             if (newDelay < this.minSpawnDelay) {
@@ -123,7 +124,7 @@ export class MainScene extends Scene {
 
         let monster;
         if (this.gameTime >= this.catUnlockTime && Math.random() < 0.3) {
-            // Cat 등장 확률을 30%로 설정
+            // Cat 등장 확률을 30%로 유지
             monster = new Cat(this, x, y, this.currentMonsterSpeed);
         } else {
             monster = new Pig(this, x, y, this.currentMonsterSpeed);
