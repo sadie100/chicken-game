@@ -39,8 +39,10 @@ export class Player extends Physics.Arcade.Sprite {
     fire() {
         const egg = this.eggs.get();
         if (egg) {
-            egg.fire(this.x, this.y, 400); // 400은 egg의 속도입니다. 필요에 따라 조정하세요.
-            egg.body.onWorldBounds = true; // 월드 경계에 도달했을 때 이벤트를 활성화합니다.
+            // 닭의 y축 중간 지점 계산
+            const middleY = this.y + this.height / 2.5; // this.height / 4는 실제 높이의 중간점 (스케일이 2이므로)
+            egg.fire(this.x, middleY, 400);
+            egg.body.onWorldBounds = true;
             egg.body.world.on("worldbounds", (body) => {
                 if (body.gameObject === egg) {
                     egg.destroy();
