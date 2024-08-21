@@ -6,7 +6,7 @@ export class Monster extends Physics.Arcade.Sprite {
     isStunned = false;
     stunDuration = 1000; // 1초간 기절
 
-    constructor(scene, x, y) {
+    constructor(scene, x, y, speed) {
         super(scene, x, y, "monster");
         scene.add.existing(this);
         scene.physics.add.existing(this);
@@ -17,8 +17,21 @@ export class Monster extends Physics.Arcade.Sprite {
         this.body.setSize(this.width * 0.5, this.height * 0.5); // 크기를 원본의 60%로 조정
         this.body.setOffset(this.width * 0.25, this.height * 0.5); // 오프셋 설정
 
+        // 속도 설정
+        this.speed = speed || 100;
+
         if (this.scene.anims.exists("monster_walk")) {
             this.play("monster_walk");
+        }
+    }
+
+    update(time, delta) {
+        if (!this.isStunned) {
+            this.x -= this.speed * (delta / 1000);
+        }
+
+        if (this.x < -this.width) {
+            this.destroy();
         }
     }
 
@@ -50,16 +63,6 @@ export class Monster extends Physics.Arcade.Sprite {
                 this.isStunned = false;
                 this.clearTint();
             });
-        }
-    }
-
-    update(time, delta) {
-        if (!this.isStunned) {
-            this.x -= this.speed * (delta / 1000);
-        }
-
-        if (this.x < -this.width) {
-            this.destroy();
         }
     }
 }

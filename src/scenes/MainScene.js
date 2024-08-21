@@ -9,10 +9,13 @@ export class MainScene extends Scene {
     points = 0;
     hudScene = null;
     spawnTimer = null;
-    initialSpawnDelay = 2000; // 초기 스폰 주기 (2초)
-    minSpawnDelay = 500; // 최소 스폰 주기 (0.5초)
-    spawnReductionRate = 100; // 10초마다 줄어들 시간 (0.1초)
+    initialSpawnDelay = 2000;
+    minSpawnDelay = 500;
+    spawnReductionRate = 100;
     gameTime = 0;
+    initialMonsterSpeed = 100;
+    currentMonsterSpeed = 100;
+    monsterSpeedIncreaseRate = 5; // 10초마다 증가할 속도
 
     constructor() {
         super("MainScene");
@@ -93,21 +96,28 @@ export class MainScene extends Scene {
     updateGameTime() {
         this.gameTime++;
 
-        // 10초마다 스폰 주기 감소
+        // 10초마다 스폰 주기 감소 및 몬스터 속도 증가
         if (this.gameTime % 10 === 0) {
+            // 스폰 주기 감소
             let newDelay = this.spawnTimer.delay - this.spawnReductionRate;
             if (newDelay < this.minSpawnDelay) {
                 newDelay = this.minSpawnDelay;
             }
             this.spawnTimer.delay = newDelay;
-            console.log(`Spawn delay reduced to ${newDelay}ms`);
+
+            // 몬스터 속도 증가
+            this.currentMonsterSpeed += this.monsterSpeedIncreaseRate;
+
+            console.log(
+                `Spawn delay reduced to ${newDelay}ms, Monster speed increased to ${this.currentMonsterSpeed}`
+            );
         }
     }
 
     spawnMonster() {
         const x = this.scale.width;
         const y = Phaser.Math.Between(50, this.scale.height - 50);
-        const monster = new Monster(this, x, y);
+        const monster = new Monster(this, x, y, this.currentMonsterSpeed);
         this.monsters.add(monster);
     }
 
