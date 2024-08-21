@@ -9,6 +9,7 @@ export class Player extends Physics.Arcade.Sprite {
     isInvulnerable = false;
     realWidth = 0;
     realHeight = 0;
+    speed = 200; // 속도를 픽셀/초 단위로 정의
 
     constructor({ scene }) {
         super(scene, 200, scene.scale.height - 100, "chicken_idle");
@@ -35,14 +36,6 @@ export class Player extends Physics.Arcade.Sprite {
         this.playIdleAnimation();
     }
 
-    playIdleAnimation() {
-        this.play("chicken_idle", true);
-    }
-
-    playWalkAnimation() {
-        this.play("chicken_walk", true);
-    }
-
     fire() {
         const egg = this.eggs.get();
         if (egg) {
@@ -56,45 +49,66 @@ export class Player extends Physics.Arcade.Sprite {
         }
     }
 
-    move(direction) {
-        const speed = 5;
-        let moved = false;
+    move(directions, delta) {
+        let dx = 0;
+        let dy = 0;
 
-        switch (direction) {
-            case "up":
-                if (this.y - speed > 0) {
-                    this.y -= speed;
-                    moved = true;
-                }
-                break;
-            case "down":
-                if (
-                    this.y + this.realHeight + speed <
-                    this.scene.scale.height
-                ) {
-                    this.y += speed;
-                    moved = true;
-                }
-                break;
-            case "left":
-                if (this.x - speed > 0) {
-                    this.x -= speed;
-                    moved = true;
-                }
-                break;
-            case "right":
-                if (this.x + this.realWidth + speed < this.scene.scale.width) {
-                    this.x += speed;
-                    moved = true;
-                }
-                break;
+        if (directions.includes("up")) {
+            dy -= 1;
+        }
+        if (directions.includes("down")) {
+            dy += 1;
+        }
+        if (directions.includes("left")) {
+            dx -= 1;
+        }
+        if (directions.includes("right")) {
+            dx += 1;
         }
 
-        if (moved) {
+        // 대각선 이동 시 속도 정규화
+        if (dx !== 0 && dy !== 0) {
+            const factor = Math.sqrt(2) / 2;
+            dx *= factor;
+            dy *= factor;
+        }
+
+        // delta를 이용한 시간 기반 이동
+        const pixelsToMoveX = dx * this.speed * (delta / 1000);
+        const pixelsToMoveY = dy * this.speed * (delta / 1000);
+
+        // 새로운 위치 계산
+        let newX = this.x + pixelsToMoveX;
+        let newY = this.y + pixelsToMoveY;
+
+        // 화면 경계 검사
+        newX = Phaser.Math.Clamp(
+            newX,
+            0,
+            this.scene.scale.width - this.realWidth
+        );
+        newY = Phaser.Math.Clamp(
+            newY,
+            0,
+            this.scene.scale.height - this.realHeight
+        );
+
+        // 위치 업데이트
+        this.setPosition(newX, newY);
+
+        if (dx !== 0 || dy !== 0) {
             this.playWalkAnimation();
         } else {
             this.playIdleAnimation();
         }
+    }
+
+    playIdleAnimation() {
+        this.play("chicken_idle", true);
+    }
+
+    playWalkAnimation() {
+        this.play("chicken_walk", true);
     }
 
     update() {

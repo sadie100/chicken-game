@@ -209,20 +209,26 @@ export class MainScene extends Scene {
         }
     }
 
-    update() {
-        this.player.update();
+    update(time, delta) {
+        const directions = [];
 
         if (this.cursors.up.isDown || this.wasd.up.isDown) {
-            this.player.move("up");
+            directions.push("up");
         }
         if (this.cursors.down.isDown || this.wasd.down.isDown) {
-            this.player.move("down");
+            directions.push("down");
         }
         if (this.cursors.left.isDown || this.wasd.left.isDown) {
-            this.player.move("left");
+            directions.push("left");
         }
         if (this.cursors.right.isDown || this.wasd.right.isDown) {
-            this.player.move("right");
+            directions.push("right");
+        }
+
+        if (directions.length > 0) {
+            this.player.move(directions, delta);
+        } else {
+            this.player.playIdleAnimation();
         }
 
         if (
