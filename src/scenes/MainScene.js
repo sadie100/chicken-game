@@ -35,6 +35,15 @@ export class MainScene extends Scene {
 
         // Cursor keys
         this.cursors = this.input.keyboard.createCursorKeys();
+
+        // WASD keys for alternative movement
+        this.wasd = this.input.keyboard.addKeys({
+            up: Phaser.Input.Keyboard.KeyCodes.W,
+            down: Phaser.Input.Keyboard.KeyCodes.S,
+            left: Phaser.Input.Keyboard.KeyCodes.A,
+            right: Phaser.Input.Keyboard.KeyCodes.D,
+        });
+
         this.input.keyboard.on("keydown-SPACE", () => {
             this.player.fire();
         });
@@ -97,11 +106,30 @@ export class MainScene extends Scene {
     update() {
         this.player.update();
 
-        if (this.cursors.up.isDown) {
+        if (this.cursors.up.isDown || this.wasd.up.isDown) {
             this.player.move("up");
         }
-        if (this.cursors.down.isDown) {
+        if (this.cursors.down.isDown || this.wasd.down.isDown) {
             this.player.move("down");
+        }
+        if (this.cursors.left.isDown || this.wasd.left.isDown) {
+            this.player.move("left");
+        }
+        if (this.cursors.right.isDown || this.wasd.right.isDown) {
+            this.player.move("right");
+        }
+
+        if (
+            !this.cursors.up.isDown &&
+            !this.cursors.down.isDown &&
+            !this.cursors.left.isDown &&
+            !this.cursors.right.isDown &&
+            !this.wasd.up.isDown &&
+            !this.wasd.down.isDown &&
+            !this.wasd.left.isDown &&
+            !this.wasd.right.isDown
+        ) {
+            this.player.playIdleAnimation();
         }
     }
 }

@@ -51,16 +51,36 @@ export class Player extends Physics.Arcade.Sprite {
     }
 
     move(direction) {
+        const speed = 5;
         let moved = false;
-        if (direction === "up" && this.y - 10 > 0) {
-            this.y -= 5;
-            moved = true;
-        } else if (
-            direction === "down" &&
-            this.y + 75 < this.scene.scale.height
-        ) {
-            this.y += 5;
-            moved = true;
+
+        switch (direction) {
+            case "up":
+                if (this.y - speed > 0) {
+                    this.y -= speed;
+                    moved = true;
+                }
+                break;
+            case "down":
+                if (this.y + this.height + speed < this.scene.scale.height) {
+                    this.y += speed;
+                    moved = true;
+                }
+                break;
+            case "left":
+                if (this.x - speed > 0) {
+                    this.x -= speed;
+                    moved = true;
+                    this.setFlipX(true);
+                }
+                break;
+            case "right":
+                if (this.x + this.width + speed < this.scene.scale.width) {
+                    this.x += speed;
+                    moved = true;
+                    this.setFlipX(false);
+                }
+                break;
         }
 
         if (moved) {
