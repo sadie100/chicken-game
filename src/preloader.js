@@ -20,8 +20,14 @@ export class Preloader extends Phaser.Scene {
 
         this.load.image("egg", "egg.png");
 
-        // Load monster sprite
-        this.load.spritesheet("monster", "monster.png", {
+        // Load pig sprite
+        this.load.spritesheet("pig", "pig.png", {
+            frameWidth: 32,
+            frameHeight: 32,
+        });
+
+        // Load cat sprite
+        this.load.spritesheet("cat", "cat.png", {
             frameWidth: 32,
             frameHeight: 32,
         });
@@ -65,11 +71,10 @@ export class Preloader extends Phaser.Scene {
             frameRate: 6,
             repeat: -1,
         });
-
-        // Monster animations
+        // Pig animations
         this.anims.create({
-            key: "monster_idle",
-            frames: this.anims.generateFrameNumbers("monster", {
+            key: "pig_idle",
+            frames: this.anims.generateFrameNumbers("pig", {
                 start: 0,
                 end: 4,
             }),
@@ -77,8 +82,28 @@ export class Preloader extends Phaser.Scene {
             repeat: -1,
         });
         this.anims.create({
-            key: "monster_walk",
-            frames: this.anims.generateFrameNumbers("monster", {
+            key: "pig_walk",
+            frames: this.anims.generateFrameNumbers("pig", {
+                start: 5,
+                end: 8,
+            }),
+            frameRate: 8,
+            repeat: -1,
+        });
+
+        // Cat animations
+        this.anims.create({
+            key: "cat_idle",
+            frames: this.anims.generateFrameNumbers("cat", {
+                start: 0,
+                end: 4,
+            }),
+            frameRate: 6,
+            repeat: -1,
+        });
+        this.anims.create({
+            key: "cat_walk",
+            frames: this.anims.generateFrameNumbers("cat", {
                 start: 5,
                 end: 8,
             }),

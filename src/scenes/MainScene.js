@@ -1,6 +1,8 @@
 import { Scene } from "phaser";
 import { Player } from "../gameobjects/Player";
-import { Monster } from "../gameobjects/Monster";
+import { Pig } from "../gameobjects/monsters/Pig";
+import { Cat } from "../gameobjects/monsters/Cat";
+import { Monster } from "../gameobjects/monsters/Monster";
 
 export class MainScene extends Scene {
     player = null;
@@ -13,9 +15,10 @@ export class MainScene extends Scene {
     minSpawnDelay = 500;
     spawnReductionRate = 100;
     gameTime = 0;
-    initialMonsterSpeed = 100;
-    currentMonsterSpeed = 100;
-    monsterSpeedIncreaseRate = 5; // 10초마다 증가할 속도
+    initialMonsterSpeed = 150; // Pig의 초기 속도를 150으로 변경
+    currentMonsterSpeed = 150; // 현재 몬스터 속도도 150으로 시작
+    monsterSpeedIncreaseRate = 5;
+    catUnlockTime = 60; // Cat이 등장하는 시간 (초)
 
     constructor() {
         super("MainScene");
@@ -117,7 +120,14 @@ export class MainScene extends Scene {
     spawnMonster() {
         const x = this.scale.width;
         const y = Phaser.Math.Between(50, this.scale.height - 50);
-        const monster = new Monster(this, x, y, this.currentMonsterSpeed);
+
+        let monster;
+        if (this.gameTime >= this.catUnlockTime && Math.random() < 0.3) {
+            // Cat 등장 확률을 30%로 설정
+            monster = new Cat(this, x, y, this.currentMonsterSpeed);
+        } else {
+            monster = new Pig(this, x, y, this.currentMonsterSpeed);
+        }
         this.monsters.add(monster);
     }
 

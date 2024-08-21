@@ -6,23 +6,19 @@ export class Monster extends Physics.Arcade.Sprite {
     isStunned = false;
     stunDuration = 1000; // 1초간 기절
 
-    constructor(scene, x, y, speed) {
-        super(scene, x, y, "monster");
+    constructor(scene, x, y, texture, speed) {
+        super(scene, x, y, texture);
         scene.add.existing(this);
         scene.physics.add.existing(this);
         this.setScale(2);
         this.setFlipX(true);
 
         // 충돌 영역 조정
-        this.body.setSize(this.width * 0.5, this.height * 0.5); // 크기를 원본의 60%로 조정
-        this.body.setOffset(this.width * 0.25, this.height * 0.5); // 오프셋 설정
+        this.body.setSize(this.width * 0.5, this.height * 0.5);
+        this.body.setOffset(this.width * 0.25, this.height * 0.5);
 
         // 속도 설정
-        this.speed = speed || 100;
-
-        if (this.scene.anims.exists("monster_walk")) {
-            this.play("monster_walk");
-        }
+        this.speed = speed || this.speed;
     }
 
     update(time, delta) {
@@ -37,7 +33,10 @@ export class Monster extends Physics.Arcade.Sprite {
 
     hit(damage) {
         this.health -= damage;
-        console.log("Monster hit. Remaining health:", this.health);
+        console.log(
+            `${this.constructor.name} hit. Remaining health:`,
+            this.health
+        );
 
         this.scene.tweens.add({
             targets: this,
@@ -47,7 +46,7 @@ export class Monster extends Physics.Arcade.Sprite {
         });
 
         if (this.health <= 0) {
-            console.log("Monster destroyed");
+            console.log(`${this.constructor.name} destroyed`);
             this.destroy();
         } else {
             this.stun();
@@ -66,4 +65,3 @@ export class Monster extends Physics.Arcade.Sprite {
         }
     }
 }
-
