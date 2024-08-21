@@ -15,11 +15,14 @@ export class MainScene extends Scene {
     minSpawnDelay = 500;
     spawnReductionRate = 100;
     gameTime = 0;
-    initialMonsterSpeed = 100; // Pig의 초기 속도를 100으로 변경
-    currentMonsterSpeed = 100; // 현재 몬스터 속도도 100으로 시작
+    initialMonsterSpeed = 100;
+    currentMonsterSpeed = 100;
     monsterSpeedIncreaseRate = 5;
-    catUnlockTime = 60; // Cat이 등장하는 시간 (초)
-    difficultyIncreaseInterval = 5; // 난이도 증가 주기를 5초로 설정
+    catUnlockTime = 30; // Cat이 등장하는 시간을 30초로 변경
+    difficultyIncreaseInterval = 5;
+    initialCatProbability = 0.3;
+    maxCatProbability = 0.7;
+    catProbabilityIncreaseRate = 0.01;
 
     constructor() {
         super("MainScene");
@@ -118,13 +121,24 @@ export class MainScene extends Scene {
         }
     }
 
+    getCatProbability() {
+        if (this.gameTime < this.catUnlockTime) {
+            return 0;
+        }
+        const timeSinceCatUnlock = this.gameTime - this.catUnlockTime;
+        const increasedProbability =
+            this.initialCatProbability +
+            (timeSinceCatUnlock / 10) * this.catProbabilityIncreaseRate;
+        return Math.min(increasedProbability, this.maxCatProbability);
+    }
+
     spawnMonster() {
         const x = this.scale.width;
         const y = Phaser.Math.Between(50, this.scale.height - 50);
 
         let monster;
-        if (this.gameTime >= this.catUnlockTime && Math.random() < 0.3) {
-            // Cat 등장 확률을 30%로 유지
+        const catProbability = this.getCatProbability();
+        if (Math.random() < catProbability) {
             monster = new Cat(this, x, y, this.currentMonsterSpeed);
         } else {
             monster = new Pig(this, x, y, this.currentMonsterSpeed);
