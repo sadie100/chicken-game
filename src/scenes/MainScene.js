@@ -109,7 +109,9 @@ export class MainScene extends Scene {
             let newDelay = this.spawnTimer.delay - this.spawnReductionRate;
             if (newDelay <= this.minSpawnDelay) {
                 newDelay = this.minSpawnDelay;
-                this.monstersPerSpawn++;
+                if (this.monstersPerSpawn < 10) {
+                    this.monstersPerSpawn++;
+                }
             }
             this.spawnTimer.delay = newDelay;
             this.currentMonsterSpeed += this.monsterSpeedIncreaseRate;
