@@ -3,6 +3,7 @@ import { Player } from "../gameobjects/Player";
 import { Pig } from "../gameobjects/monsters/Pig";
 import { Cat } from "../gameobjects/monsters/Cat";
 import { Monster } from "../gameobjects/monsters/Monster";
+import { Heart } from "../gameobjects/Heart";
 
 export class MainScene extends Scene {
     player = null;
@@ -24,7 +25,12 @@ export class MainScene extends Scene {
     maxCatProbability = 0.7;
     catProbabilityIncreaseRate = 0.01;
     monstersPerSpawn = 1;
-    advancedSpawnTime = 60; // 1분 후 고급 스폰 시작
+    advancedSpawnTime = 60;
+
+    hearts = null;
+    heartSpawnTimer = null;
+    isHeartSpawnTimerRunning = false;
+    lastHeartSpawnTime = 0;
 
     constructor() {
         super("MainScene");
@@ -100,6 +106,21 @@ export class MainScene extends Scene {
             callbackScope: this,
             loop: true,
         });
+
+        // Hearts group
+        this.hearts = this.physics.add.group({
+            classType: Heart,
+            runChildUpdate: true,
+        });
+
+        // Collision detection for hearts
+        this.physics.add.overlap(
+            this.player,
+            this.hearts,
+            this.collectHeart,
+            null,
+            this
+        );
     }
 
     updateGameTime() {
@@ -119,6 +140,14 @@ export class MainScene extends Scene {
             console.log(
                 `Spawn delay: ${newDelay}ms, Monster speed: ${this.currentMonsterSpeed}, Monsters per spawn: ${this.monstersPerSpawn}`
             );
+        }
+
+        // Heart spawn logic
+        if (
+            this.isHeartSpawnTimerRunning &&
+            this.time.now >= this.lastHeartSpawnTime
+        ) {
+            this.spawnHeart();
         }
     }
 
@@ -191,13 +220,11 @@ export class MainScene extends Scene {
         this.points += 10;
         this.hudScene.update_points(this.points);
 
-        // Update score display
-
-        egg.destroy(); // egg를 완전히 제거합니다.
+        egg.destroy();
     }
 
     gameOver() {
-        console.log("Game Over called"); // 디버깅용 로그 추가
+        console.log("Game Over called");
         this.scene.start("GameOverScene", { points: this.points });
     }
 
@@ -208,7 +235,46 @@ export class MainScene extends Scene {
 
         if (remainingLives <= 0) {
             this.gameOver();
+        } else {
+            this.startHeartSpawnTimer();
         }
+    }
+
+    startHeartSpawnTimer() {
+        if (!this.isHeartSpawnTimerRunning) {
+            this.isHeartSpawnTimerRunning = true;
+            this.setNextHeartSpawnTime();
+        }
+    }
+
+    setNextHeartSpawnTime() {
+        const randomDelay = Phaser.Math.Between(10000, 20000); // 10초에서 20초 사이의 랜덤한 시간
+        this.lastHeartSpawnTime = this.time.now + randomDelay;
+    }
+
+    spawnHeart() {
+        if (this.player.getLives() < 5) {
+            const x = Phaser.Math.Between(50, this.scale.width - 50);
+            const y = Phaser.Math.Between(50, this.scale.height - 50);
+            const heart = new Heart(this, x, y);
+            this.hearts.add(heart);
+            heart.spawn(x, y);
+            this.setNextHeartSpawnTime();
+        } else {
+            this.isHeartSpawnTimerRunning = false;
+        }
+    }
+
+    collectHeart(player, heart) {
+        const newLives = Math.min(player.getLives() + 1, 5);
+        player.setLives(newLives);
+        this.hudScene.updateLives(newLives);
+
+        if (newLives >= 5) {
+            this.isHeartSpawnTimerRunning = false;
+        }
+
+        heart.despawn();
     }
 
     update(time, delta) {

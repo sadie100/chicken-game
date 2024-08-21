@@ -147,5 +147,9 @@ export class Player extends Physics.Arcade.Sprite {
     getLives() {
         return this.lives;
     }
+
+    setLives(lives) {
+        this.lives = lives;
+    }
 }
 
