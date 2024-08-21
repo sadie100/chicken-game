@@ -5,16 +5,16 @@ export class Monster extends Phaser.Physics.Arcade.Sprite {
     health = 3;
     isStunned = false;
     stunDuration = 1000; // 1초간 기절
-    moveAngle = 0; // y축 이동 각도
+    direction = 0; // y축 이동 각도
 
-    constructor(scene, x, y, texture, speed, angle) {
+    constructor(scene, x, y, texture, speed, direction) {
         super(scene, x, y, texture);
         scene.add.existing(this);
         scene.physics.add.existing(this);
         this.setOrigin(0.5);
         this.setFlipX(true);
         this.setScale(2);
-        this.moveAngle = angle; // y축 이동 각도 설정
+        this.direction = direction; // y축 이동 각도 설정
         this.isStunned = false;
         this.body.setSize(this.width * 0.5, this.height * 0.5);
         this.body.setOffset(this.width * 0.25, this.height * 0.5);
@@ -26,12 +26,15 @@ export class Monster extends Phaser.Physics.Arcade.Sprite {
             // x축 이동 (항상 왼쪽으로)
             const dx = -this.speed * (delta / 1000);
 
-            // y축 이동 (각도에 따라 위 또는 아래로)
-            const radians = Phaser.Math.DegToRad(this.moveAngle);
-            const dy = Math.sin(radians) * this.speed * (delta / 1000);
-
             this.x += dx;
-            this.y += dy;
+
+            const dy = this.speed * (delta / 1000);
+            // y축 이동 (각도에 따라 위 또는 아래로)
+            if (this.direction === "down") {
+                this.y += dy / 2;
+            } else if (this.direction === "up") {
+                this.y -= dy / 2;
+            }
         }
 
         if (
@@ -75,14 +78,6 @@ export class Monster extends Phaser.Physics.Arcade.Sprite {
                 this.isStunned = false;
                 this.clearTint();
             });
-        }
-    }
-
-    setDirectionFromVelocity() {
-        if (this.body.velocity.x < 0) {
-            this.setFlipX(true); // 왼쪽으로 이동할 때 스프라이트를 뒤집음
-        } else if (this.body.velocity.x > 0) {
-            this.setFlipX(false); // 오른쪽으로 이동할 때 스프라이트를 원래대로
         }
     }
 }

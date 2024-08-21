@@ -138,7 +138,7 @@ export class MainScene extends Scene {
     }
 
     spawnSingleMonster() {
-        let x, y, angle;
+        let x, y, direction;
 
         if (this.gameTime >= this.advancedSpawnTime) {
             const spawnArea = Math.random();
@@ -146,7 +146,7 @@ export class MainScene extends Scene {
                 // 오른쪽 벽 (60% 확률)
                 x = this.scale.width;
                 y = Phaser.Math.Between(0, this.scale.height);
-                angle = 180; // 왼쪽으로 직선 이동
+                direction = "straight"; // 왼쪽으로 직선 이동
             } else if (spawnArea < 0.8) {
                 // 오른쪽 상단 (20% 확률)
                 x = Phaser.Math.Between(
@@ -154,7 +154,7 @@ export class MainScene extends Scene {
                     this.scale.width
                 );
                 y = 0;
-                angle = Phaser.Math.Between(225, 260); // 225도에서 260도 사이 (아래쪽 왼쪽으로 향하게)
+                direction = "down";
             } else {
                 // 오른쪽 하단 (20% 확률)
                 x = Phaser.Math.Between(
@@ -162,21 +162,21 @@ export class MainScene extends Scene {
                     this.scale.width
                 );
                 y = this.scale.height;
-                angle = Phaser.Math.Between(100, 135); // 100도에서 135도 사이 (위쪽 왼쪽으로 향하게)
+                direction = "up";
             }
         } else {
             // 기본 스폰 시스템
             x = this.scale.width;
             y = Phaser.Math.Between(0, this.scale.height);
-            angle = 180; // 왼쪽으로 직선 이동
+            direction = "straight"; // 왼쪽으로 직선 이동
         }
 
         const catProbability = this.getCatProbability();
         let monster;
         if (Math.random() < catProbability) {
-            monster = new Cat(this, x, y, this.currentMonsterSpeed, angle);
+            monster = new Cat(this, x, y, this.currentMonsterSpeed, direction);
         } else {
-            monster = new Pig(this, x, y, this.currentMonsterSpeed, angle);
+            monster = new Pig(this, x, y, this.currentMonsterSpeed, direction);
         }
 
         this.monsters.add(monster);
