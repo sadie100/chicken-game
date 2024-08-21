@@ -17,7 +17,7 @@ export class Player extends Physics.Arcade.Sprite {
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
-        this.setScale(2);
+        this.setScale(3); // 플레이어의 크기를 3배로 확대
 
         // 충돌 영역 설정 (원래대로 유지)
         this.body.setSize(this.width * 0.3, this.height * 0.5);
