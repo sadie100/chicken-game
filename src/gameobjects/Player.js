@@ -7,6 +7,8 @@ export class Player extends Physics.Arcade.Sprite {
     isMoving = false;
     lives = 5;
     isInvulnerable = false;
+    realWidth = 0;
+    realHeight = 0;
 
     constructor({ scene }) {
         super(scene, 200, scene.scale.height - 100, "chicken_idle");
@@ -16,9 +18,13 @@ export class Player extends Physics.Arcade.Sprite {
 
         this.setScale(2);
 
-        // 충돌 영역 조정
-        this.body.setSize(this.width * 0.3, this.height * 0.5); // 크기를 원본의 50%로 조정
-        this.body.setOffset(this.width * 0.35, this.height * 0.5); // 오프셋 설정
+        // 충돌 영역 설정 (원래대로 유지)
+        this.body.setSize(this.width * 0.3, this.height * 0.5);
+        this.body.setOffset(this.width * 0.35, this.height * 0.5);
+
+        // 실제 플레이어 크기 계산
+        this.realWidth = this.width * 0.3;
+        this.realHeight = this.height * 0.5;
 
         this.eggs = this.scene.physics.add.group({
             classType: Egg,
@@ -62,7 +68,10 @@ export class Player extends Physics.Arcade.Sprite {
                 }
                 break;
             case "down":
-                if (this.y + this.height + speed < this.scene.scale.height) {
+                if (
+                    this.y + this.realHeight + speed <
+                    this.scene.scale.height
+                ) {
                     this.y += speed;
                     moved = true;
                 }
@@ -71,14 +80,12 @@ export class Player extends Physics.Arcade.Sprite {
                 if (this.x - speed > 0) {
                     this.x -= speed;
                     moved = true;
-                    this.setFlipX(true);
                 }
                 break;
             case "right":
-                if (this.x + this.width + speed < this.scene.scale.width) {
+                if (this.x + this.realWidth + speed < this.scene.scale.width) {
                     this.x += speed;
                     moved = true;
-                    this.setFlipX(false);
                 }
                 break;
         }
