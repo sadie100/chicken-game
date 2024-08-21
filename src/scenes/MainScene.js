@@ -7,6 +7,7 @@ export class MainScene extends Scene {
     monsters = null;
     cursors = null;
     points = 0;
+    hudScene = null;
 
     constructor() {
         super("MainScene");
@@ -49,10 +50,14 @@ export class MainScene extends Scene {
         this.physics.add.overlap(
             this.player,
             this.monsters,
-            this.gameOver,
+            this.playerHitMonster,
             null,
             this
         );
+
+        // HUD 씬 시작
+        this.scene.launch("HudScene");
+        this.hudScene = this.scene.get("HudScene");
     }
 
     spawnMonster() {
@@ -67,6 +72,8 @@ export class MainScene extends Scene {
         monster.hit(egg.damage);
 
         this.points += 10;
+        this.hudScene.update_points(this.points);
+
         // Update score display
 
         egg.destroy(); // egg를 완전히 제거합니다.
@@ -75,6 +82,16 @@ export class MainScene extends Scene {
     gameOver() {
         console.log("Game Over called"); // 디버깅용 로그 추가
         this.scene.start("GameOverScene", { points: this.points });
+    }
+
+    playerHitMonster(player, monster) {
+        monster.destroy();
+        const remainingLives = player.loseLife();
+        this.hudScene.updateLives(remainingLives);
+
+        if (remainingLives <= 0) {
+            this.gameOver();
+        }
     }
 
     update() {

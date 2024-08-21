@@ -5,6 +5,7 @@ export class Player extends Physics.Arcade.Sprite {
     scene = null;
     eggs = null;
     isMoving = false;
+    lives = 5; // 초기 목숨 개수
 
     constructor({ scene }) {
         super(scene, 200, scene.scale.height - 100, "chicken_idle");
@@ -67,6 +68,18 @@ export class Player extends Physics.Arcade.Sprite {
 
     update() {
         // Update logic if needed
+    }
+
+    loseLife() {
+        this.lives--;
+        if (this.lives <= 0) {
+            this.scene.gameOver();
+        }
+        return this.lives;
+    }
+
+    getLives() {
+        return this.lives;
     }
 }
 
