@@ -8,6 +8,11 @@ export class MainScene extends Scene {
     cursors = null;
     points = 0;
     hudScene = null;
+    spawnTimer = null;
+    initialSpawnDelay = 2000; // 초기 스폰 주기 (2초)
+    minSpawnDelay = 500; // 최소 스폰 주기 (0.5초)
+    spawnReductionRate = 100; // 10초마다 줄어들 시간 (0.1초)
+    gameTime = 0;
 
     constructor() {
         super("MainScene");
@@ -67,6 +72,36 @@ export class MainScene extends Scene {
         // HUD 씬 시작
         this.scene.launch("HudScene");
         this.hudScene = this.scene.get("HudScene");
+
+        // 적 스폰 타이머 설정
+        this.spawnTimer = this.time.addEvent({
+            delay: this.initialSpawnDelay,
+            callback: this.spawnMonster,
+            callbackScope: this,
+            loop: true,
+        });
+
+        // 게임 시간 및 난이도 조절을 위한 타이머
+        this.time.addEvent({
+            delay: 1000, // 1초마다
+            callback: this.updateGameTime,
+            callbackScope: this,
+            loop: true,
+        });
+    }
+
+    updateGameTime() {
+        this.gameTime++;
+
+        // 10초마다 스폰 주기 감소
+        if (this.gameTime % 10 === 0) {
+            let newDelay = this.spawnTimer.delay - this.spawnReductionRate;
+            if (newDelay < this.minSpawnDelay) {
+                newDelay = this.minSpawnDelay;
+            }
+            this.spawnTimer.delay = newDelay;
+            console.log(`Spawn delay reduced to ${newDelay}ms`);
+        }
     }
 
     spawnMonster() {
