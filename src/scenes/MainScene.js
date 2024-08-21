@@ -18,11 +18,13 @@ export class MainScene extends Scene {
     initialMonsterSpeed = 100;
     currentMonsterSpeed = 100;
     monsterSpeedIncreaseRate = 5;
-    catUnlockTime = 30; // Cat이 등장하는 시간을 30초로 변경
+    catUnlockTime = 30;
     difficultyIncreaseInterval = 5;
     initialCatProbability = 0.3;
     maxCatProbability = 0.7;
     catProbabilityIncreaseRate = 0.01;
+    monstersPerSpawn = 1;
+    advancedSpawnTime = 60; // 1분 후 고급 스폰 시작
 
     constructor() {
         super("MainScene");
@@ -86,7 +88,7 @@ export class MainScene extends Scene {
         // 적 스폰 타이머 설정
         this.spawnTimer = this.time.addEvent({
             delay: this.initialSpawnDelay,
-            callback: this.spawnMonster,
+            callback: this.spawnMonsters,
             callbackScope: this,
             loop: true,
         });
@@ -103,20 +105,17 @@ export class MainScene extends Scene {
     updateGameTime() {
         this.gameTime++;
 
-        // 5초마다 스폰 주기 감소 및 몬스터 속도 증가
         if (this.gameTime % this.difficultyIncreaseInterval === 0) {
-            // 스폰 주기 감소
             let newDelay = this.spawnTimer.delay - this.spawnReductionRate;
-            if (newDelay < this.minSpawnDelay) {
+            if (newDelay <= this.minSpawnDelay) {
                 newDelay = this.minSpawnDelay;
+                this.monstersPerSpawn++;
             }
             this.spawnTimer.delay = newDelay;
-
-            // 몬스터 속도 증가
             this.currentMonsterSpeed += this.monsterSpeedIncreaseRate;
 
             console.log(
-                `Spawn delay reduced to ${newDelay}ms, Monster speed increased to ${this.currentMonsterSpeed}`
+                `Spawn delay: ${newDelay}ms, Monster speed: ${this.currentMonsterSpeed}, Monsters per spawn: ${this.monstersPerSpawn}`
             );
         }
     }
@@ -132,17 +131,54 @@ export class MainScene extends Scene {
         return Math.min(increasedProbability, this.maxCatProbability);
     }
 
-    spawnMonster() {
-        const x = this.scale.width;
-        const y = Phaser.Math.Between(50, this.scale.height - 50);
-
-        let monster;
-        const catProbability = this.getCatProbability();
-        if (Math.random() < catProbability) {
-            monster = new Cat(this, x, y, this.currentMonsterSpeed);
-        } else {
-            monster = new Pig(this, x, y, this.currentMonsterSpeed);
+    spawnMonsters() {
+        for (let i = 0; i < this.monstersPerSpawn; i++) {
+            this.spawnSingleMonster();
         }
+    }
+
+    spawnSingleMonster() {
+        let x, y, angle;
+
+        if (this.gameTime >= this.advancedSpawnTime) {
+            const spawnArea = Math.random();
+            if (spawnArea < 0.6) {
+                // 오른쪽 벽 (60% 확률)
+                x = this.scale.width;
+                y = Phaser.Math.Between(0, this.scale.height);
+                angle = 180; // 왼쪽으로 직선 이동
+            } else if (spawnArea < 0.8) {
+                // 오른쪽 상단 (20% 확률)
+                x = Phaser.Math.Between(
+                    this.scale.width * 0.7,
+                    this.scale.width
+                );
+                y = 0;
+                angle = Phaser.Math.Between(225, 260); // 225도에서 260도 사이 (아래쪽 왼쪽으로 향하게)
+            } else {
+                // 오른쪽 하단 (20% 확률)
+                x = Phaser.Math.Between(
+                    this.scale.width * 0.7,
+                    this.scale.width
+                );
+                y = this.scale.height;
+                angle = Phaser.Math.Between(100, 135); // 100도에서 135도 사이 (위쪽 왼쪽으로 향하게)
+            }
+        } else {
+            // 기본 스폰 시스템
+            x = this.scale.width;
+            y = Phaser.Math.Between(0, this.scale.height);
+            angle = 180; // 왼쪽으로 직선 이동
+        }
+
+        const catProbability = this.getCatProbability();
+        let monster;
+        if (Math.random() < catProbability) {
+            monster = new Cat(this, x, y, this.currentMonsterSpeed, angle);
+        } else {
+            monster = new Pig(this, x, y, this.currentMonsterSpeed, angle);
+        }
+
         this.monsters.add(monster);
     }
 
