@@ -28,12 +28,12 @@ export class Monster extends Phaser.Physics.Arcade.Sprite {
 
             this.x += dx;
 
-            const dy = this.speed * (delta / 1000);
+            const dy = this.speed * (delta / 1000) * Math.random();
             // y축 이동 (각도에 따라 위 또는 아래로)
             if (this.direction === "down") {
-                this.y += dy / 2;
+                this.y += dy;
             } else if (this.direction === "up") {
-                this.y -= dy / 2;
+                this.y -= dy;
             }
         }
 
