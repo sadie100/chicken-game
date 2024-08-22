@@ -74,9 +74,10 @@ export class GameOverScene extends Scene {
             delay: 1000,
             callback: () => {
                 this.input.on("pointerdown", () => {
-                    this.scene.start("MainScene");
+                    this.scene.start("FirstScene");
                 });
             },
         });
     }
 }
+

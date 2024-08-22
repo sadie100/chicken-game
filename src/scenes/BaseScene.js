@@ -1,43 +1,41 @@
 import { Scene } from "phaser";
 import { Player } from "../gameobjects/Player";
-import { Pig } from "../gameobjects/monsters/Pig";
-import { Cat } from "../gameobjects/monsters/Cat";
 import { Monster } from "../gameobjects/monsters/Monster";
 import { Heart } from "../gameobjects/Heart";
 
-export class MainScene extends Scene {
+export class BaseScene extends Scene {
     player = null;
     monsters = null;
     cursors = null;
     points = 0;
     hudScene = null;
     spawnTimer = null;
+    gameTime = 0;
+    stageTime = 90000; // 1분 30초
+    isStageComplete = false;
+    nextStageArrow = null;
+
+    // 몬스터 스폰 관련 변수
     initialSpawnDelay = 2000;
     minSpawnDelay = 500;
     spawnReductionRate = 100;
-    gameTime = 0;
+    currentSpawnDelay = 2000;
+
+    // 몬스터 속도 관련 변수
     initialMonsterSpeed = 100;
     currentMonsterSpeed = 100;
     monsterSpeedIncreaseRate = 5;
-    catUnlockTime = 30;
-    difficultyIncreaseInterval = 5;
-    initialCatProbability = 0.3;
-    maxCatProbability = 0.7;
-    catProbabilityIncreaseRate = 0.01;
+
+    // 고급 스폰 시스템
+    advancedSpawnTime = 30000; // 30초 후 고급 스폰 시작
     monstersPerSpawn = 1;
-    advancedSpawnTime = 60;
 
-    hearts = null;
-    heartSpawnTimer = null;
-    isHeartSpawnTimerRunning = false;
-    lastHeartSpawnTime = 0;
-
-    constructor() {
-        super("MainScene");
+    constructor(key) {
+        super(key);
     }
 
     create() {
-        this.add.image(0, 0, "farm_background").setOrigin(0, 0);
+        this.add.image(0, 0, this.getBackgroundKey()).setOrigin(0, 0);
 
         // Player
         this.player = new Player({ scene: this });
@@ -46,14 +44,6 @@ export class MainScene extends Scene {
         this.monsters = this.physics.add.group({
             classType: Monster,
             runChildUpdate: true,
-        });
-
-        // Spawn monsters
-        this.time.addEvent({
-            delay: 2000,
-            callback: this.spawnMonster,
-            callbackScope: this,
-            loop: true,
         });
 
         // Cursor keys
@@ -72,32 +62,11 @@ export class MainScene extends Scene {
         });
 
         // Collision detection
-        this.physics.add.overlap(
-            this.player.eggs,
-            this.monsters,
-            this.hitMonster,
-            null,
-            this
-        );
-        this.physics.add.overlap(
-            this.player,
-            this.monsters,
-            this.playerHitMonster,
-            null,
-            this
-        );
+        this.setupCollisions();
 
         // HUD 씬 시작
-        this.scene.launch("HudScene");
-        this.hudScene = this.scene.get("HudScene");
-
-        // 적 스폰 타이머 설정
-        this.spawnTimer = this.time.addEvent({
-            delay: this.initialSpawnDelay,
-            callback: this.spawnMonsters,
-            callbackScope: this,
-            loop: true,
-        });
+        this.setupHUD();
+        this.setupSpawnTimer();
 
         // 게임 시간 및 난이도 조절을 위한 타이머
         this.time.addEvent({
@@ -123,25 +92,40 @@ export class MainScene extends Scene {
         );
     }
 
+    setupCollisions() {
+        this.physics.add.overlap(
+            this.player.eggs,
+            this.monsters,
+            this.hitMonster,
+            null,
+            this
+        );
+        this.physics.add.overlap(
+            this.player,
+            this.monsters,
+            this.playerHitMonster,
+            null,
+            this
+        );
+    }
+
+    setupHUD() {
+        this.scene.launch("HudScene");
+        this.hudScene = this.scene.get("HudScene");
+    }
+
+    setupSpawnTimer() {
+        this.spawnTimer = this.time.addEvent({
+            delay: this.currentSpawnDelay,
+            callback: this.spawnMonsters,
+            callbackScope: this,
+            loop: true,
+        });
+    }
+
     updateGameTime() {
-        this.gameTime++;
-
-        if (this.gameTime % this.difficultyIncreaseInterval === 0) {
-            let newDelay = this.spawnTimer.delay - this.spawnReductionRate;
-            if (newDelay <= this.minSpawnDelay) {
-                newDelay = this.minSpawnDelay;
-                if (this.monstersPerSpawn < 10) {
-                    this.monstersPerSpawn++;
-                }
-            }
-            this.spawnTimer.delay = newDelay;
-            this.currentMonsterSpeed += this.monsterSpeedIncreaseRate;
-
-            console.log(
-                `Spawn delay: ${newDelay}ms, Monster speed: ${this.currentMonsterSpeed}, Monsters per spawn: ${this.monstersPerSpawn}`
-            );
-        }
-
+        this.gameTime += 1000;
+        this.updateDifficulty();
         // Heart spawn logic
         if (
             this.isHeartSpawnTimerRunning &&
@@ -149,17 +133,36 @@ export class MainScene extends Scene {
         ) {
             this.spawnHeart();
         }
+        if (this.gameTime >= this.stageTime && !this.isStageComplete) {
+            this.completeStage();
+        }
     }
 
-    getCatProbability() {
-        if (this.gameTime < this.catUnlockTime) {
-            return 0;
+    updateDifficulty() {
+        // 스폰 주기 감소
+        this.currentSpawnDelay = Math.max(
+            this.minSpawnDelay,
+            this.currentSpawnDelay - this.spawnReductionRate
+        );
+        this.spawnTimer.delay = this.currentSpawnDelay;
+
+        // 몬스터 속도 증가
+        this.currentMonsterSpeed += this.monsterSpeedIncreaseRate;
+
+        // 고급 스폰 시스템
+        if (
+            this.gameTime >= this.advancedSpawnTime &&
+            this.monstersPerSpawn < 3
+        ) {
+            this.monstersPerSpawn = Math.min(
+                3,
+                Math.floor(this.gameTime / this.advancedSpawnTime)
+            );
         }
-        const timeSinceCatUnlock = this.gameTime - this.catUnlockTime;
-        const increasedProbability =
-            this.initialCatProbability +
-            (timeSinceCatUnlock / 10) * this.catProbabilityIncreaseRate;
-        return Math.min(increasedProbability, this.maxCatProbability);
+
+        console.log(
+            `Spawn delay: ${this.currentSpawnDelay}ms, Monster speed: ${this.currentMonsterSpeed}, Monsters per spawn: ${this.monstersPerSpawn}`
+        );
     }
 
     spawnMonsters() {
@@ -169,65 +172,16 @@ export class MainScene extends Scene {
     }
 
     spawnSingleMonster() {
-        let x, y, direction;
-
-        if (this.gameTime >= this.advancedSpawnTime) {
-            const spawnArea = Math.random();
-            if (spawnArea < 0.6) {
-                // 오른쪽 벽 (60% 확률)
-                x = this.scale.width;
-                y = Phaser.Math.Between(0, this.scale.height);
-                direction = "straight"; // 왼쪽으로 직선 이동
-            } else if (spawnArea < 0.8) {
-                // 오른쪽 상단 (20% 확률)
-                x = Phaser.Math.Between(
-                    this.scale.width * 0.7,
-                    this.scale.width
-                );
-                y = 0;
-                direction = "down";
-            } else {
-                // 오른쪽 하단 (20% 확률)
-                x = Phaser.Math.Between(
-                    this.scale.width * 0.7,
-                    this.scale.width
-                );
-                y = this.scale.height;
-                direction = "up";
-            }
-        } else {
-            // 기본 스폰 시스템
-            x = this.scale.width;
-            y = Phaser.Math.Between(0, this.scale.height);
-            direction = "straight"; // 왼쪽으로 직선 이동
-        }
-
-        const catProbability = this.getCatProbability();
-        let monster;
-        if (Math.random() < catProbability) {
-            monster = new Cat(this, x, y, this.currentMonsterSpeed, direction);
-        } else {
-            monster = new Pig(this, x, y, this.currentMonsterSpeed, direction);
-        }
-
-        this.monsters.add(monster);
+        // 자식 클래스에서 구현
     }
 
     hitMonster(egg, monster) {
         console.log("Egg hit monster. Damage:", egg.damage);
         monster.hit(egg.damage);
-
         this.points += 10;
         this.hudScene.update_points(this.points);
-
         egg.destroy();
     }
-
-    gameOver() {
-        console.log("Game Over called");
-        this.scene.start("GameOverScene", { points: this.points });
-    }
-
     playerHitMonster(player, monster) {
         monster.destroy();
         const remainingLives = player.loseLife();
@@ -277,9 +231,19 @@ export class MainScene extends Scene {
         heart.despawn();
     }
 
-    update(time, delta) {
-        const directions = [];
+    gameOver() {
+        console.log("Game Over called");
+        this.scene.start("GameOverScene", { points: this.points });
+    }
 
+    update(time, delta) {
+        if (!this.isStageComplete) {
+            this.handlePlayerMovement(delta);
+        }
+    }
+
+    handlePlayerMovement(delta) {
+        const directions = [];
         if (this.cursors.up.isDown || this.wasd.up.isDown) {
             directions.push("up");
         }
@@ -311,6 +275,15 @@ export class MainScene extends Scene {
         ) {
             this.player.playIdleAnimation();
         }
+    }
+
+    // 자식 클래스에서 오버라이드할 메서드들
+    getBackgroundKey() {
+        return "background1";
+    }
+
+    getInitialSpawnDelay() {
+        return this.initialSpawnDelay;
     }
 }
 
