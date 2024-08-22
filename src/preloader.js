@@ -48,7 +48,20 @@ export class Preloader extends Phaser.Scene {
 
     create() {
         this.createAnimations();
-        this.scene.start("MainScene");
+        // Create bitmap font and load it in cache
+        const config = {
+            image: "knighthawks",
+            width: 31,
+            height: 25,
+            chars: Phaser.GameObjects.RetroFont.TEXT_SET6,
+            charsPerRow: 10,
+            spacing: { x: 1, y: 1 },
+        };
+        this.cache.bitmapFont.add(
+            "knighthawks",
+            Phaser.GameObjects.RetroFont.Parse(this, config)
+        );
+        this.scene.start("MenuScene");
     }
 
     createAnimations() {
