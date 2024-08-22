@@ -5,9 +5,9 @@ export class Preloader extends Phaser.Scene {
 
     preload() {
         this.load.setPath("assets");
-        this.load.image("farm_background", "/backgrounds/background1.png");
+        this.load.image("background1", "/backgrounds/background1.png");
         this.load.image("life", "life.png");
-        this.load.image("next-arrow", "assets/next-arrow.png");
+        this.load.image("next-arrow", "next-arrow.png");
 
         // Load chicken sprites
         this.load.spritesheet("chicken_idle", "/player/chicken_idle.png", {
