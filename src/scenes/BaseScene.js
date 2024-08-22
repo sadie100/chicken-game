@@ -11,26 +11,26 @@ export class BaseScene extends Scene {
     hudScene = null;
     spawnTimer = null;
     gameTime = 0;
-    stageTime = 90000; // 1분 30초
+    stageTime = 60000; // 1분으로 변경 (60000ms = 1분)
     isStageComplete = false;
     nextStageArrow = null;
-    hudScene = null;
-    elapsedSeconds = 0;
 
     // 몬스터 스폰 관련 변수
-    initialSpawnDelay = 2000;
+    initialSpawnDelay = 1000; // 1초로 변경
     minSpawnDelay = 500;
     spawnReductionRate = 100;
-    currentSpawnDelay = 2000;
+    currentSpawnDelay = 1000; // 초기 스폰 딜레이도 1초로 변경
 
     // 몬스터 속도 관련 변수
-    initialMonsterSpeed = 100;
-    currentMonsterSpeed = 100;
+    initialMonsterSpeed = 150; // 150으로 변경
+    currentMonsterSpeed = 150; // 현재 속도도 150으로 초기화
     monsterSpeedIncreaseRate = 5;
 
     // 고급 스폰 시스템
     advancedSpawnTime = 30000; // 30초 후 고급 스폰 시작
     monstersPerSpawn = 1;
+
+    elapsedSeconds = 0;
 
     constructor(key) {
         super(key);
