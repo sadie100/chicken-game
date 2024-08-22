@@ -6,6 +6,13 @@ export class FirstScene extends BaseScene {
         super("FirstScene");
     }
 
+    completeStage() {
+        super.completeStage();
+        this.time.delayedCall(2000, () => {
+            this.goToNextStage();
+        });
+    }
+
     getBackgroundKey() {
         return "background1";
     }
@@ -56,3 +63,4 @@ export class FirstScene extends BaseScene {
         });
     }
 }
+

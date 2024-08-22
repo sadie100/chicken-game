@@ -138,6 +138,12 @@ export class BaseScene extends Scene {
         }
     }
 
+    completeStage() {
+        this.isStageComplete = true;
+        console.log("Stage completed!");
+        // This method should be overridden in child classes
+    }
+
     updateDifficulty() {
         // 스폰 주기 감소
         this.currentSpawnDelay = Math.max(
