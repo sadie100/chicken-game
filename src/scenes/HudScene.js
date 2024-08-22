@@ -3,6 +3,7 @@ import { Scene } from "phaser";
 export class HudScene extends Scene {
     points_text;
     lives_group;
+    time_text;
 
     constructor() {
         super("HudScene");
@@ -21,6 +22,16 @@ export class HudScene extends Scene {
             "POINTS:0000",
             24
         );
+
+        // 시간 텍스트 생성 (우측 상단에 위치)
+        this.time_text = this.add.bitmapText(
+            this.scale.width - 10,
+            10,
+            "pixelfont",
+            "TIME: 00:00",
+            24
+        );
+        this.time_text.setOrigin(1, 0); // 우측 상단 정렬
     }
 
     update_points(points) {
@@ -36,5 +47,14 @@ export class HudScene extends Scene {
             this.lives_group.add(life);
         }
     }
-}
 
+    updateTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        this.time_text.setText(
+            `TIME: ${minutes.toString().padStart(2, "0")}:${remainingSeconds
+                .toString()
+                .padStart(2, "0")}`
+        );
+    }
+}

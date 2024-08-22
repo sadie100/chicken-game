@@ -14,6 +14,8 @@ export class BaseScene extends Scene {
     stageTime = 90000; // 1분 30초
     isStageComplete = false;
     nextStageArrow = null;
+    hudScene = null;
+    elapsedSeconds = 0;
 
     // 몬스터 스폰 관련 변수
     initialSpawnDelay = 2000;
@@ -125,7 +127,14 @@ export class BaseScene extends Scene {
 
     updateGameTime() {
         this.gameTime += 1000;
+        this.elapsedSeconds = Math.floor(this.gameTime / 1000);
         this.updateDifficulty();
+
+        // HudScene의 시간 업데이트
+        if (this.hudScene) {
+            this.hudScene.updateTime(this.elapsedSeconds);
+        }
+
         // Heart spawn logic
         if (
             this.isHeartSpawnTimerRunning &&
