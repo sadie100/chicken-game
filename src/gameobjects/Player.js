@@ -12,7 +12,7 @@ export class Player extends Physics.Arcade.Sprite {
     speed = 200; // 속도를 픽셀/초 단위로 정의
 
     constructor({ scene }) {
-        super(scene, 200, scene.scale.height - 100, "chicken_idle");
+        super(scene, 100, scene.scale.height / 2, "chicken_idle");
         this.scene = scene;
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
