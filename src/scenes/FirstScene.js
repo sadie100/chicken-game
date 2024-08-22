@@ -64,15 +64,16 @@ export class FirstScene extends BaseScene {
     // }
 
     startNextRound() {
-        // 카메라와 맵을 오른쪽으로 슬라이드
         this.cameras.main.pan(this.scale.width, 0, 1000, "Power2");
 
-        // this.time.delayedCall(1000, () => {
-        //     this.scene.start("SecondScene", {
-        //         points: this.points,
-        //         lives: this.player.getLives(),
-        //     });
-        // });
+        this.time.delayedCall(1000, () => {
+            this.scene.start("SecondScene", {
+                player: this.player,
+                points: this.points,
+                lives: this.player.getLives(),
+                selectedItem: this.selectedItem, // 선택된 아이템 정보 전달
+            });
+        });
     }
 }
 

@@ -2,6 +2,7 @@ import { Scene } from "phaser";
 import { Player } from "../gameobjects/Player";
 import { Monster } from "../gameobjects/monsters/Monster";
 import { Heart } from "../gameobjects/Heart";
+import { ToggleButtonGroup } from "../gameobjects/ItemButton";
 
 export class BaseScene extends Scene {
     player = null;
@@ -12,8 +13,6 @@ export class BaseScene extends Scene {
     spawnTimer = null;
     gameTime = 0;
     stageTime = 10000; // 1분으로 변경 (60000ms = 1분)
-    isStageComplete = false;
-    nextStageArrow = null;
 
     // 몬스터 스폰 관련 변수
     initialSpawnDelay = 1000; // 1초로 변경
@@ -30,23 +29,40 @@ export class BaseScene extends Scene {
     advancedSpawnTime = 30000; // 30초 후 고급 스폰 시작
     monstersPerSpawn = 1;
 
+    //라운드 종료
     elapsedSeconds = 0;
-    roundEndText = null;
+    isStageComplete = false;
     nextRoundArrow = null;
 
     constructor(key) {
         super(key);
     }
 
+    createToggleButtons() {
+        const centerX = this.scale.width / 2;
+        const centerY = this.scale.height / 2;
+
+        this.toggleGroup = new ToggleButtonGroup(this);
+        this.toggleGroup.addButton(centerX - 50, centerY, "item1", "item1");
+        this.toggleGroup.addButton(centerX + 50, centerY, "item2", "item2");
+
+        this.events.on("itemSelected", this.onItemSelected, this);
+    }
+
+    onItemSelected(id) {
+        this.toggleGroup.onItemSelected(id);
+        this.selectedItem = id;
+    }
+
     completeStage() {
         this.isStageComplete = true;
 
-        // 몬스터 스폰 타이머 정지
         if (this.spawnTimer) {
             this.spawnTimer.remove();
         }
 
         this.showNextRoundArrow();
+        this.createToggleButtons();
     }
 
     showNextRoundArrow() {
@@ -179,6 +195,8 @@ export class BaseScene extends Scene {
     }
 
     updateGameTime() {
+        if (this.isStageComplete) return;
+
         this.gameTime += 1000;
         this.elapsedSeconds = Math.floor(this.gameTime / 1000);
         this.updateDifficulty();

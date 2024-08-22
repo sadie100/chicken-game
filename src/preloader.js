@@ -45,6 +45,10 @@ export class Preloader extends Phaser.Scene {
         this.load.on("progress", (progress) => {
             console.log("Loading: " + Math.round(progress * 100) + "%");
         });
+
+        // 아이템 이미지 로드
+        this.load.image("item1", "assets/items/item1.png");
+        this.load.image("item2", "assets/items/item2.png");
     }
 
     create() {
