@@ -80,5 +80,10 @@ export class Monster extends Phaser.Physics.Arcade.Sprite {
             });
         }
     }
+
+    destroy(fromScene) {
+        // 부모 클래스의 destroy 메서드 호출
+        super.destroy(fromScene);
+    }
 }
 

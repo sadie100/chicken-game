@@ -8,9 +8,9 @@ export class FirstScene extends BaseScene {
 
     completeStage() {
         super.completeStage();
-        this.time.delayedCall(2000, () => {
-            this.goToNextStage();
-        });
+        // this.time.delayedCall(2000, () => {
+        //     this.goToNextStage();
+        // });
     }
 
     getBackgroundKey() {
@@ -51,16 +51,28 @@ export class FirstScene extends BaseScene {
         this.monsters.add(pig);
     }
 
-    goToNextStage() {
-        this.cameras.main.fade(1000, 0, 0, 0);
-        this.cameras.main.once("camerafadeoutcomplete", () => {
-            this.scene.start("SecondScene", {
-                points: this.points,
-                currentMonsterSpeed: this.currentMonsterSpeed,
-                currentSpawnDelay: this.currentSpawnDelay,
-                monstersPerSpawn: this.monstersPerSpawn,
-            });
-        });
+    // goToNextStage() {
+    //     this.cameras.main.fade(1000, 0, 0, 0);
+    //     this.cameras.main.once("camerafadeoutcomplete", () => {
+    //         this.scene.start("SecondScene", {
+    //             points: this.points,
+    //             currentMonsterSpeed: this.currentMonsterSpeed,
+    //             currentSpawnDelay: this.currentSpawnDelay,
+    //             monstersPerSpawn: this.monstersPerSpawn,
+    //         });
+    //     });
+    // }
+
+    startNextRound() {
+        // 카메라와 맵을 오른쪽으로 슬라이드
+        this.cameras.main.pan(this.scale.width, 0, 1000, "Power2");
+
+        // this.time.delayedCall(1000, () => {
+        //     this.scene.start("SecondScene", {
+        //         points: this.points,
+        //         lives: this.player.getLives(),
+        //     });
+        // });
     }
 }
 

@@ -9,11 +9,25 @@ export class SecondScene extends BaseScene {
 
     init(data) {
         this.points = data.points || 0;
-        this.currentMonsterSpeed =
-            data.currentMonsterSpeed || this.initialMonsterSpeed;
-        this.currentSpawnDelay =
-            data.currentSpawnDelay || this.initialSpawnDelay;
-        this.monstersPerSpawn = data.monstersPerSpawn || 1;
+        this.resetVariables();
+        // 플레이어의 생명력을 이전 라운드에서 가져옵니다.
+        if (data.lives) {
+            this.player.setLives(data.lives);
+        }
+    }
+
+    create() {
+        super.create();
+        // HUD의 생명력 표시 업데이트
+        if (this.hudScene) {
+            this.hudScene.updateLives(this.player.getLives());
+        }
+        this.add
+            .text(this.scale.width / 2, 50, "2라운드 시작!", {
+                fontSize: "32px",
+                fill: "#fff",
+            })
+            .setOrigin(0.5);
     }
 
     getBackgroundKey() {
@@ -78,3 +92,4 @@ export class SecondScene extends BaseScene {
         this.scene.start("GameOverScene", { points: this.points });
     }
 }
+

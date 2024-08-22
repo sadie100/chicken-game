@@ -34,6 +34,7 @@ export class Player extends Physics.Arcade.Sprite {
         });
 
         this.playIdleAnimation();
+        this.setData("canMove", true);
     }
 
     fire() {
@@ -52,6 +53,7 @@ export class Player extends Physics.Arcade.Sprite {
     }
 
     move(directions, delta) {
+        if (!this.getData("canMove")) return;
         let dx = 0;
         let dy = 0;
 

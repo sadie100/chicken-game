@@ -11,7 +11,7 @@ export class BaseScene extends Scene {
     hudScene = null;
     spawnTimer = null;
     gameTime = 0;
-    stageTime = 60000; // 1분으로 변경 (60000ms = 1분)
+    stageTime = 10000; // 1분으로 변경 (60000ms = 1분)
     isStageComplete = false;
     nextStageArrow = null;
 
@@ -31,9 +31,62 @@ export class BaseScene extends Scene {
     monstersPerSpawn = 1;
 
     elapsedSeconds = 0;
+    roundEndText = null;
+    nextRoundArrow = null;
 
     constructor(key) {
         super(key);
+    }
+
+    completeStage() {
+        this.isStageComplete = true;
+
+        // 몬스터 스폰 타이머 정지
+        if (this.spawnTimer) {
+            this.spawnTimer.remove();
+        }
+
+        this.showNextRoundArrow();
+    }
+
+    showNextRoundArrow() {
+        this.nextRoundArrow = this.add
+            .image(this.scale.width - 50, this.scale.height / 2, "next-arrow")
+            .setInteractive();
+        this.nextRoundArrow.setScale(2);
+
+        this.nextRoundArrow.on("pointerdown", () => {
+            this.player.setData("canMove", true);
+            this.nextRoundArrow.destroy();
+        });
+    }
+
+    update(time, delta) {
+        if (!this.isStageComplete) {
+            this.handlePlayerMovement(delta);
+        } else {
+            this.handlePlayerMovement(delta);
+            // 플레이어가 화면 오른쪽 끝에 도달했는지 확인
+            if (this.player.x > this.scale.width - this.player.width / 2) {
+                this.startNextRound();
+            }
+        }
+    }
+
+    startNextRound() {
+        // 이 메서드는 자식 클래스에서 오버라이드 됩니다.
+    }
+
+    resetVariables() {
+        this.gameTime = 0;
+        this.elapsedSeconds = 0;
+        this.currentSpawnDelay = this.initialSpawnDelay;
+        this.currentMonsterSpeed = this.initialMonsterSpeed;
+        this.monstersPerSpawn = 1;
+        // HUD 시간 리셋
+        if (this.hudScene) {
+            this.hudScene.updateTime(0);
+        }
     }
 
     create() {
@@ -147,12 +200,6 @@ export class BaseScene extends Scene {
         }
     }
 
-    completeStage() {
-        this.isStageComplete = true;
-        console.log("Stage completed!");
-        // This method should be overridden in child classes
-    }
-
     updateDifficulty() {
         // 스폰 주기 감소
         this.currentSpawnDelay = Math.max(
@@ -249,12 +296,6 @@ export class BaseScene extends Scene {
     gameOver() {
         console.log("Game Over called");
         this.scene.start("GameOverScene", { points: this.points });
-    }
-
-    update(time, delta) {
-        if (!this.isStageComplete) {
-            this.handlePlayerMovement(delta);
-        }
     }
 
     handlePlayerMovement(delta) {
