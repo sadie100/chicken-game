@@ -5,29 +5,30 @@ export class Preloader extends Phaser.Scene {
 
     preload() {
         this.load.setPath("assets");
-        this.load.image("farm_background", "farm_background.png");
+        this.load.image("farm_background", "/backgrounds/background1.png");
         this.load.image("life", "life.png");
+        this.load.image("next-arrow", "assets/next-arrow.png");
 
         // Load chicken sprites
-        this.load.spritesheet("chicken_idle", "chicken_idle.png", {
+        this.load.spritesheet("chicken_idle", "/player/chicken_idle.png", {
             frameWidth: 48,
             frameHeight: 48,
         });
-        this.load.spritesheet("chicken_walk", "chicken_walk.png", {
+        this.load.spritesheet("chicken_walk", "/player/chicken_walk.png", {
             frameWidth: 48,
             frameHeight: 48,
         });
 
-        this.load.image("egg", "egg.png");
+        this.load.image("egg", "/player/egg.png");
 
         // Load pig sprite
-        this.load.spritesheet("pig", "pig.png", {
+        this.load.spritesheet("pig", "/monsters/pig.png", {
             frameWidth: 32,
             frameHeight: 32,
         });
 
         // Load cat sprite
-        this.load.spritesheet("cat", "cat.png", {
+        this.load.spritesheet("cat", "/monsters/cat.png", {
             frameWidth: 32,
             frameHeight: 32,
         });
