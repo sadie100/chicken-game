@@ -58,7 +58,21 @@ export class GoldPig extends Monster {
     }
 
     hit(damage) {
-        super.hit(damage);
+        this.health -= damage;
+        console.log(
+            `${this.constructor.name} hit. Remaining health:`,
+            this.health
+        );
+
+        this.scene.tweens.add({
+            targets: this,
+            tint: 0xff0000,
+            duration: 70,
+            yoyo: true,
+            onComplete: () => {
+                this.clearTint();
+            },
+        });
 
         // 체력이 변경될 때마다 이벤트 발생
         this.scene.events.emit(
@@ -69,6 +83,7 @@ export class GoldPig extends Monster {
         if (this.health <= 0) {
             // 보스가 죽었을 때의 처리
             this.scene.goToNextStage();
+            this.destroy();
         }
     }
 

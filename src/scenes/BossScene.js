@@ -84,7 +84,8 @@ export class BossScene extends BaseScene {
     goToNextStage() {
         console.log("Game Completed!");
         this.events.off("bossHealthChanged", this.updateBossHealthBar, this);
-        this.scene.start("GameOverScene", { points: this.points });
+        this.scene.stop("BossScene");
+        this.scene.start("GameClearScene", { points: this.points });
     }
 
     update(time, delta) {

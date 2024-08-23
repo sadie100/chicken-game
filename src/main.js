@@ -7,6 +7,7 @@ import { SplashScene } from "./scenes/SplashScene";
 import { FirstScene } from "./scenes/FirstScene";
 import { SecondScene } from "./scenes/SecondScene";
 import { BossScene } from "./scenes/BossScene";
+import { GameClearScene } from "./scenes/GameClearScene";
 
 // More information about config: https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
 const config = {
@@ -40,6 +41,7 @@ const config = {
         MenuScene,
         HudScene,
         GameOverScene,
+        GameClearScene,
     ],
 };
 
