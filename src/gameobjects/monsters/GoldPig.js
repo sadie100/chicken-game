@@ -34,8 +34,22 @@ export class GoldPig extends Monster {
 
     update(time, delta) {
         super.update(time, delta);
+
         if (this.health <= 50 && !this.isUltimateUsed) {
             this.ultimatePattern();
+        }
+
+        if (!this.isPatternActive) {
+            this.startNextPattern();
+        }
+    }
+
+    startNextPattern() {
+        if (!this.isPatternActive) {
+            this.isPatternActive = true;
+            this.patterns[this.currentPatternIndex]();
+            this.currentPatternIndex =
+                (this.currentPatternIndex + 1) % this.patterns.length;
         }
     }
 
@@ -65,15 +79,6 @@ export class GoldPig extends Monster {
         this.maxHealth = health;
         this.health = health;
         this.scene.events.emit("bossHealthChanged", 1);
-    }
-
-    startNextPattern() {
-        if (!this.isPatternActive) {
-            this.isPatternActive = true;
-            this.patterns[this.currentPatternIndex]();
-            this.currentPatternIndex =
-                (this.currentPatternIndex + 1) % this.patterns.length;
-        }
     }
 
     ultimatePattern() {
@@ -143,9 +148,46 @@ export class GoldPig extends Monster {
         });
     }
 
-    // 여기에 다른 패턴들을 구현할 수 있습니다.
     pattern1() {
-        // 패턴 1 구현
+        this.isPatternActive = true;
+        const twitchCount = Phaser.Math.Between(2, 3);
+        let delay = 0;
+
+        // 뒤로 움찔거리기 (2-3번)
+        for (let i = 0; i < twitchCount; i++) {
+            this.scene.tweens.add({
+                targets: this,
+                x: this.x + 20,
+                duration: 100,
+                ease: "Power1",
+                yoyo: true,
+                delay: delay,
+            });
+            delay += 200; // 각 움찔거림 사이의 지연 시간
+        }
+
+        // 전방(왼쪽)으로 빠르게 전진
+        this.scene.tweens.add({
+            targets: this,
+            x: 50,
+            duration: 500,
+            ease: "Power2",
+            delay: delay,
+        });
+
+        delay += 500;
+
+        // 제자리로 돌아가기
+        this.scene.tweens.add({
+            targets: this,
+            x: this.initialX,
+            duration: 1000,
+            ease: "Power2",
+            delay: delay,
+            onComplete: () => {
+                this.isPatternActive = false;
+            },
+        });
     }
 
     pattern2() {
