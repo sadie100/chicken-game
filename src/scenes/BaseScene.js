@@ -3,7 +3,6 @@ import { Player } from "../gameobjects/Player";
 import { Monster } from "../gameobjects/monsters/Monster";
 import { Heart } from "../gameobjects/Heart";
 import { ItemManager } from "../gameobjects/Item";
-import { Background } from "../backgrounds/Background";
 
 export class BaseScene extends Scene {
     player = null;
@@ -38,106 +37,6 @@ export class BaseScene extends Scene {
 
     constructor(key) {
         super(key);
-    }
-
-    createItems() {
-        // 이 메서드는 자식 클래스에서 오버라이드됩니다.
-    }
-
-    collectItem(player, item) {
-        if (player.heldItem) {
-            player.heldItem.return();
-        }
-        player.collectItem(item);
-        item.collect();
-    }
-
-    completeStage() {
-        this.isStageComplete = true;
-
-        if (this.spawnTimer) {
-            this.spawnTimer.remove();
-        }
-
-        this.showNextRoundArrow();
-        this.createItems();
-    }
-
-    showNextRoundArrow() {
-        this.nextRoundArrow = this.add
-            .image(this.scale.width - 50, this.scale.height / 2, "next-arrow")
-            .setInteractive();
-        this.nextRoundArrow.setScale(2);
-
-        this.nextRoundArrow.on("pointerdown", () => {
-            this.player.setData("canMove", true);
-            this.nextRoundArrow.destroy();
-        });
-    }
-
-    update(time, delta) {
-        if (this.background) {
-            this.background.update(delta);
-        }
-        if (!this.isStageComplete) {
-            this.handlePlayerMovement(delta);
-        } else {
-            this.handlePlayerMovement(delta);
-            // 플레이어가 화면 오른쪽 끝에 도달했는지 확인
-            if (this.player.x > this.scale.width - this.player.width / 2) {
-                this.startNextRound();
-            }
-        }
-    }
-
-    startNextRound(nextSceneKey) {
-        // 현재 배경을 저장
-        const currentBackground = this.background;
-
-        // 다음 씬의 배경 이미지 키를 가져옵니다
-        const nextBackgroundKey = this.scene.get(nextSceneKey).getBackground();
-
-        // 새 배경을 현재 배경 위에 추가하고 알파값을 0으로 설정
-        const nextBackground = this.add
-            .image(0, 0, nextBackgroundKey)
-            .setOrigin(0, 0)
-            .setAlpha(0);
-
-        // 배경 전환 효과
-        this.tweens.add({
-            targets: nextBackground,
-            alpha: 1,
-            duration: 1000,
-            onComplete: () => {
-                // 전환이 완료되면 이전 배경을 제거
-                currentBackground.destroy();
-
-                // 다음 씬으로 전환
-                this.scene.start(nextSceneKey, {
-                    player: this.player,
-                    points: this.points,
-                    lives: this.player.getLives(),
-                    heldItem: this.player.heldItem,
-                });
-            },
-        });
-    }
-
-    getBackground() {
-        // 이 메서드는 자식 클래스에서 오버라이드해야 합니다
-        throw new Error("getBackground must be implemented in child class");
-    }
-
-    resetVariables() {
-        this.gameTime = 0;
-        this.elapsedSeconds = 0;
-        this.currentSpawnDelay = this.initialSpawnDelay;
-        this.currentMonsterSpeed = this.initialMonsterSpeed;
-        this.monstersPerSpawn = 1;
-        // HUD 시간 리셋
-        if (this.hudScene) {
-            this.hudScene.updateTime(0);
-        }
     }
 
     create() {
@@ -212,18 +111,120 @@ export class BaseScene extends Scene {
             null,
             this
         );
+
+        // 장면 전환을 위한 오버레이 생성
+        this.transitionOverlay = this.add.rectangle(
+            0,
+            0,
+            this.scale.width,
+            this.scale.height,
+            0x000000
+        );
+        this.transitionOverlay.setOrigin(0);
+        this.transitionOverlay.setDepth(1000);
+        this.transitionOverlay.alpha = 1; // 시작 시 완전히 불투명하게 설정
+
+        // 페이드인 효과 시작
+        this.fadeIn();
+    }
+
+    fadeIn() {
+        this.tweens.add({
+            targets: this.transitionOverlay,
+            alpha: 0,
+            duration: 1000, // 1초 동안 페이드인
+            ease: "Power2",
+        });
+    }
+
+    createItems() {
+        // 이 메서드는 자식 클래스에서 오버라이드됩니다.
+    }
+
+    collectItem(player, item) {
+        if (player.heldItem) {
+            player.heldItem.return();
+        }
+        player.collectItem(item);
+        item.collect();
+    }
+
+    completeStage() {
+        this.isStageComplete = true;
+
+        if (this.spawnTimer) {
+            this.spawnTimer.remove();
+        }
+
+        this.showNextRoundArrow();
+        this.createItems();
+    }
+
+    showNextRoundArrow() {
+        this.nextRoundArrow = this.add
+            .image(this.scale.width - 50, this.scale.height / 2, "next-arrow")
+            .setInteractive();
+        this.nextRoundArrow.setScale(2);
+
+        this.nextRoundArrow.on("pointerdown", () => {
+            this.player.setData("canMove", true);
+            this.nextRoundArrow.destroy();
+        });
+    }
+
+    update(time, delta) {
+        if (this.background) {
+            this.background.update(delta);
+        }
+        if (!this.isStageComplete) {
+            this.handlePlayerMovement(delta);
+        } else {
+            this.handlePlayerMovement(delta);
+            // 플레이어가 화면 오른쪽 끝에 도달했는지 확인
+            if (this.player.x > this.scale.width - this.player.width / 2) {
+                this.startNextRound();
+            }
+        }
+    }
+
+    startNextRound(nextSceneKey) {
+        this.tweens.add({
+            targets: this.transitionOverlay,
+            alpha: 1,
+            duration: 1000, // 1초 동안 페이드아웃
+            ease: "Power2",
+            onComplete: () => {
+                this.scene.start(nextSceneKey, {
+                    player: this.player,
+                    points: this.points,
+                    lives: this.player.getLives(),
+                    heldItem: this.player.heldItem,
+                });
+            },
+        });
+    }
+
+    resetVariables() {
+        this.gameTime = 0;
+        this.elapsedSeconds = 0;
+        this.currentSpawnDelay = this.initialSpawnDelay;
+        this.currentMonsterSpeed = this.initialMonsterSpeed;
+        this.monstersPerSpawn = 1;
+        // HUD 시간 리셋
+        if (this.hudScene) {
+            this.hudScene.updateTime(0);
+        }
     }
 
     createBackground() {
         // 기본 배경 키 설정 (자식 클래스에서 오버라이드 가능)
-        const backgroundKey = this.getBackgroundKey();
-        this.background = new Background(this, backgroundKey);
+        this.background = this.getBackground();
         this.background.create();
     }
 
-    getBackgroundKey() {
-        // 기본 배경 키 반환 (자식 클래스에서 오버라이드해야 함)
-        return "default_background";
+    getBackground() {
+        // (자식 클래스에서 오버라이드해야 함)
+        throw new Error("getBackground must be implemented in child class");
     }
 
     setupCollisions() {

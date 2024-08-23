@@ -1,6 +1,7 @@
 import { BaseScene } from "./BaseScene";
 import { Pig } from "../gameobjects/monsters/Pig";
 import { Cat } from "../gameobjects/monsters/Cat";
+import { Background } from "../backgrounds/Background";
 
 export class SecondScene extends BaseScene {
     constructor() {
@@ -8,6 +9,7 @@ export class SecondScene extends BaseScene {
     }
 
     init(data) {
+        this.player = data.player;
         this.points = data.points || 0;
         this.resetVariables();
         if (data.lives) {
@@ -24,12 +26,17 @@ export class SecondScene extends BaseScene {
             this.hudScene.updateLives(this.player.getLives());
             this.player.updateHUD(); // 아이템 효과가 적용된 상태로 HUD 업데이트
         }
-        this.add
-            .text(this.scale.width / 2, 50, "2라운드 시작!", {
-                fontSize: "32px",
-                fill: "#fff",
-            })
-            .setOrigin(0.5);
+        // 배경 생성 후 전환 오버레이 페이드 아웃
+        this.tweens.add({
+            targets: this.transitionOverlay,
+            alpha: 0,
+            duration: 500,
+            ease: "Power2",
+        });
+    }
+
+    getBackground() {
+        return new Background(this, "background2", 3);
     }
 
     createItems() {
@@ -51,10 +58,6 @@ export class SecondScene extends BaseScene {
             3,
             "item4"
         );
-    }
-
-    getBackgroundKey() {
-        return "background2";
     }
 
     spawnSingleMonster() {

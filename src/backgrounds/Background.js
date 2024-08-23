@@ -1,17 +1,18 @@
-// Background 클래스 (이전과 동일)
 export class Background {
-    constructor(scene, key) {
+    constructor(scene, key, layerCount) {
         this.scene = scene;
         this.key = key;
+        this.layerCount = layerCount;
         this.layers = [];
         this.scrollSpeeds = [0.1, 0.3, 0.5, 0.7];
+        this.container = this.scene.add.container(0, 0);
     }
 
     create() {
         const gameWidth = this.scene.scale.width;
         const gameHeight = this.scene.scale.height;
 
-        for (let i = 1; i <= 4; i++) {
+        for (let i = 1; i <= this.layerCount; i++) {
             this.createLayer(
                 `${this.key}_${i}`,
                 this.scrollSpeeds[i - 1],
@@ -36,6 +37,7 @@ export class Background {
         layer.tileScaleX = 1 / scale;
         layer.tileScaleY = 1;
 
+        this.container.add(layer);
         this.layers.push({ sprite: layer, scrollFactor: scrollFactor });
     }
 
@@ -44,4 +46,10 @@ export class Background {
             layer.sprite.tilePositionX += layer.scrollFactor * delta * 0.1;
         });
     }
+
+    destroy() {
+        this.container.destroy();
+        this.layers = [];
+    }
 }
+

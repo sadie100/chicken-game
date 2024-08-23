@@ -1,16 +1,28 @@
 import { BaseScene } from "./BaseScene";
 import { Pig } from "../gameobjects/monsters/Pig";
-import { FirstBackground } from "../backgrounds/FirstBackground";
+import { Background } from "../backgrounds/Background";
 
 export class FirstScene extends BaseScene {
     constructor() {
         super("FirstScene");
-        this.background = null;
     }
 
-    getBackgroundKey() {
+    create() {
+        super.create();
+        // FirstScene 특정 생성 로직...
+
+        // 전환 오버레이 페이드 아웃
+        this.tweens.add({
+            targets: this.transitionOverlay,
+            alpha: 0,
+            duration: 500,
+            ease: "Power2",
+        });
+    }
+
+    getBackground() {
         // FirstScene에 맞는 배경 키 반환
-        return "background1";
+        return new Background(this, "background1", 4);
     }
 
     completeStage() {
