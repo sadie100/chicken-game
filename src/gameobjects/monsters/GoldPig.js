@@ -40,22 +40,31 @@ export class GoldPig extends Monster {
     }
 
     hit(damage) {
-        super.hit(damage);
+        this.health -= damage;
+        if (this.health < 0) this.health = 0;
+
         // 체력이 변경될 때마다 이벤트 발생
         this.scene.events.emit(
             "bossHealthChanged",
             this.health / this.maxHealth
         );
+
+        console.log(
+            `Boss hit! Current health: ${this.health}/${this.maxHealth}`
+        );
+
+        if (this.health <= 0) {
+            // 보스가 죽었을 때의 처리
+            this.destroy();
+        }
     }
 
     // 체력을 설정하는 메서드 추가
+
     setHealth(health) {
-        this.health = health;
         this.maxHealth = health;
-        this.scene.events.emit(
-            "bossHealthChanged",
-            this.health / this.maxHealth
-        );
+        this.health = health;
+        this.scene.events.emit("bossHealthChanged", 1);
     }
 
     startNextPattern() {

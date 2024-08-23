@@ -54,15 +54,18 @@ export class BossScene extends BaseScene {
     createItems() {}
 
     spawnBossMonster() {
-        // 체력 게이지 생성
-        this.bossHealthBar = new BossHealthBar(this);
-
         // 보스 생성 및 초기 체력 설정
         this.boss = new GoldPig(this, 600, 300);
         this.boss.setHealth(100);
 
+        // 체력 게이지 생성
+        this.bossHealthBar = new BossHealthBar(this);
+
         // 보스 체력 변경 이벤트 리스너 추가
         this.events.on("bossHealthChanged", this.updateBossHealthBar, this);
+
+        // 초기 체력바 설정
+        this.updateBossHealthBar(1);
         this.monsters.add(this.boss);
     }
 
@@ -84,8 +87,10 @@ export class BossScene extends BaseScene {
     updateBossHealthBar(healthPercentage) {
         if (this.bossHealthBar) {
             this.bossHealthBar.setValue(healthPercentage);
+            console.log(`Updating health bar: ${healthPercentage}`);
         }
     }
+
     // 씬이 종료될 때 이벤트 리스너 제거
     shutdown() {
         this.events.off("bossHealthChanged", this.updateBossHealthBar, this);
