@@ -18,6 +18,15 @@ export class BossScene extends BaseScene {
         if (data.heldItem) {
             this.player.heldItem = data.heldItem;
         }
+        if (data.restart) {
+            this.resetScene();
+        }
+    }
+
+    resetScene() {
+        // Reset necessary variables and game state
+        this.points = 0;
+        // Add any other reset logic specific to this scene
     }
 
     resetVariables() {

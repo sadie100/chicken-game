@@ -1,7 +1,8 @@
 import { Scene } from "phaser";
 
 export class GameOverScene extends Scene {
-    end_points = 0;
+    lastPlayedScene = "FirstScene"; // Default to FirstScene
+
     constructor() {
         super("GameOverScene");
     }
@@ -9,6 +10,7 @@ export class GameOverScene extends Scene {
     init(data) {
         this.cameras.main.fadeIn(1000, 0, 0, 0);
         this.end_points = data.points || 0;
+        this.lastPlayedScene = data.lastPlayedScene || "FirstScene";
     }
 
     create() {
@@ -74,12 +76,12 @@ export class GameOverScene extends Scene {
             )
             .setOrigin(0.5, 0.5);
 
-        // Click to restart
+        // Modify the restart logic
         this.time.addEvent({
             delay: 1000,
             callback: () => {
                 this.input.on("pointerdown", () => {
-                    this.scene.start("FirstScene");
+                    this.scene.start(this.lastPlayedScene, { restart: true });
                 });
             },
         });

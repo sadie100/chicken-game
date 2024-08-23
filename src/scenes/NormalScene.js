@@ -31,6 +31,18 @@ export class NormalScene extends BaseScene {
         super(key);
     }
 
+    init(data) {
+        if (data.restart) {
+            this.resetScene();
+        }
+    }
+    resetScene() {
+        // Reset necessary variables and game state
+        this.resetVariables();
+        this.points = 0;
+        // Add any other reset logic specific to this scene
+    }
+
     create() {
         super.create();
 

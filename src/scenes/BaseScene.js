@@ -209,7 +209,10 @@ export class BaseScene extends Scene {
 
     gameOver() {
         console.log("Game Over called");
-        this.scene.start("GameOverScene", { points: this.points });
+        this.scene.start("GameOverScene", {
+            points: this.points,
+            lastPlayedScene: this.scene.key,
+        });
     }
 
     handlePlayerMovement(delta) {
