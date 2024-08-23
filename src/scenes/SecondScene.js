@@ -113,7 +113,7 @@ export class SecondScene extends NormalScene {
     }
 
     startNextRound() {
-        super.startNextRound("FinalScene");
+        super.startNextRound("BossScene");
     }
 }
 

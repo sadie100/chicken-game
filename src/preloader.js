@@ -28,6 +28,12 @@ export class Preloader extends Phaser.Scene {
             frameHeight: 32,
         });
 
+        // Load pig sprite
+        this.load.spritesheet("gold_pig", "/monsters/gold-pig.png", {
+            frameWidth: 32,
+            frameHeight: 32,
+        });
+
         // Load cat sprite
         this.load.spritesheet("cat", "/monsters/cat.png", {
             frameWidth: 32,
@@ -113,6 +119,25 @@ export class Preloader extends Phaser.Scene {
         this.anims.create({
             key: "pig_walk",
             frames: this.anims.generateFrameNumbers("pig", {
+                start: 5,
+                end: 8,
+            }),
+            frameRate: 8,
+            repeat: -1,
+        });
+        // Pig animations
+        this.anims.create({
+            key: "gold_pig_idle",
+            frames: this.anims.generateFrameNumbers("gold_pig", {
+                start: 0,
+                end: 4,
+            }),
+            frameRate: 6,
+            repeat: -1,
+        });
+        this.anims.create({
+            key: "gold_pig_walk",
+            frames: this.anims.generateFrameNumbers("gold_pig", {
                 start: 5,
                 end: 8,
             }),
