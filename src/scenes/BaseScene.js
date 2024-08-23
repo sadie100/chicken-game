@@ -2,7 +2,7 @@ import { Scene } from "phaser";
 import { Player } from "../gameobjects/Player";
 import { Monster } from "../gameobjects/monsters/Monster";
 import { Heart } from "../gameobjects/Heart";
-import { ToggleButtonGroup } from "../gameobjects/ItemButton";
+import { ItemManager } from "../gameobjects/Item";
 
 export class BaseScene extends Scene {
     player = null;
@@ -12,7 +12,7 @@ export class BaseScene extends Scene {
     hudScene = null;
     spawnTimer = null;
     gameTime = 0;
-    stageTime = 10000; // 1분으로 변경 (60000ms = 1분)
+    stageTime = 1000; // 1분으로 변경 (60000ms = 1분)
 
     // 몬스터 스폰 관련 변수
     initialSpawnDelay = 1000; // 1초로 변경
@@ -38,20 +38,32 @@ export class BaseScene extends Scene {
         super(key);
     }
 
-    createToggleButtons() {
+    createItems() {
         const centerX = this.scale.width / 2;
         const centerY = this.scale.height / 2;
 
-        this.toggleGroup = new ToggleButtonGroup(this);
-        this.toggleGroup.addButton(centerX - 50, centerY, "item1", "item1");
-        this.toggleGroup.addButton(centerX + 50, centerY, "item2", "item2");
-
-        this.events.on("itemSelected", this.onItemSelected, this);
+        this.itemManager.addItem(
+            centerX - 100,
+            centerY,
+            "itemList1",
+            0,
+            "item1"
+        );
+        this.itemManager.addItem(
+            centerX + 100,
+            centerY,
+            "itemList1",
+            1,
+            "item2"
+        );
     }
 
-    onItemSelected(id) {
-        this.toggleGroup.onItemSelected(id);
-        this.selectedItem = id;
+    collectItem(player, item) {
+        if (player.heldItem) {
+            player.heldItem.return();
+        }
+        player.collectItem(item);
+        item.collect();
     }
 
     completeStage() {
@@ -62,7 +74,7 @@ export class BaseScene extends Scene {
         }
 
         this.showNextRoundArrow();
-        this.createToggleButtons();
+        this.createItems();
     }
 
     showNextRoundArrow() {
@@ -158,6 +170,17 @@ export class BaseScene extends Scene {
             this.player,
             this.hearts,
             this.collectHeart,
+            null,
+            this
+        );
+
+        // ItemManager 생성 및 아이템 추가
+        this.itemManager = new ItemManager(this);
+        // 아이템과 플레이어 간의 충돌 설정
+        this.physics.add.overlap(
+            this.player,
+            this.itemManager.items,
+            this.collectItem,
             null,
             this
         );

@@ -47,12 +47,22 @@ export class Preloader extends Phaser.Scene {
         });
 
         // 아이템 이미지 로드
-        this.load.image("item1", "assets/items/item1.png");
-        this.load.image("item2", "assets/items/item2.png");
+        this.load.spritesheet("itemList1", "items/items1.png", {
+            frameWidth: 16,
+            frameHeight: 16,
+        });
+        this.load.spritesheet("itemList2", "items/items2.png", {
+            frameWidth: 16,
+            frameHeight: 16,
+        });
     }
 
     create() {
         this.createAnimations();
+        this.add.image(16, 16, "itemList1", 0);
+        this.add.image(32, 16, "itemList1", 1);
+        this.add.image(48, 16, "itemList1", 2);
+        this.add.image(64, 16, "itemList1", 3);
         // Create bitmap font and load it in cache
         const config = {
             image: "knighthawks",

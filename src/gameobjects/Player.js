@@ -5,6 +5,7 @@ export class Player extends Physics.Arcade.Sprite {
     scene = null;
     eggs = null;
     isMoving = false;
+    heldItem = null;
     lives = 5;
     isInvulnerable = false;
     realWidth = 0;
@@ -14,6 +15,7 @@ export class Player extends Physics.Arcade.Sprite {
     constructor({ scene }) {
         super(scene, 100, scene.scale.height / 2, "chicken_idle");
         this.scene = scene;
+        this.heldItem = null;
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
@@ -152,6 +154,10 @@ export class Player extends Physics.Arcade.Sprite {
 
     setLives(lives) {
         this.lives = lives;
+    }
+
+    collectItem(item) {
+        this.heldItem = item;
     }
 }
 
