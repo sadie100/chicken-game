@@ -10,7 +10,7 @@ export class NormalScene extends BaseScene {
 
     initialSpawnDelay = 1000; // 1초로 변경
     minSpawnDelay = 500;
-    spawnReductionRate = 100;
+    spawnReductionRate = 200;
     currentSpawnDelay = 1000; // 초기 스폰 딜레이도 1초로 변경
 
     // 몬스터 속도 관련 변수
@@ -190,11 +190,12 @@ export class NormalScene extends BaseScene {
         // 고급 스폰 시스템
         if (
             this.gameTime >= this.advancedSpawnTime &&
-            this.monstersPerSpawn < 3
+            this.monstersPerSpawn < 5
         ) {
             this.monstersPerSpawn = Math.min(
-                3,
-                Math.floor(this.gameTime / this.advancedSpawnTime)
+                5,
+                this.monstersPerSpawn +
+                    Math.floor((this.gameTime - this.advancedSpawnTime) / 10)
             );
         }
 
