@@ -1,8 +1,8 @@
-import { BaseScene } from "./BaseScene";
+import { NormalScene } from "./NormalScene";
 import { Pig } from "../gameobjects/monsters/Pig";
 import { Background } from "../backgrounds/Background";
 
-export class FirstScene extends BaseScene {
+export class FirstScene extends NormalScene {
     constructor() {
         super("FirstScene");
     }

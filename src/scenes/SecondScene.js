@@ -1,9 +1,9 @@
-import { BaseScene } from "./BaseScene";
 import { Pig } from "../gameobjects/monsters/Pig";
 import { Cat } from "../gameobjects/monsters/Cat";
 import { Background } from "../backgrounds/Background";
+import { NormalScene } from "./NormalScene";
 
-export class SecondScene extends BaseScene {
+export class SecondScene extends NormalScene {
     constructor() {
         super("SecondScene");
     }
@@ -112,10 +112,8 @@ export class SecondScene extends BaseScene {
         }
     }
 
-    goToNextStage() {
-        // 여기에 다음 스테이지나 게임 종료 로직을 구현할 수 있습니다.
-        console.log("Game Completed!");
-        this.scene.start("GameOverScene", { points: this.points });
+    startNextRound() {
+        super.startNextRound("FinalScene");
     }
 }
 
