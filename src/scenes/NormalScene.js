@@ -105,7 +105,7 @@ export class NormalScene extends BaseScene {
 
     update(time, delta) {
         super.update(time, delta);
-        if (isStageComplete) {
+        if (this.isStageComplete) {
             // 플레이어가 화면 오른쪽 끝에 도달했는지 확인
             if (this.player.x > this.scale.width - this.player.width / 2) {
                 this.startNextRound();

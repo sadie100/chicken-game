@@ -67,7 +67,7 @@ export class MenuScene extends Scene {
         // Send start-game event when user clicks
         this.input.on("pointerdown", () => {
             this.scene.stop("MenuScene");
-            this.scene.start("BossScene");
+            this.scene.start("FirstScene");
         });
     }
 }
