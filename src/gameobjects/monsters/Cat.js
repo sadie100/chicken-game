@@ -1,6 +1,6 @@
-import { Monster } from "./Monster";
+import { NormalMonster } from "./NormalMonster";
 
-export class Cat extends Monster {
+export class Cat extends NormalMonster {
     constructor(scene, x, y, speed, direction) {
         // Cat의 속도를 기본 속도의 1.5배로 설정
         const catSpeed = speed * 1.5;

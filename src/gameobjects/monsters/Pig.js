@@ -1,6 +1,6 @@
-import { Monster } from "./Monster";
+import { NormalMonster } from "./NormalMonster";
 
-export class Pig extends Monster {
+export class Pig extends NormalMonster {
     constructor(scene, x, y, speed, direction) {
         super(scene, x, y, "pig", speed, direction);
         this.health = 1; // Pig의 체력을 1로 설정
