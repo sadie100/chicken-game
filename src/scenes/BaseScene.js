@@ -40,6 +40,12 @@ export class BaseScene extends Scene {
     }
 
     create() {
+        // 대신, 즉시 불투명해지도록 설정
+        this.cameras.main.alpha = 1;
+
+        // 게임의 전반적인 밝기를 일정하게 유지
+        this.cameras.main.setBackgroundColor("#1c172e"); // 기본 배경색 설정
+
         this.createBackground();
 
         // Player
@@ -124,17 +130,13 @@ export class BaseScene extends Scene {
         this.transitionOverlay.setDepth(1000);
         this.transitionOverlay.alpha = 1; // 시작 시 완전히 불투명하게 설정
 
-        // 페이드인 효과 시작
-        this.fadeIn();
+        this.events.on("wake", this.onSceneWake, this);
     }
 
-    fadeIn() {
-        this.tweens.add({
-            targets: this.transitionOverlay,
-            alpha: 0,
-            duration: 1000, // 1초 동안 페이드인
-            ease: "Power2",
-        });
+    onSceneWake() {
+        // Scene이 다시 활성화될 때 호출되는 메서드
+        this.cameras.main.alpha = 1;
+        this.cameras.main.setBackgroundColor("#1c172e");
     }
 
     createItems() {
@@ -193,20 +195,15 @@ export class BaseScene extends Scene {
             this.itemManager.hideAllDescriptions();
         }
 
-        this.tweens.add({
-            targets: this.transitionOverlay,
-            alpha: 1,
-            duration: 1000, // 1초 동안 페이드아웃
-            ease: "Power2",
-            onComplete: () => {
-                this.scene.start(nextSceneKey, {
-                    player: this.player,
-                    points: this.points,
-                    lives: this.player.getLives(),
-                    heldItem: this.player.heldItem,
-                });
-            },
+        // 다음 Scene으로 전환 시 fade out 효과 대신 즉시 전환
+        this.scene.start(nextSceneKey, {
+            x: this.scale.width,
+            player: this.player,
+            points: this.points,
+            lives: this.player.getLives(),
+            heldItem: this.player.heldItem,
         });
+        this.previousSceneKey = this.scene.key;
     }
 
     resetVariables() {
