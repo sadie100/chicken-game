@@ -189,7 +189,10 @@ export class GoldPig extends Monster {
                 x: this.scene.scale.width * 0.75,
                 y: this.scene.scale.height - 100,
             },
-            { x: this.scene.scale.width * 0.5, y: this.scene.scale.height / 2 },
+            {
+                x: this.scene.scale.width * 0.25,
+                y: this.scene.scale.height / 2,
+            },
             { x: this.scene.scale.width * 0.75, y: 100 },
             { x: this.scene.scale.width - 100, y: this.scene.scale.height / 2 },
         ];
