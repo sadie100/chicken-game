@@ -10,22 +10,23 @@ export class Player extends Physics.Arcade.Sprite {
     isInvulnerable = false;
     realWidth = 0;
     realHeight = 0;
-    speed = 200; // 속도를 픽셀/초 단위로 정의
+    speed = 200;
+    baseBulletDamage = 1;
+    baseBulletSpeed = 400;
+    bulletDamage = 1;
+    bulletSpeed = 400;
 
     constructor({ scene }) {
         super(scene, 100, scene.scale.height / 2, "chicken_idle");
         this.scene = scene;
-        this.heldItem = null;
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
-        this.setScale(3); // 플레이어의 크기를 3배로 확대
+        this.setScale(3);
 
-        // 충돌 영역 설정 (원래대로 유지)
         this.body.setSize(this.width * 0.3, this.height * 0.5);
         this.body.setOffset(this.width * 0.35, this.height * 0.5);
 
-        // 실제 플레이어 크기 계산
         this.realWidth = this.width * 0.3;
         this.realHeight = this.height * 0.5;
 
@@ -42,15 +43,58 @@ export class Player extends Physics.Arcade.Sprite {
     fire() {
         const egg = this.eggs.get();
         if (egg) {
-            // 닭의 y축 중간 지점 계산
-            const middleY = this.y + this.height / 2.5; // this.height / 4는 실제 높이의 중간점 (스케일이 2이므로)
-            egg.fire(this.x, middleY, 400);
+            const middleY = this.y + this.height / 2.5;
+            egg.fire(this.x, middleY, this.bulletSpeed);
+            egg.damage = this.bulletDamage;
             egg.body.onWorldBounds = true;
             egg.body.world.on("worldbounds", (body) => {
                 if (body.gameObject === egg) {
                     egg.destroy();
                 }
             });
+        }
+    }
+
+    collectItem(item) {
+        if (this.heldItem) {
+            this.heldItem.removeEffect(this);
+        }
+        this.heldItem = item;
+        item.applyEffect(this);
+        this.updateHUD();
+    }
+
+    resetItemEffects() {
+        this.bulletDamage = this.baseBulletDamage;
+        this.bulletSpeed = this.baseBulletSpeed;
+    }
+
+    increaseBulletDamage(amount) {
+        this.bulletDamage += amount;
+    }
+
+    increaseBulletSpeed(amount) {
+        this.bulletSpeed += amount;
+    }
+
+    decreaseBulletDamage(amount) {
+        this.bulletDamage = Math.max(
+            this.baseBulletDamage,
+            this.bulletDamage - amount
+        );
+    }
+
+    decreaseBulletSpeed(amount) {
+        this.bulletSpeed = Math.max(
+            this.baseBulletSpeed,
+            this.bulletSpeed - amount
+        );
+    }
+
+    updateHUD() {
+        const hudScene = this.scene.scene.get("HudScene");
+        if (hudScene && hudScene.scene.isActive()) {
+            hudScene.updateBulletInfo(this.bulletDamage, this.bulletSpeed);
         }
     }
 
@@ -154,10 +198,6 @@ export class Player extends Physics.Arcade.Sprite {
 
     setLives(lives) {
         this.lives = lives;
-    }
-
-    collectItem(item) {
-        this.heldItem = item;
     }
 }
 

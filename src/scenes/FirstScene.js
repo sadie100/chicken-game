@@ -75,5 +75,26 @@ export class FirstScene extends BaseScene {
             });
         });
     }
+
+    createItems() {
+        const centerX = this.scale.width / 2;
+        const centerY = this.scale.height / 2;
+
+        // FirstScene에서는 아이템 1과 2를 생성합니다
+        this.itemManager.addItem(
+            centerX - 100,
+            centerY,
+            "itemList1",
+            0,
+            "item1"
+        );
+        this.itemManager.addItem(
+            centerX + 100,
+            centerY,
+            "itemList1",
+            1,
+            "item2"
+        );
+    }
 }
 

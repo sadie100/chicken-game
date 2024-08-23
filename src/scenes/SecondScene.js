@@ -10,17 +10,19 @@ export class SecondScene extends BaseScene {
     init(data) {
         this.points = data.points || 0;
         this.resetVariables();
-        // 플레이어의 생명력을 이전 라운드에서 가져옵니다.
         if (data.lives) {
             this.player.setLives(data.lives);
+        }
+        if (data.heldItem) {
+            this.player.heldItem = data.heldItem;
         }
     }
 
     create() {
         super.create();
-        // HUD의 생명력 표시 업데이트
         if (this.hudScene) {
             this.hudScene.updateLives(this.player.getLives());
+            this.player.updateHUD(); // 아이템 효과가 적용된 상태로 HUD 업데이트
         }
         this.add
             .text(this.scale.width / 2, 50, "2라운드 시작!", {
@@ -28,6 +30,27 @@ export class SecondScene extends BaseScene {
                 fill: "#fff",
             })
             .setOrigin(0.5);
+    }
+
+    createItems() {
+        const centerX = this.scale.width / 2;
+        const centerY = this.scale.height / 2;
+
+        // SecondScene에서는 아이템 3과 4를 생성합니다 (예시)
+        this.itemManager.addItem(
+            centerX - 100,
+            centerY,
+            "itemList1",
+            2,
+            "item3"
+        );
+        this.itemManager.addItem(
+            centerX + 100,
+            centerY,
+            "itemList1",
+            3,
+            "item4"
+        );
     }
 
     getBackgroundKey() {

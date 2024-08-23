@@ -39,23 +39,7 @@ export class BaseScene extends Scene {
     }
 
     createItems() {
-        const centerX = this.scale.width / 2;
-        const centerY = this.scale.height / 2;
-
-        this.itemManager.addItem(
-            centerX - 100,
-            centerY,
-            "itemList1",
-            0,
-            "item1"
-        );
-        this.itemManager.addItem(
-            centerX + 100,
-            centerY,
-            "itemList1",
-            1,
-            "item2"
-        );
+        // 이 메서드는 자식 클래스에서 오버라이드됩니다.
     }
 
     collectItem(player, item) {
@@ -150,6 +134,11 @@ export class BaseScene extends Scene {
         // HUD 씬 시작
         this.setupHUD();
         this.setupSpawnTimer();
+
+        // Player의 초기 총알 정보 업데이트
+        this.time.delayedCall(100, () => {
+            this.player.updateHUD();
+        });
 
         // 게임 시간 및 난이도 조절을 위한 타이머
         this.time.addEvent({
