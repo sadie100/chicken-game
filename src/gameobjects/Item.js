@@ -42,9 +42,17 @@ export class Item extends Phaser.Physics.Arcade.Sprite {
                 return (player) => {
                     player.increaseBulletDamage(1);
                 };
-            case "item2":
+            case "EggSpeedBooster":
                 return (player) => {
                     player.increaseBulletSpeed(100);
+                };
+            case "SpeedBooster":
+                return (player) => {
+                    player.increaseSpeed(100);
+                };
+            case "EggSizeBooster":
+                return (player) => {
+                    player.increaseEggSize();
                 };
             case "StunAbility":
                 return (player) => {
@@ -61,9 +69,17 @@ export class Item extends Phaser.Physics.Arcade.Sprite {
                 return (player) => {
                     player.decreaseBulletDamage(1);
                 };
-            case "item2":
+            case "EggSpeedBooster":
                 return (player) => {
                     player.decreaseBulletSpeed(100);
+                };
+            case "SpeedBooster":
+                return (player) => {
+                    player.decreaseSpeed(100);
+                };
+            case "EggSizeBooster":
+                return (player) => {
+                    player.decreaseEggSize();
                 };
             case "StunAbility":
                 return (player) => {
@@ -78,8 +94,12 @@ export class Item extends Phaser.Physics.Arcade.Sprite {
         switch (id) {
             case "BulletBooster":
                 return "달걀 데미지를 강화합니다.";
-            case "item2":
-                return "달걀의 속도가 빨라집니다.";
+            case "EggSpeedBooster":
+                return "달걀의 이동속도가 빨라집니다.";
+            case "SpeedBooster":
+                return "이동속도가 빨라집니다.";
+            case "EggSizeBooster":
+                return "달걀 크기가 커집니다.";
             case "StunAbility":
                 return "알에 맞은 몬스터를 잠시 기절시키는 능력을 얻습니다. 보스 몬스터에는 통하지 않습니다.";
             default:

@@ -11,10 +11,13 @@ export class Player extends Physics.Arcade.Sprite {
     realWidth = 0;
     realHeight = 0;
     speed = 200;
+    baseSpeed = 200;
     baseBulletDamage = 1;
     baseBulletSpeed = 400;
     bulletDamage = 1;
     bulletSpeed = 400;
+    baseEggSize = 1;
+    eggSize = 1;
 
     constructor({ scene }) {
         super(scene, 100, scene.scale.height / 2, "chicken_idle");
@@ -49,6 +52,7 @@ export class Player extends Physics.Arcade.Sprite {
         if (egg) {
             const middleY = this.y + this.height / 2.5;
             egg.fire(this.x, middleY, this.bulletSpeed);
+            egg.setScale(this.eggSize); // 새로 추가된 줄
             egg.damage = this.bulletDamage;
             egg.body.onWorldBounds = true;
             egg.body.world.on("worldbounds", (body) => {
@@ -96,6 +100,14 @@ export class Player extends Physics.Arcade.Sprite {
         this.bulletSpeed += amount;
     }
 
+    increaseSpeed(amount) {
+        this.speed += amount;
+    }
+
+    increaseEggSize() {
+        this.eggSize = 1.5;
+    }
+
     decreaseBulletDamage(amount) {
         this.bulletDamage = Math.max(
             this.baseBulletDamage,
@@ -108,6 +120,14 @@ export class Player extends Physics.Arcade.Sprite {
             this.baseBulletSpeed,
             this.bulletSpeed - amount
         );
+    }
+
+    decreaseSpeed(amount) {
+        this.speed = Math.max(this.baseSpeed, this.speed - amount);
+    }
+
+    decreaseEggSize() {
+        this.eggSize = this.baseEggSize;
     }
 
     updateHUD() {

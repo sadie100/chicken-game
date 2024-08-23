@@ -49,14 +49,14 @@ export class SecondScene extends NormalScene {
             centerY,
             "itemList1",
             2,
-            "item3"
+            "SpeedBooster"
         );
         this.itemManager.addItem(
             centerX + 100,
             centerY,
             "itemList1",
             3,
-            "item4"
+            "EggSizeBooster"
         );
     }
 

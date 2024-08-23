@@ -96,7 +96,7 @@ export class FirstScene extends NormalScene {
             centerY,
             "itemList1",
             1,
-            "item2"
+            "EggSpeedBooster"
         );
     }
 }
