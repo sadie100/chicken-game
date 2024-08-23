@@ -4,7 +4,7 @@ import { BaseScene } from "./BaseScene";
 export class NormalScene extends BaseScene {
     spawnTimer = null;
     gameTime = 0;
-    stageTime = 1500; // 1분으로 변경 (60000ms = 1분)
+    stageTime = 60000; // 1분으로 변경 (60000ms = 1분)
 
     // 몬스터 스폰 관련 변수
 
@@ -110,6 +110,7 @@ export class NormalScene extends BaseScene {
             this.itemManager.hideAllDescriptions();
         }
 
+        this.scene.stop(this.scene.key);
         // 다음 Scene으로 전환 시 fade out 효과 대신 즉시 전환
         this.scene.start(nextSceneKey, {
             x: this.scale.width,
