@@ -3,6 +3,7 @@ import { Player } from "../gameobjects/Player";
 import { Monster } from "../gameobjects/monsters/Monster";
 import { Heart } from "../gameobjects/Heart";
 import { ItemManager } from "../gameobjects/Item";
+import { Background } from "../backgrounds/Background";
 
 export class BaseScene extends Scene {
     player = null;
@@ -13,6 +14,7 @@ export class BaseScene extends Scene {
     spawnTimer = null;
     gameTime = 0;
     stageTime = 1000; // 1분으로 변경 (60000ms = 1분)
+    background = null;
 
     // 몬스터 스폰 관련 변수
     initialSpawnDelay = 1000; // 1초로 변경
@@ -74,6 +76,9 @@ export class BaseScene extends Scene {
     }
 
     update(time, delta) {
+        if (this.background) {
+            this.background.update(delta);
+        }
         if (!this.isStageComplete) {
             this.handlePlayerMovement(delta);
         } else {
@@ -85,8 +90,42 @@ export class BaseScene extends Scene {
         }
     }
 
-    startNextRound() {
-        // 이 메서드는 자식 클래스에서 오버라이드 됩니다.
+    startNextRound(nextSceneKey) {
+        // 현재 배경을 저장
+        const currentBackground = this.background;
+
+        // 다음 씬의 배경 이미지 키를 가져옵니다
+        const nextBackgroundKey = this.scene.get(nextSceneKey).getBackground();
+
+        // 새 배경을 현재 배경 위에 추가하고 알파값을 0으로 설정
+        const nextBackground = this.add
+            .image(0, 0, nextBackgroundKey)
+            .setOrigin(0, 0)
+            .setAlpha(0);
+
+        // 배경 전환 효과
+        this.tweens.add({
+            targets: nextBackground,
+            alpha: 1,
+            duration: 1000,
+            onComplete: () => {
+                // 전환이 완료되면 이전 배경을 제거
+                currentBackground.destroy();
+
+                // 다음 씬으로 전환
+                this.scene.start(nextSceneKey, {
+                    player: this.player,
+                    points: this.points,
+                    lives: this.player.getLives(),
+                    heldItem: this.player.heldItem,
+                });
+            },
+        });
+    }
+
+    getBackground() {
+        // 이 메서드는 자식 클래스에서 오버라이드해야 합니다
+        throw new Error("getBackground must be implemented in child class");
     }
 
     resetVariables() {
@@ -102,7 +141,7 @@ export class BaseScene extends Scene {
     }
 
     create() {
-        this.add.image(0, 0, this.getBackgroundKey()).setOrigin(0, 0);
+        this.createBackground();
 
         // Player
         this.player = new Player({ scene: this });
@@ -173,6 +212,18 @@ export class BaseScene extends Scene {
             null,
             this
         );
+    }
+
+    createBackground() {
+        // 기본 배경 키 설정 (자식 클래스에서 오버라이드 가능)
+        const backgroundKey = this.getBackgroundKey();
+        this.background = new Background(this, backgroundKey);
+        this.background.create();
+    }
+
+    getBackgroundKey() {
+        // 기본 배경 키 반환 (자식 클래스에서 오버라이드해야 함)
+        return "default_background";
     }
 
     setupCollisions() {
@@ -361,11 +412,6 @@ export class BaseScene extends Scene {
         ) {
             this.player.playIdleAnimation();
         }
-    }
-
-    // 자식 클래스에서 오버라이드할 메서드들
-    getBackgroundKey() {
-        return "background1";
     }
 
     getInitialSpawnDelay() {

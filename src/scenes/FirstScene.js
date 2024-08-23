@@ -1,9 +1,16 @@
 import { BaseScene } from "./BaseScene";
 import { Pig } from "../gameobjects/monsters/Pig";
+import { FirstBackground } from "../backgrounds/FirstBackground";
 
 export class FirstScene extends BaseScene {
     constructor() {
         super("FirstScene");
+        this.background = null;
+    }
+
+    getBackgroundKey() {
+        // FirstScene에 맞는 배경 키 반환
+        return "background1";
     }
 
     completeStage() {
@@ -11,10 +18,6 @@ export class FirstScene extends BaseScene {
         // this.time.delayedCall(2000, () => {
         //     this.goToNextStage();
         // });
-    }
-
-    getBackgroundKey() {
-        return "background1";
     }
 
     spawnSingleMonster() {
@@ -64,16 +67,7 @@ export class FirstScene extends BaseScene {
     // }
 
     startNextRound() {
-        this.cameras.main.pan(this.scale.width, 0, 1000, "Power2");
-
-        this.time.delayedCall(1000, () => {
-            this.scene.start("SecondScene", {
-                player: this.player,
-                points: this.points,
-                lives: this.player.getLives(),
-                selectedItem: this.selectedItem, // 선택된 아이템 정보 전달
-            });
-        });
+        super.startNextRound("SecondScene");
     }
 
     createItems() {

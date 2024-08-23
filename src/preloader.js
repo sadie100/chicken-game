@@ -5,7 +5,8 @@ export class Preloader extends Phaser.Scene {
 
     preload() {
         this.load.setPath("assets");
-        this.load.image("background1", "/backgrounds/background1.png");
+        // 배경 에셋 로드
+        this.loadBackgroundAssets();
         this.load.image("life", "life.png");
         this.load.image("next-arrow", "next-arrow.png");
 
@@ -138,6 +139,20 @@ export class Preloader extends Phaser.Scene {
             frameRate: 8,
             repeat: -1,
         });
+    }
+
+    loadBackgroundAssets() {
+        // 모든 배경 에셋 로드
+        for (let i = 1; i <= 5; i++) {
+            // 5개의 배경 세트가 있다고 가정
+            for (let j = 1; j <= 4; j++) {
+                // 각 배경 세트는 4개의 레이어
+                this.load.image(
+                    `background${i}_${j}`,
+                    `backgrounds/background${i}/${j}.png`
+                );
+            }
+        }
     }
 }
 
