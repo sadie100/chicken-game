@@ -46,6 +46,10 @@ export class Item extends Phaser.Physics.Arcade.Sprite {
                 return (player) => {
                     player.increaseBulletSpeed(100);
                 };
+            case "StunAbility":
+                return (player) => {
+                    player.enableStun();
+                };
             default:
                 return () => {};
         }
@@ -61,6 +65,10 @@ export class Item extends Phaser.Physics.Arcade.Sprite {
                 return (player) => {
                     player.decreaseBulletSpeed(100);
                 };
+            case "StunAbility":
+                return (player) => {
+                    player.canStun = false;
+                };
             default:
                 return () => {};
         }
@@ -71,11 +79,9 @@ export class Item extends Phaser.Physics.Arcade.Sprite {
             case "BulletBooster":
                 return "달걀 데미지를 강화합니다.";
             case "item2":
-                return "Increases bullet speed by 100";
-            case "item3":
-                return "Grants temporary invincibility";
-            case "item4":
-                return "Restores 1 life point";
+                return "달걀의 속도가 빨라집니다.";
+            case "StunAbility":
+                return "알에 맞은 몬스터를 잠시 기절시키는 능력을 얻습니다. 보스 몬스터에는 통하지 않습니다.";
             default:
                 return "Unknown item";
         }

@@ -155,14 +155,18 @@ export class BaseScene extends Scene {
     }
 
     playerHitMonster(player, monster) {
-        const remainingLives = player.loseLife();
-        this.hudScene.updateLives(remainingLives);
-
-        if (remainingLives <= 0) {
-            monster.destroy();
-            this.gameOver();
+        if (player.canStun) {
+            player.stunMonster(monster);
         } else {
-            this.startHeartSpawnTimer();
+            const remainingLives = player.loseLife();
+            this.hudScene.updateLives(remainingLives);
+
+            if (remainingLives <= 0) {
+                monster.destroy();
+                this.gameOver();
+            } else {
+                this.startHeartSpawnTimer();
+            }
         }
     }
 

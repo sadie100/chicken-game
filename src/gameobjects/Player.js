@@ -38,6 +38,10 @@ export class Player extends Physics.Arcade.Sprite {
 
         this.playIdleAnimation();
         this.setData("canMove", true);
+
+        // 스턴 관련 변수
+        this.canStun = false;
+        this.stunDuration = 2000; // 2초간 스턴
     }
 
     fire() {
@@ -67,6 +71,21 @@ export class Player extends Physics.Arcade.Sprite {
     resetItemEffects() {
         this.bulletDamage = this.baseBulletDamage;
         this.bulletSpeed = this.baseBulletSpeed;
+        this.canStun = false;
+    }
+
+    enableStun() {
+        this.canStun = true;
+    }
+
+    stunMonster(monster) {
+        if (this.canStun) {
+            monster.setTint(0x0000ff);
+            monster.setVelocity(0, 0);
+            this.scene.time.delayedCall(this.stunDuration, () => {
+                monster.clearTint();
+            });
+        }
     }
 
     increaseBulletDamage(amount) {
