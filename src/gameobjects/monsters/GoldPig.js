@@ -66,7 +66,7 @@ export class GoldPig extends Monster {
 
         if (this.health <= 0) {
             // 보스가 죽었을 때의 처리
-            this.scene.events.emit("bossKilled");
+            this.scene.goToNextStage();
         }
     }
 
