@@ -13,8 +13,11 @@ export class GameOverScene extends Scene {
 
     create() {
         // Backgrounds
-        this.add.image(0, 0, "farm_background").setOrigin(0, 0);
-        this.add.image(0, this.scale.height, "farm_floor").setOrigin(0, 1);
+        const wallpaper = this.add
+            .image(this.x, this.y, "gameover")
+            .setOrigin(0, 0);
+        wallpaper.setDisplaySize(this.scale.width, this.scale.height);
+        wallpaper.setTint(0x808080);
 
         // Rectangles to show the text
         // Background rectangles
@@ -42,7 +45,7 @@ export class GameOverScene extends Scene {
         // Game Over 텍스트
         this.add
             .text(this.scale.width / 2, this.scale.height / 2, "GAME\nOVER", {
-                fontFamily: "Arial",
+                fontFamily: "pixel",
                 fontSize: 62,
                 color: "#000000",
                 align: "center",
@@ -51,21 +54,23 @@ export class GameOverScene extends Scene {
 
         // 점수 표시
         this.add
-            .text(
+            .bitmapText(
                 this.scale.width / 2,
                 this.scale.height / 2 + 85,
+                "pixelfont",
                 `YOUR POINTS: ${this.end_points}`,
-                { fontFamily: "Arial", fontSize: 24, color: "#ffffff" }
+                24
             )
             .setOrigin(0.5, 0.5);
 
         // 재시작 안내
         this.add
-            .text(
+            .bitmapText(
                 this.scale.width / 2,
                 this.scale.height / 2 + 130,
+                "pixelfont",
                 "CLICK TO RESTART",
-                { fontFamily: "Arial", fontSize: 24, color: "#ffffff" }
+                24
             )
             .setOrigin(0.5, 0.5);
 

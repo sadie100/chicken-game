@@ -7,6 +7,7 @@ export class Preloader extends Phaser.Scene {
         this.load.setPath("assets");
         // 배경 에셋 로드
         this.loadBackgroundAssets();
+        this.loadIllustrations();
         this.load.image("life", "life.png");
         this.load.image("next-arrow", "next-arrow.png");
         this.load.image("enemy-bullet", "monsters/enemy-bullet.png");
@@ -183,6 +184,13 @@ export class Preloader extends Phaser.Scene {
                 );
             }
         }
+    }
+
+    loadIllustrations() {
+        this.load.image("ending", "illusts/ending.jpg");
+        this.load.image("gameover", "illusts/gameover.png");
+        this.load.image("main", "illusts/main.jpg");
+        this.load.image("prologue", "illusts/prologue.jpg");
     }
 }
 
