@@ -24,6 +24,8 @@ export class GoldPig extends Monster {
         this.isUltimateUsed = false;
         this.isPatternActive = false;
         this.scene = scene;
+        this.scene.setupCollisionsWithBullets(this.bullets);
+
         this.initialX = x;
         this.initialY = y;
 

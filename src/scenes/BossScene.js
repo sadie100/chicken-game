@@ -45,6 +45,15 @@ export class BossScene extends BaseScene {
         this.spawnBossMonster();
     }
 
+    setupCollisionsWithBullets(bullets) {
+        this.physics.add.overlap(
+            this.player,
+            bullets,
+            this.playerHitBullet,
+            null,
+            this
+        );
+    }
     getBackground() {
         return new Background(this, "background3", 4);
     }
@@ -83,6 +92,18 @@ export class BossScene extends BaseScene {
     updateBossHealthBar(healthPercentage) {
         if (this.bossHealthBar) {
             this.bossHealthBar.setValue(healthPercentage);
+        }
+    }
+
+    playerHitBullet(player, bullet) {
+        const remainingLives = player.loseLife();
+        this.hudScene.updateLives(remainingLives);
+
+        bullet.destroy();
+        if (remainingLives <= 0) {
+            this.gameOver();
+        } else {
+            this.startHeartSpawnTimer();
         }
     }
 }
