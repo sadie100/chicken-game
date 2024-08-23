@@ -9,6 +9,7 @@ export class Preloader extends Phaser.Scene {
         this.loadBackgroundAssets();
         this.load.image("life", "life.png");
         this.load.image("next-arrow", "next-arrow.png");
+        this.load.image("enemy-bullet", "monsters/enemy-bullet.png");
 
         // Load chicken sprites
         this.load.spritesheet("chicken_idle", "/player/chicken_idle.png", {
@@ -62,6 +63,10 @@ export class Preloader extends Phaser.Scene {
             frameWidth: 16,
             frameHeight: 16,
         });
+
+        //보스 헬스 바
+        this.load.image("health_bar_fill", "monsters/health_bar_fill.png");
+        this.load.image("health_bar_border", "monsters/health_bar_border.png");
     }
 
     create() {

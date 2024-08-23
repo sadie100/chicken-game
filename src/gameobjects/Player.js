@@ -161,10 +161,6 @@ export class Player extends Physics.Arcade.Sprite {
         this.play("chicken_walk", true);
     }
 
-    update() {
-        // Update logic if needed
-    }
-
     loseLife() {
         if (this.isInvulnerable) return this.lives;
 

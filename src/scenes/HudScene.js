@@ -55,6 +55,9 @@ export class HudScene extends Scene {
     }
 
     updateLives(lives) {
+        if (!this.lives_group) {
+            this.create();
+        }
         this.lives_group.clear(true, true);
         for (let i = 0; i < lives; i++) {
             const life = this.add.image(20 + i * 30, 25, "life").setScale(1.5);

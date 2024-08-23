@@ -107,6 +107,7 @@ export class BaseScene extends Scene {
     }
 
     update(time, delta) {
+        this.handlePlayerMovement(delta);
         if (this.background) {
             this.background.update(delta);
         }
