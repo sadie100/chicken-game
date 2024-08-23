@@ -21,8 +21,11 @@ export class Monster extends Phaser.Physics.Arcade.Sprite {
         this.scene.tweens.add({
             targets: this,
             tint: 0xff0000,
-            duration: 100,
+            duration: 70,
             yoyo: true,
+            onComplete: () => {
+                this.clearTint();
+            },
         });
 
         if (this.health <= 0) {
@@ -35,3 +38,4 @@ export class Monster extends Phaser.Physics.Arcade.Sprite {
         super.destroy(fromScene);
     }
 }
+
