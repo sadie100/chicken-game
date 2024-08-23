@@ -8,7 +8,8 @@ export class NormalMonster extends Monster {
     direction = 0; // y축 이동 각도
 
     constructor(scene, x, y, texture, speed, direction) {
-        super(scene, x, y, texture);
+        super(scene, x, y, texture, speed);
+        this.speed = speed;
         this.direction = direction; // y축 이동 각도 설정
     }
 

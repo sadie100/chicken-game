@@ -1,5 +1,5 @@
 export class Monster extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y, texture, speed, direction) {
+    constructor(scene, x, y, texture) {
         super(scene, x, y, texture);
         scene.add.existing(this);
         scene.physics.add.existing(this);
@@ -8,7 +8,6 @@ export class Monster extends Phaser.Physics.Arcade.Sprite {
         this.isStunned = false;
         this.body.setSize(this.width * 0.5, this.height * 0.5);
         this.body.setOffset(this.width * 0.25, this.height * 0.5);
-        this.speed = speed;
     }
 
     update(time, delta) {}
