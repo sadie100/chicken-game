@@ -1,5 +1,7 @@
 import { Monster } from "./Monster";
 import { Bullet } from "../Bullet";
+import { Pig } from "./Pig";
+import { Cat } from "./Cat";
 
 export class GoldPig extends Monster {
     constructor(scene, x, y) {
@@ -81,6 +83,213 @@ export class GoldPig extends Monster {
         this.scene.events.emit("bossHealthChanged", 1);
     }
 
+    pattern1() {
+        this.isPatternActive = true;
+        const twitchCount = Phaser.Math.Between(2, 3);
+        let delay = 0;
+
+        // 뒤로 움찔거리기 (2-3번)
+        for (let i = 0; i < twitchCount; i++) {
+            this.scene.tweens.add({
+                targets: this,
+                x: this.x + 20,
+                duration: 100,
+                ease: "Power1",
+                yoyo: true,
+                delay: delay,
+            });
+            delay += 200; // 각 움찔거림 사이의 지연 시간
+        }
+
+        // 전방(왼쪽)으로 빠르게 전진
+        this.scene.tweens.add({
+            targets: this,
+            x: 50,
+            duration: 500,
+            ease: "Power2",
+            delay: delay,
+        });
+
+        delay += 500;
+
+        // 제자리로 돌아가기
+        this.scene.tweens.add({
+            targets: this,
+            x: this.initialX,
+            duration: 1000,
+            ease: "Power2",
+            delay: delay,
+            onComplete: () => {
+                this.isPatternActive = false;
+            },
+        });
+    }
+    pattern2() {
+        this.isPatternActive = true;
+        let delay = 0;
+
+        const fireTripleBullet = () => {
+            for (let i = -1; i <= 1; i++) {
+                const bullet = this.bullets.get(this.x, this.y, "enemy-bullet");
+                if (bullet) {
+                    bullet.setScale(2);
+                    bullet.fire(this.x, this.y, -400, i * 50);
+                }
+            }
+        };
+
+        // 위로 이동
+        this.scene.tweens.add({
+            targets: this,
+            y: this.initialY - 100,
+            duration: 1000,
+            ease: "Sine.easeInOut",
+            onUpdate: () => {
+                if (Math.random() < 0.1) fireTripleBullet();
+            },
+            delay: delay,
+        });
+        delay += 1000;
+
+        // 아래로 이동
+        this.scene.tweens.add({
+            targets: this,
+            y: this.initialY + 100,
+            duration: 2000,
+            ease: "Sine.easeInOut",
+            onUpdate: () => {
+                if (Math.random() < 0.1) fireTripleBullet();
+            },
+            delay: delay,
+        });
+        delay += 2000;
+
+        // 원래 위치로
+        this.scene.tweens.add({
+            targets: this,
+            y: this.initialY,
+            duration: 1000,
+            ease: "Sine.easeInOut",
+            onUpdate: () => {
+                if (Math.random() < 0.1) fireTripleBullet();
+            },
+            delay: delay,
+            onComplete: () => {
+                this.isPatternActive = false;
+            },
+        });
+    }
+
+    pattern3() {
+        this.isPatternActive = true;
+        let delay = 0;
+
+        const diamondPoints = [
+            {
+                x: this.scene.scale.width * 0.75,
+                y: this.scene.scale.height - 100,
+            },
+            { x: this.scene.scale.width * 0.5, y: this.scene.scale.height / 2 },
+            { x: this.scene.scale.width * 0.75, y: 100 },
+            { x: this.scene.scale.width - 100, y: this.scene.scale.height / 2 },
+        ];
+
+        // 위 중앙으로 이동
+        this.scene.tweens.add({
+            targets: this,
+            x: this.scene.scale.width * 0.75,
+            y: 100,
+            duration: 1000,
+            ease: "Power2",
+            delay: delay,
+        });
+        delay += 1000;
+
+        // 다이아몬드 모양 이동
+        diamondPoints.forEach((point) => {
+            this.scene.tweens.add({
+                targets: this,
+                x: point.x,
+                y: point.y,
+                duration: 500,
+                ease: "Linear",
+                delay: delay,
+            });
+            delay += 500;
+        });
+
+        // 원래 위치로 돌아가기
+        this.scene.tweens.add({
+            targets: this,
+            x: this.initialX,
+            y: this.initialY,
+            duration: 1000,
+            ease: "Power2",
+            delay: delay,
+            onComplete: () => {
+                this.isPatternActive = false;
+            },
+        });
+
+        // 회전 애니메이션
+        this.scene.tweens.add({
+            targets: this,
+            angle: 360,
+            duration: 3000,
+            delay: 1000,
+            onComplete: () => {
+                this.setRotation(0);
+            },
+        });
+    }
+
+    pattern4() {
+        this.isPatternActive = true;
+        let spawnCount = 0;
+        const maxSpawns = 10;
+
+        const spawnMonster = () => {
+            if (spawnCount >= maxSpawns) {
+                this.scene.time.delayedCall(1000, () => {
+                    this.isPatternActive = false;
+                });
+                return;
+            }
+
+            const spawnArea = Math.random();
+            let x, y, direction;
+
+            if (spawnArea < 0.4) {
+                x = this.scene.scale.width;
+                y = Phaser.Math.Between(0, this.scene.scale.height);
+                direction = "straight";
+            } else if (spawnArea < 0.7) {
+                x = Phaser.Math.Between(
+                    this.scene.scale.width * 0.7,
+                    this.scene.scale.width
+                );
+                y = 0;
+                direction = "down";
+            } else {
+                x = Phaser.Math.Between(
+                    this.scene.scale.width * 0.7,
+                    this.scene.scale.width
+                );
+                y = this.scene.scale.height;
+                direction = "up";
+            }
+
+            const monsterType = Math.random() < 0.5 ? Pig : Cat;
+            const monster = new monsterType(this.scene, x, y, 300, direction);
+            this.scene.monsters.add(monster);
+
+            spawnCount++;
+            this.scene.time.delayedCall(500, spawnMonster);
+        };
+
+        spawnMonster();
+    }
+
     ultimatePattern() {
         this.isUltimateUsed = true;
         this.isPatternActive = true;
@@ -124,7 +333,7 @@ export class GoldPig extends Monster {
             angle += Math.PI / 16;
         };
 
-        const scaleAnimation = this.scene.tweens.add({
+        this.scene.tweens.add({
             targets: this,
             scaleX: 5.5,
             scaleY: 5.5,
@@ -133,229 +342,16 @@ export class GoldPig extends Monster {
             repeat: -1,
         });
 
-        const bulletTimer = this.scene.time.addEvent({
-            delay: 100,
-            callback: fireBullets,
-            callbackScope: this,
-            repeat: bulletCount - 1,
-        });
+        for (let i = 0; i < bulletCount; i++) {
+            this.scene.time.delayedCall(i * 100, fireBullets);
+        }
 
         this.scene.time.delayedCall(bulletCount * 100 + 1000, () => {
-            scaleAnimation.stop();
+            this.scene.tweens.killTweensOf(this);
             this.setScale(5);
             this.isPatternActive = false;
             this.startNextPattern();
         });
-    }
-
-    pattern1() {
-        this.isPatternActive = true;
-        const twitchCount = Phaser.Math.Between(2, 3);
-        let delay = 0;
-
-        // 뒤로 움찔거리기 (2-3번)
-        for (let i = 0; i < twitchCount; i++) {
-            this.scene.tweens.add({
-                targets: this,
-                x: this.x + 20,
-                duration: 100,
-                ease: "Power1",
-                yoyo: true,
-                delay: delay,
-            });
-            delay += 200; // 각 움찔거림 사이의 지연 시간
-        }
-
-        // 전방(왼쪽)으로 빠르게 전진
-        this.scene.tweens.add({
-            targets: this,
-            x: 50,
-            duration: 500,
-            ease: "Power2",
-            delay: delay,
-        });
-
-        delay += 500;
-
-        // 제자리로 돌아가기
-        this.scene.tweens.add({
-            targets: this,
-            x: this.initialX,
-            duration: 1000,
-            ease: "Power2",
-            delay: delay,
-            onComplete: () => {
-                this.isPatternActive = false;
-            },
-        });
-    }
-
-    pattern2() {
-        this.isPatternActive = true;
-        const timeline = this.scene.tweens.createTimeline();
-
-        const fireTripleBullet = () => {
-            for (let i = -1; i <= 1; i++) {
-                const bullet = this.bullets.get(this.x, this.y, "enemy-bullet");
-                if (bullet) {
-                    bullet.setScale(2);
-                    bullet.fire(this.x, this.y, -400, i * 50); // 왼쪽으로 발사, 약간의 수직 퍼짐
-                }
-            }
-        };
-
-        // 위아래로 움직이면서 총알 발사
-        timeline.add({
-            targets: this,
-            y: this.initialY - 100, // 위로 이동
-            duration: 1000,
-            ease: "Sine.easeInOut",
-            onUpdate: () => {
-                if (Math.random() < 0.1) {
-                    // 10% 확률로 총알 발사
-                    fireTripleBullet();
-                }
-            },
-        });
-
-        timeline.add({
-            targets: this,
-            y: this.initialY + 100, // 아래로 이동
-            duration: 2000,
-            ease: "Sine.easeInOut",
-            onUpdate: () => {
-                if (Math.random() < 0.1) {
-                    fireTripleBullet();
-                }
-            },
-        });
-
-        timeline.add({
-            targets: this,
-            y: this.initialY, // 원래 위치로
-            duration: 1000,
-            ease: "Sine.easeInOut",
-            onUpdate: () => {
-                if (Math.random() < 0.1) {
-                    fireTripleBullet();
-                }
-            },
-        });
-
-        timeline.play();
-
-        timeline.on("complete", () => {
-            this.isPatternActive = false;
-            this.startNextPattern();
-        });
-    }
-
-    pattern3() {
-        this.isPatternActive = true;
-        const timeline = this.scene.tweens.createTimeline();
-
-        // 위 중앙으로 이동
-        timeline.add({
-            targets: this,
-            x: this.scene.scale.width * 0.75,
-            y: 100,
-            duration: 1000,
-            ease: "Power2",
-        });
-
-        // 다이아몬드 모양 이동
-        const diamondPoints = [
-            {
-                x: this.scene.scale.width * 0.75,
-                y: this.scene.scale.height - 100,
-            },
-            { x: this.scene.scale.width * 0.5, y: this.scene.scale.height / 2 },
-            { x: this.scene.scale.width * 0.75, y: 100 },
-            { x: this.scene.scale.width - 100, y: this.scene.scale.height / 2 },
-        ];
-
-        diamondPoints.forEach((point) => {
-            timeline.add({
-                targets: this,
-                x: point.x,
-                y: point.y,
-                duration: 500,
-                ease: "Linear",
-            });
-        });
-
-        // 원래 위치로 돌아가기
-        timeline.add({
-            targets: this,
-            x: this.initialX,
-            y: this.initialY,
-            duration: 1000,
-            ease: "Power2",
-        });
-
-        timeline.play();
-
-        // 회전 애니메이션
-        this.scene.tweens.add({
-            targets: this,
-            angle: 360,
-            duration: 3000,
-            repeat: 0,
-        });
-
-        timeline.on("complete", () => {
-            this.setRotation(0); // 회전 초기화
-            this.isPatternActive = false;
-            this.startNextPattern();
-        });
-    }
-
-    pattern4() {
-        this.isPatternActive = true;
-        let spawnCount = 0;
-        const maxSpawns = 10;
-
-        const spawnMonster = () => {
-            if (spawnCount >= maxSpawns) {
-                this.scene.time.delayedCall(1000, () => {
-                    this.isPatternActive = false;
-                    this.startNextPattern();
-                });
-                return;
-            }
-
-            const spawnArea = Math.random();
-            let x, y, direction;
-
-            if (spawnArea < 0.4) {
-                x = this.scene.scale.width;
-                y = Phaser.Math.Between(0, this.scene.scale.height);
-                direction = "straight";
-            } else if (spawnArea < 0.7) {
-                x = Phaser.Math.Between(
-                    this.scene.scale.width * 0.7,
-                    this.scene.scale.width
-                );
-                y = 0;
-                direction = "down";
-            } else {
-                x = Phaser.Math.Between(
-                    this.scene.scale.width * 0.7,
-                    this.scene.scale.width
-                );
-                y = this.scene.scale.height;
-                direction = "up";
-            }
-
-            const monsterType = Math.random() < 0.5 ? Pig : Cat;
-            const monster = new monsterType(this.scene, x, y, 300, direction); // 속도를 3배로 설정
-            this.scene.monsters.add(monster);
-
-            spawnCount++;
-            this.scene.time.delayedCall(500, spawnMonster);
-        };
-
-        spawnMonster();
     }
 }
 
