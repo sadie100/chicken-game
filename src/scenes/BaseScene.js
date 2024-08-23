@@ -12,7 +12,7 @@ export class BaseScene extends Scene {
     hudScene = null;
     spawnTimer = null;
     gameTime = 0;
-    stageTime = 1000; // 1분으로 변경 (60000ms = 1분)
+    stageTime = 1500; // 1분으로 변경 (60000ms = 1분)
     background = null;
 
     // 몬스터 스폰 관련 변수
@@ -188,6 +188,11 @@ export class BaseScene extends Scene {
     }
 
     startNextRound(nextSceneKey) {
+        // 아이템 설명 숨기기
+        if (this.itemManager) {
+            this.itemManager.hideAllDescriptions();
+        }
+
         this.tweens.add({
             targets: this.transitionOverlay,
             alpha: 1,

@@ -27,9 +27,6 @@ export class FirstScene extends BaseScene {
 
     completeStage() {
         super.completeStage();
-        // this.time.delayedCall(2000, () => {
-        //     this.goToNextStage();
-        // });
     }
 
     spawnSingleMonster() {

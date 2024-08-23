@@ -85,6 +85,18 @@ export class Item extends Phaser.Physics.Arcade.Sprite {
     applyEffect(player) {
         this.effect(player);
     }
+
+    hideDescription() {
+        if (this.descriptionText) {
+            this.descriptionText.setVisible(false);
+        }
+    }
+
+    showDescription() {
+        if (this.descriptionText) {
+            this.descriptionText.setVisible(true);
+        }
+    }
 }
 
 export class ItemManager {
@@ -98,5 +110,12 @@ export class ItemManager {
         this.items.push(item);
         return item;
     }
-}
 
+    hideAllDescriptions() {
+        this.items.forEach((item) => item.hideDescription());
+    }
+
+    showAllDescriptions() {
+        this.items.forEach((item) => item.showDescription());
+    }
+}

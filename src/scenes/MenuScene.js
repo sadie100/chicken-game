@@ -37,7 +37,7 @@ export class MenuScene extends Scene {
             this.scale.width / 2,
             this.scale.height / 2,
             "knighthawks",
-            "PHASER'S\nREVENGE",
+            "CHICKEN'S\nREVENGE",
             52,
             1
         );
