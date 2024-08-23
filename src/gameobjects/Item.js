@@ -16,15 +16,21 @@ export class Item extends Phaser.Physics.Arcade.Sprite {
         this.effect = this.getEffect(id);
         this.removeEffect = this.getRemoveEffect(id);
         this.description = this.getDescription(id);
+        // 텍스트 스타일 수정
+        const textStyle = {
+            fontSize: "16px",
+            backgroundColor: "#000000",
+            padding: { x: 5, y: 5 },
+            align: "center",
+            wordWrap: { width: 150, useAdvancedWrap: true },
+        };
+
+        // 텍스트 생성 및 설정 수정
         this.descriptionText = scene.add.text(
             x,
             y + this.height + 10,
             this.description,
-            {
-                backgroundColor: "#000000",
-                padding: { x: 5, y: 5 },
-                fontSize: "16px",
-            }
+            textStyle
         );
         this.descriptionText.setOrigin(0.5, 0);
         this.descriptionText.setDepth(1000);
@@ -32,7 +38,7 @@ export class Item extends Phaser.Physics.Arcade.Sprite {
 
     getEffect(id) {
         switch (id) {
-            case "item1":
+            case "BulletBooster":
                 return (player) => {
                     player.increaseBulletDamage(1);
                 };
@@ -47,7 +53,7 @@ export class Item extends Phaser.Physics.Arcade.Sprite {
 
     getRemoveEffect(id) {
         switch (id) {
-            case "item1":
+            case "BulletBooster":
                 return (player) => {
                     player.decreaseBulletDamage(1);
                 };
@@ -62,10 +68,14 @@ export class Item extends Phaser.Physics.Arcade.Sprite {
 
     getDescription(id) {
         switch (id) {
-            case "item1":
-                return "Increases bullet damage by 1";
+            case "BulletBooster":
+                return "달걀 데미지를 강화합니다.";
             case "item2":
                 return "Increases bullet speed by 100";
+            case "item3":
+                return "Grants temporary invincibility";
+            case "item4":
+                return "Restores 1 life point";
             default:
                 return "Unknown item";
         }
@@ -119,3 +129,4 @@ export class ItemManager {
         this.items.forEach((item) => item.showDescription());
     }
 }
+

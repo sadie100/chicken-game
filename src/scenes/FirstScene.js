@@ -89,7 +89,7 @@ export class FirstScene extends BaseScene {
             centerY,
             "itemList1",
             0,
-            "item1"
+            "BulletBooster"
         );
         this.itemManager.addItem(
             centerX + 100,
