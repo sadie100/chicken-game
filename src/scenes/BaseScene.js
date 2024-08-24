@@ -51,10 +51,15 @@ export class BaseScene extends Scene {
             right: Phaser.Input.Keyboard.KeyCodes.D,
         });
 
+        // 스페이스바 입력 처리 수정
         this.input.keyboard.on("keydown-SPACE", () => {
-            this.player.fire();
+            this.player.setData("isFiring", true);
         });
 
+        this.input.keyboard.on("keyup-SPACE", () => {
+            this.player.setData("isFiring", false);
+            this.player.fireTimer = 0;
+        });
         // Collision detection
         this.setupCollisions();
 
@@ -110,6 +115,13 @@ export class BaseScene extends Scene {
         this.handlePlayerMovement(delta);
         if (this.background) {
             this.background.update(delta);
+        }
+
+        this.player.updateCooldown(delta);
+
+        // 자동 발사 처리
+        if (this.player.getData("isFiring")) {
+            this.player.fire();
         }
     }
 

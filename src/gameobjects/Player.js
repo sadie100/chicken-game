@@ -18,6 +18,9 @@ export class Player extends Physics.Arcade.Sprite {
     bulletSpeed = 400;
     baseEggSize = 1;
     eggSize = 1;
+    appliedItems = [];
+    fireDelay = 200; // 0.2초 간격으로 발사
+    fireTimer = 0;
 
     constructor({ scene }) {
         super(scene, 100, scene.scale.height / 2, "chicken_idle");
@@ -47,7 +50,19 @@ export class Player extends Physics.Arcade.Sprite {
         this.stunDuration = 2000; // 2초간 스턴
     }
 
+    updateCooldown(delta) {
+        if (this.fireTimer > 0) {
+            this.fireTimer -= delta;
+            return; // 발사 간격이 지나지 않았으면 발사하지 않음
+        }
+    }
+
     fire() {
+        if (this.fireTimer > 0) {
+            return;
+        }
+        this.fireTimer = this.fireDelay;
+
         const egg = this.eggs.get();
         if (egg) {
             const middleY = this.y + this.height / 2.5;
