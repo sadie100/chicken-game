@@ -3,7 +3,6 @@ import { Preloader } from "./preloader";
 import { GameOverScene } from "./scenes/GameOverScene";
 import { HudScene } from "./scenes/HudScene";
 import { MenuScene } from "./scenes/MenuScene";
-import { SplashScene } from "./scenes/SplashScene";
 import { FirstScene } from "./scenes/FirstScene";
 import { SecondScene } from "./scenes/SecondScene";
 import { BossScene } from "./scenes/BossScene";
@@ -34,7 +33,6 @@ const config = {
     },
     scene: [
         Preloader,
-        SplashScene,
         FirstScene,
         SecondScene,
         BossScene,
