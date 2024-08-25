@@ -30,14 +30,22 @@ export class BaseScene extends Scene {
         }
         this.player = data.player;
         this.points = data.points || 0;
-        this.resetVariables();
-        this.appliedItems = data.appliedItems;
         if (data.lives) {
             this.player.setLives(data.lives);
         }
+
         if (data.heldItem) {
             this.player.heldItem = data.heldItem;
         }
+        if (data.restart) {
+            this.resetScene();
+        }
+    }
+
+    resetScene() {
+        // Reset necessary variables and game state
+        this.points = 0;
+        // Add any other reset logic specific to this scene
     }
 
     create() {
@@ -106,9 +114,14 @@ export class BaseScene extends Scene {
 
         this.itemManager = new ItemManager(this);
 
-        if (this.appliedItems) {
-            this.player.applyStoredItems(this.appliedItems);
-        }
+        // 아이템과 플레이어 간의 충돌 설정
+        this.physics.add.overlap(
+            this.player,
+            this.itemManager.items,
+            this.collectItem,
+            null,
+            this
+        );
 
         // 장면 전환을 위한 오버레이 생성
         this.transitionOverlay = this.add.rectangle(
@@ -123,6 +136,14 @@ export class BaseScene extends Scene {
         this.transitionOverlay.alpha = 1; // 시작 시 완전히 불투명하게 설정
 
         this.events.on("wake", this.onSceneWake, this);
+
+        // 배경 생성 후 전환 오버레이 페이드 아웃
+        this.tweens.add({
+            targets: this.transitionOverlay,
+            alpha: 0,
+            duration: 500,
+            ease: "Power2",
+        });
     }
 
     onSceneWake() {
@@ -180,6 +201,8 @@ export class BaseScene extends Scene {
     setupHUD() {
         this.scene.launch("HudScene");
         this.hudScene = this.scene.get("HudScene");
+        this.hudScene.updateLives(this.player.getLives());
+        this.player.updateHUD(); // 아이템 효과가 적용된 상태로 HUD 업데이트
     }
 
     hitMonster(egg, monster) {

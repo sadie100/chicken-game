@@ -18,7 +18,6 @@ export class Player extends Physics.Arcade.Sprite {
     bulletSpeed = 400;
     baseEggSize = 1;
     eggSize = 1;
-    appliedItems = [];
     fireDelay = 200; // 0.2초 간격으로 발사
     fireTimer = 0;
 
@@ -57,6 +56,13 @@ export class Player extends Physics.Arcade.Sprite {
         }
     }
 
+    setScene(scene) {
+        this.scene = scene;
+        this.scene.add.existing(this);
+        this.scene.physics.add.existing(this);
+        // 필요한 경우 다른 초기화 작업 수행
+    }
+
     fire() {
         if (this.fireTimer > 0) {
             return;
@@ -81,28 +87,9 @@ export class Player extends Physics.Arcade.Sprite {
     collectItem(item) {
         if (this.heldItem) {
             this.heldItem.removeEffect(this);
-            const index = this.appliedItems.indexOf(this.heldItem.id);
-            if (index > -1) {
-                this.appliedItems.splice(index, 1);
-            }
         }
         this.heldItem = item;
         item.applyEffect(this);
-        this.appliedItems.push(item.id);
-        this.updateHUD();
-    }
-
-    applyStoredItems(items) {
-        items.forEach((itemId) => {
-            const item = this.scene.itemManager.createItemById(
-                itemId,
-                this.scene
-            );
-            if (item) {
-                item.applyEffect(this);
-                this.appliedItems.push(itemId);
-            }
-        });
         this.updateHUD();
     }
 

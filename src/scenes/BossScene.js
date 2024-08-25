@@ -10,10 +10,6 @@ export class BossScene extends BaseScene {
 
     init(data) {
         super.init(data);
-
-        if (data.restart) {
-            this.resetScene();
-        }
     }
 
     resetScene() {
@@ -32,17 +28,6 @@ export class BossScene extends BaseScene {
 
     create() {
         super.create();
-
-        if (this.hudScene) {
-            this.hudScene.updateLives(this.player.getLives());
-            this.player.updateHUD();
-        }
-        this.tweens.add({
-            targets: this.transitionOverlay,
-            alpha: 0,
-            duration: 500,
-            ease: "Power2",
-        });
 
         this.spawnBossMonster();
     }

@@ -12,21 +12,6 @@ export class SecondScene extends NormalScene {
         super.init(data);
     }
 
-    create() {
-        super.create();
-        if (this.hudScene) {
-            this.hudScene.updateLives(this.player.getLives());
-            this.player.updateHUD(); // 아이템 효과가 적용된 상태로 HUD 업데이트
-        }
-        // 배경 생성 후 전환 오버레이 페이드 아웃
-        this.tweens.add({
-            targets: this.transitionOverlay,
-            alpha: 0,
-            duration: 500,
-            ease: "Power2",
-        });
-    }
-
     getBackground() {
         return new Background(this, "background2", 3);
     }

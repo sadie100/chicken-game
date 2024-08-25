@@ -4,7 +4,7 @@ import { BaseScene } from "./BaseScene";
 export class NormalScene extends BaseScene {
     spawnTimer = null;
     gameTime = 0;
-    stageTime = 60000; // 1분으로 변경 (60000ms = 1분)
+    stageTime = 10000; // 1분으로 변경 (60000ms = 1분)
 
     // 몬스터 스폰 관련 변수
 
@@ -32,15 +32,7 @@ export class NormalScene extends BaseScene {
     }
 
     init(data) {
-        if (data.restart) {
-            this.resetScene();
-        }
-    }
-    resetScene() {
-        // Reset necessary variables and game state
-        this.resetVariables();
-        this.points = 0;
-        // Add any other reset logic specific to this scene
+        super.init(data);
     }
 
     create() {
@@ -55,17 +47,6 @@ export class NormalScene extends BaseScene {
             callbackScope: this,
             loop: true,
         });
-
-        // ItemManager 생성 및 아이템 추가
-        this.itemManager = new ItemManager(this);
-        // 아이템과 플레이어 간의 충돌 설정
-        this.physics.add.overlap(
-            this.player,
-            this.itemManager.items,
-            this.collectItem,
-            null,
-            this
-        );
     }
 
     createItems() {
@@ -110,6 +91,7 @@ export class NormalScene extends BaseScene {
 
     startNextRound(nextSceneKey) {
         // 아이템 설명 숨기기
+        console.log("itemManager", this.itemManager);
         if (this.itemManager) {
             this.itemManager.hideAllDescriptions();
         }
@@ -122,7 +104,6 @@ export class NormalScene extends BaseScene {
             points: this.points,
             lives: this.player.getLives(),
             heldItem: this.player.heldItem,
-            appliedItems: this.player.appliedItems, // 추가된 부분
         });
         this.previousSceneKey = this.scene.key;
     }
