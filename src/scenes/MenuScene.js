@@ -34,9 +34,10 @@ export class MenuScene extends Scene {
             this.scale.height / 4,
             "치킨게임",
             {
-                fontFamily: "DNFBitBitv2",
+                fontFamily: "Impact",
                 fontSize: 52,
                 color: "#000000",
+                fontStyle: "bold",
             }
         );
         logo_game.setOrigin(0.5, 0.5);
