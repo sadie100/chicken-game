@@ -33,8 +33,7 @@ export class GameClearScene extends Scene {
             마을의 영웅으로 기억될 것이다.\n\n
 
             당신의 점수 : ${this.end_points}\n\n
-            플레이 해주셔서 감사합니다.\n
-            Sadie\n\n`,
+            플레이 해주셔서 감사합니다.\n`,
             {
                 font: "32px Arial",
                 fill: "#ffffff",

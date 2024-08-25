@@ -11,6 +11,7 @@ export class Preloader extends Phaser.Scene {
         this.load.image("life", "life.png");
         this.load.image("next-arrow", "next-arrow.png");
         this.load.image("enemy-bullet", "monsters/enemy-bullet.png");
+        this.load.image("close", "close.svg");
 
         // Load chicken sprites
         this.load.spritesheet("chicken_idle", "/player/chicken_idle.png", {
@@ -48,7 +49,6 @@ export class Preloader extends Phaser.Scene {
             "fonts/pixelfont.png",
             "fonts/pixelfont.xml"
         );
-        this.load.image("knighthawks", "fonts/knight3.png");
 
         // Event to update the loading bar
         this.load.on("progress", (progress) => {
@@ -76,19 +76,6 @@ export class Preloader extends Phaser.Scene {
         this.add.image(32, 16, "itemList1", 1);
         this.add.image(48, 16, "itemList1", 2);
         this.add.image(64, 16, "itemList1", 3);
-        // Create bitmap font and load it in cache
-        const config = {
-            image: "knighthawks",
-            width: 31,
-            height: 25,
-            chars: Phaser.GameObjects.RetroFont.TEXT_SET6,
-            charsPerRow: 10,
-            spacing: { x: 1, y: 1 },
-        };
-        this.cache.bitmapFont.add(
-            "knighthawks",
-            Phaser.GameObjects.RetroFont.Parse(this, config)
-        );
         this.scene.start("MenuScene");
     }
 
@@ -191,6 +178,7 @@ export class Preloader extends Phaser.Scene {
         this.load.image("gameover", "illusts/gameover.png");
         this.load.image("main", "illusts/main.jpg");
         this.load.image("prologue", "illusts/prologue.jpg");
+        this.load.image("menu", "illusts/menu.png");
     }
 }
 
