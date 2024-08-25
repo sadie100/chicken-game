@@ -153,8 +153,16 @@ export class Player extends Physics.Arcade.Sprite {
 
     updateHUD() {
         const hudScene = this.scene.scene.get("HudScene");
+        const effects = this.getUpdatedEffects();
+
         if (hudScene && hudScene.scene.isActive()) {
-            hudScene.updateBulletInfo(this.bulletDamage, this.bulletSpeed);
+            if (effects.length === 0) {
+                hudScene.updateBulletInfo(`강화된 효과 없음`);
+            } else {
+                hudScene.updateBulletInfo(
+                    `강화된 효과 : ${effects.join(", ")}`
+                );
+            }
         }
     }
 
@@ -270,6 +278,23 @@ export class Player extends Physics.Arcade.Sprite {
             bulletSpeed: this.bulletSpeed,
             eggSize: this.eggSize,
         };
+    }
+
+    getUpdatedEffects() {
+        const effects = [];
+        if (this.speed !== this.baseSpeed) {
+            effects.push("스피드");
+        }
+        if (this.bulletDamage !== this.baseBulletDamage) {
+            effects.push("달걀 데미지");
+        }
+        if (this.bulletSpeed !== this.baseBulletSpeed) {
+            effects.push("달걀 속도");
+        }
+        if (this.eggSize !== this.baseEggSize) {
+            effects.push("달걀 크기");
+        }
+        return effects;
     }
 }
 

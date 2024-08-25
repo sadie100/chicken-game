@@ -35,17 +35,13 @@ export class HudScene extends Scene {
         this.time_text.setOrigin(1, 0); // 우측 상단 정렬
 
         // 총알 정보 텍스트 생성 (우측 하단에 위치)
-        this.bullet_info_text = this.add.bitmapText(
+        this.bullet_info_text = this.add.text(
             this.scale.width - 10,
             this.scale.height - 10,
-            "pixelfont",
-            "DMG: 1 SPD: 400",
-            24
+            "",
+            { fontSize: 20 }
         );
         this.bullet_info_text.setOrigin(1, 1); // 우측 하단 정렬
-
-        // 초기 총알 정보 업데이트
-        this.updateBulletInfo(1, 400);
     }
 
     update_points(points) {
@@ -75,9 +71,9 @@ export class HudScene extends Scene {
         );
     }
 
-    updateBulletInfo(damage, speed) {
+    updateBulletInfo(text) {
         if (this.bullet_info_text) {
-            this.bullet_info_text.setText(`DMG: ${damage} SPD: ${speed}`);
+            this.bullet_info_text.setText(text);
         }
     }
 }
