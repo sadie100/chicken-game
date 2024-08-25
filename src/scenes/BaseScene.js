@@ -243,7 +243,7 @@ export class BaseScene extends Scene {
     }
 
     setNextHeartSpawnTime() {
-        const randomDelay = Phaser.Math.Between(10000, 20000); // 10초에서 20초 사이의 랜덤한 시간
+        const randomDelay = Phaser.Math.Between(10000, 15000); // 10초에서 20초 사이의 랜덤한 시간
         this.lastHeartSpawnTime = this.time.now + randomDelay;
     }
 

@@ -17,8 +17,10 @@ export class NormalScene extends BaseScene {
     currentMonsterSpeed = 150; // 현재 속도도 150으로 초기화
     monsterSpeedIncreaseRate = 5;
 
+    middleSpawnTime = 20000; // 20초 후 중급 스폰 시작
+    updownSpawnTime = 30000; // 30초 후 맵 위 아래 스폰 시작
     // 고급 스폰 시스템
-    advancedSpawnTime = 30000; // 30초 후 고급 스폰 시작
+    advancedSpawnTime = 40000; // 40초 후 고급 스폰 시작
     monstersPerSpawn = 1;
 
     //라운드 종료
@@ -144,6 +146,17 @@ export class NormalScene extends BaseScene {
         // 몬스터 속도 증가
         this.currentMonsterSpeed += this.monsterSpeedIncreaseRate;
 
+        // 중급 스폰 시스템
+        if (
+            this.gameTime >= this.middleSpawnTime &&
+            this.monstersPerSpawn < 3
+        ) {
+            this.monstersPerSpawn = Math.min(
+                3,
+                this.monstersPerSpawn +
+                    Math.floor((this.gameTime - this.middleSpawnTime) / 10)
+            );
+        }
         // 고급 스폰 시스템
         if (
             this.gameTime >= this.advancedSpawnTime &&
@@ -167,10 +180,40 @@ export class NormalScene extends BaseScene {
         }
     }
 
-    spawnSingleMonster() {
-        // 자식 클래스에서 구현
+    getSpawnPosition() {
+        let x, y, direction;
+
+        if (this.gameTime >= this.advancedSpawnTime) {
+            return this.getSpecialSpawnPosition(this.scale.width * 0.3);
+        } else if (this.gameTime >= this.updownSpawnTime) {
+            return this.getSpecialSpawnPosition(this.scale.width * 0.7);
+        } else {
+            x = this.scale.width;
+            y = Phaser.Math.Between(0, this.scale.height);
+            direction = "straight";
+        }
+
+        return { x, y, direction };
     }
 
+    getSpecialSpawnPosition(widthBound) {
+        let x, y, direction;
+        const spawnArea = Math.random();
+        if (spawnArea < 0.6) {
+            x = this.scale.width;
+            y = Phaser.Math.Between(0, this.scale.height);
+            direction = "straight";
+        } else if (spawnArea < 0.8) {
+            x = Phaser.Math.Between(widthBound, this.scale.width);
+            y = 0;
+            direction = "down";
+        } else {
+            x = Phaser.Math.Between(widthBound, this.scale.width);
+            y = this.scale.height;
+            direction = "up";
+        }
+        return { x, y, direction };
+    }
     hitMonster(egg, monster) {
         console.log("Egg hit monster. Damage:", egg.damage);
         monster.hit(egg.damage);

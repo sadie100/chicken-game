@@ -30,6 +30,32 @@ export class BossScene extends BaseScene {
         super.create();
 
         this.spawnBossMonster();
+
+        // 게임 시간 및 난이도 조절을 위한 타이머
+        this.time.addEvent({
+            delay: 1000, // 1초마다
+            callback: this.updateGameTime,
+            callbackScope: this,
+            loop: true,
+        });
+    }
+
+    updateGameTime() {
+        this.gameTime += 1000;
+        this.elapsedSeconds = Math.floor(this.gameTime / 1000);
+
+        // HudScene의 시간 업데이트
+        if (this.hudScene) {
+            this.hudScene.updateTime(this.elapsedSeconds);
+        }
+
+        // Heart spawn logic
+        if (
+            this.isHeartSpawnTimerRunning &&
+            this.time.now >= this.lastHeartSpawnTime
+        ) {
+            this.spawnHeart();
+        }
     }
 
     setupCollisionsWithBullets(bullets) {

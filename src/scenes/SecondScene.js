@@ -38,34 +38,7 @@ export class SecondScene extends NormalScene {
     }
 
     spawnSingleMonster() {
-        let x, y, direction;
-
-        if (this.gameTime >= this.advancedSpawnTime) {
-            const spawnArea = Math.random();
-            if (spawnArea < 0.6) {
-                x = this.scale.width;
-                y = Phaser.Math.Between(0, this.scale.height);
-                direction = "straight";
-            } else if (spawnArea < 0.8) {
-                x = Phaser.Math.Between(
-                    this.scale.width * 0.7,
-                    this.scale.width
-                );
-                y = 0;
-                direction = "down";
-            } else {
-                x = Phaser.Math.Between(
-                    this.scale.width * 0.7,
-                    this.scale.width
-                );
-                y = this.scale.height;
-                direction = "up";
-            }
-        } else {
-            x = this.scale.width;
-            y = Phaser.Math.Between(0, this.scale.height);
-            direction = "straight";
-        }
+        const { x, y, direction } = this.getSpawnPosition();
 
         if (Math.random() < 0.3) {
             // 30% 확률로 고양이 스폰
