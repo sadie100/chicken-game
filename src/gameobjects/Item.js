@@ -154,5 +154,34 @@ export class ItemManager {
     showAllDescriptions() {
         this.items.forEach((item) => item.showDescription());
     }
+
+    createItemById(id, scene) {
+        // scene 매개변수를 사용하도록 수정
+        const itemConfig = this.getItemConfigById(id);
+        if (itemConfig) {
+            return new Item(
+                scene,
+                0,
+                0,
+                itemConfig.texture,
+                itemConfig.frame,
+                id
+            );
+        }
+        return null;
+    }
+
+    getItemConfigById(id) {
+        // 이 메서드는 아이템 ID에 해당하는 설정을 반환합니다.
+        // 실제 구현은 게임의 아이템 시스템에 따라 달라질 수 있습니다.
+        const itemConfigs = {
+            BulletBooster: { texture: "itemList1", frame: 0 },
+            EggSpeedBooster: { texture: "itemList1", frame: 1 },
+            SpeedBooster: { texture: "itemList1", frame: 2 },
+            EggSizeBooster: { texture: "itemList1", frame: 3 },
+            // 다른 아이템들...
+        };
+        return itemConfigs[id];
+    }
 }
 

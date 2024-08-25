@@ -9,15 +9,7 @@ export class SecondScene extends NormalScene {
     }
 
     init(data) {
-        this.player = data.player;
-        this.points = data.points || 0;
-        this.resetVariables();
-        if (data.lives) {
-            this.player.setLives(data.lives);
-        }
-        if (data.heldItem) {
-            this.player.heldItem = data.heldItem;
-        }
+        super.init(data);
     }
 
     create() {

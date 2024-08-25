@@ -96,11 +96,6 @@ export class NormalScene extends BaseScene {
             .image(this.scale.width - 50, this.scale.height / 2, "next-arrow")
             .setInteractive();
         this.nextRoundArrow.setScale(2);
-
-        this.nextRoundArrow.on("pointerdown", () => {
-            this.player.setData("canMove", true);
-            this.nextRoundArrow.destroy();
-        });
     }
 
     update(time, delta) {
@@ -127,6 +122,7 @@ export class NormalScene extends BaseScene {
             points: this.points,
             lives: this.player.getLives(),
             heldItem: this.player.heldItem,
+            appliedItems: this.player.appliedItems, // 추가된 부분
         });
         this.previousSceneKey = this.scene.key;
     }

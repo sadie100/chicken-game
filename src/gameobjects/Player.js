@@ -81,9 +81,28 @@ export class Player extends Physics.Arcade.Sprite {
     collectItem(item) {
         if (this.heldItem) {
             this.heldItem.removeEffect(this);
+            const index = this.appliedItems.indexOf(this.heldItem.id);
+            if (index > -1) {
+                this.appliedItems.splice(index, 1);
+            }
         }
         this.heldItem = item;
         item.applyEffect(this);
+        this.appliedItems.push(item.id);
+        this.updateHUD();
+    }
+
+    applyStoredItems(items) {
+        items.forEach((itemId) => {
+            const item = this.scene.itemManager.createItemById(
+                itemId,
+                this.scene
+            );
+            if (item) {
+                item.applyEffect(this);
+                this.appliedItems.push(itemId);
+            }
+        });
         this.updateHUD();
     }
 

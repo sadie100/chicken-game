@@ -2,6 +2,7 @@ import { Scene } from "phaser";
 import { Player } from "../gameobjects/Player";
 import { Monster } from "../gameobjects/monsters/Monster";
 import { Heart } from "../gameobjects/Heart";
+import { ItemManager } from "../gameobjects/Item";
 
 export class BaseScene extends Scene {
     player = null;
@@ -12,6 +13,7 @@ export class BaseScene extends Scene {
     spawnTimer = null;
     gameTime = 0;
     background = null;
+    itemManager = null;
 
     //라운드 종료
     elapsedSeconds = 0;
@@ -20,6 +22,22 @@ export class BaseScene extends Scene {
 
     constructor(key) {
         super(key);
+    }
+
+    init(data) {
+        if (!data) {
+            return;
+        }
+        this.player = data.player;
+        this.points = data.points || 0;
+        this.resetVariables();
+        this.appliedItems = data.appliedItems;
+        if (data.lives) {
+            this.player.setLives(data.lives);
+        }
+        if (data.heldItem) {
+            this.player.heldItem = data.heldItem;
+        }
     }
 
     create() {
@@ -85,6 +103,12 @@ export class BaseScene extends Scene {
             null,
             this
         );
+
+        this.itemManager = new ItemManager(this);
+
+        if (this.appliedItems) {
+            this.player.applyStoredItems(this.appliedItems);
+        }
 
         // 장면 전환을 위한 오버레이 생성
         this.transitionOverlay = this.add.rectangle(
