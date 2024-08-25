@@ -39,10 +39,6 @@ export class GoldPig extends Monster {
     update(time, delta) {
         super.update(time, delta);
 
-        if (this.health <= 50 && !this.isUltimateUsed) {
-            this.ultimatePattern();
-        }
-
         if (!this.isPatternActive) {
             this.startNextPattern();
         }
@@ -50,6 +46,12 @@ export class GoldPig extends Monster {
 
     startNextPattern() {
         if (!this.isPatternActive) {
+            if (this.health <= 50 && !this.isUltimateUsed) {
+                this.patterns.push(this.ultimatePattern.bind(this));
+                this.ultimatePattern();
+                this.isUltimateUsed = true;
+                return;
+            }
             this.isPatternActive = true;
             this.patterns[this.currentPatternIndex]();
             this.currentPatternIndex = Phaser.Math.Between(
@@ -308,25 +310,13 @@ export class GoldPig extends Monster {
     }
 
     ultimatePattern() {
-        this.isUltimateUsed = true;
         this.isPatternActive = true;
 
         const centerX = this.x;
         const centerY = this.y;
-        const directions = [
-            { x: 1, y: 0 },
-            { x: -1, y: 0 },
-            { x: 0, y: 1 },
-            { x: 0, y: -1 },
-            { x: 0.707, y: 0.707 },
-            { x: -0.707, y: 0.707 },
-            { x: 0.707, y: -0.707 },
-            { x: -0.707, y: -0.707 },
-        ];
-
-        let angle = 0;
         const bulletCount = 32;
         const bulletSpeed = 300;
+        let angle = 0;
 
         const fireBullets = () => {
             for (let i = 0; i < 8; i++) {
@@ -337,38 +327,48 @@ export class GoldPig extends Monster {
                 );
                 if (bullet) {
                     bullet.setScale(2);
-                    const direction = directions[i];
-                    bullet.fire(
-                        centerX,
-                        centerY,
-                        direction.x * bulletSpeed,
-                        direction.y * bulletSpeed
-                    );
-                    bullet.setRotation(angle);
+                    const radians = Phaser.Math.DegToRad(angle + i * 45);
+                    const velocityX = Math.cos(radians) * bulletSpeed;
+                    const velocityY = Math.sin(radians) * bulletSpeed;
+                    bullet.fire(centerX, centerY, velocityX, velocityY);
+                    bullet.setRotation(radians);
                 }
             }
-            angle += Math.PI / 16;
+            angle += 11.5; // 360 / 32 = 11.25 (한 바퀴를 32번에 나눔)
         };
 
-        this.scene.tweens.add({
-            targets: this,
-            scaleX: 5.5,
-            scaleY: 5.5,
-            duration: 500,
-            yoyo: true,
-            repeat: -1,
-        });
+        const executePattern = (callback) => {
+            this.scene.tweens.add({
+                targets: this,
+                scaleX: 5.5,
+                scaleY: 5.5,
+                duration: 500,
+                yoyo: true,
+                repeat: -1,
+            });
 
-        for (let i = 0; i < bulletCount; i++) {
-            this.scene.time.delayedCall(i * 100, fireBullets);
-        }
+            for (let i = 0; i < bulletCount; i++) {
+                this.scene.time.delayedCall(i * 100, fireBullets);
+            }
 
-        this.scene.time.delayedCall(bulletCount * 100 + 1000, () => {
-            this.scene.tweens.killTweensOf(this);
-            this.setScale(5);
-            this.isPatternActive = false;
-            this.startNextPattern();
-        });
+            this.scene.time.delayedCall(bulletCount * 100 + 1000, () => {
+                this.scene.tweens.killTweensOf(this);
+                this.setScale(5);
+                if (callback) callback();
+            });
+        };
+
+        const patternWithDelay = (remainingPatterns) => {
+            executePattern(() => {
+                if (remainingPatterns > 0) {
+                    patternWithDelay(remainingPatterns - 1);
+                } else {
+                    this.isPatternActive = false;
+                }
+            });
+        };
+
+        patternWithDelay(1); // 처음 실행 + 1번 더 반복 = 총 2번 실행
     }
 }
 
