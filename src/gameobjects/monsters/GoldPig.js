@@ -52,8 +52,10 @@ export class GoldPig extends Monster {
         if (!this.isPatternActive) {
             this.isPatternActive = true;
             this.patterns[this.currentPatternIndex]();
-            this.currentPatternIndex =
-                (this.currentPatternIndex + 1) % this.patterns.length;
+            this.currentPatternIndex = Phaser.Math.Between(
+                0,
+                this.patterns.length - 1
+            );
         }
     }
 
