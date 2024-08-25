@@ -18,7 +18,6 @@ export class BaseScene extends Scene {
 
     //라운드 종료
     elapsedSeconds = 0;
-    isStageComplete = false;
     nextRoundArrow = null;
 
     constructor(key) {

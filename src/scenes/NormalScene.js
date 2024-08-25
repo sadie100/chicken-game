@@ -1,4 +1,3 @@
-import { ItemManager } from "../gameobjects/Item";
 import { BaseScene } from "./BaseScene";
 
 export class NormalScene extends BaseScene {
@@ -39,7 +38,7 @@ export class NormalScene extends BaseScene {
         super.create();
 
         this.setupSpawnTimer();
-
+        this.isStageComplete = false;
         // 게임 시간 및 난이도 조절을 위한 타이머
         this.time.addEvent({
             delay: 1000, // 1초마다
