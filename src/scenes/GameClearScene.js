@@ -66,7 +66,7 @@ export class GameClearScene extends Scene {
         });
 
         // 재시작 안내
-        const skipText = this.add
+        this.add
             .bitmapText(
                 this.scale.width - 10,
                 this.scale.height - 10,
@@ -80,10 +80,21 @@ export class GameClearScene extends Scene {
             delay: 1000,
             callback: () => {
                 this.input.on("pointerdown", () => {
-                    this.scene.start("MenuScene");
+                    this.resetGame();
                 });
             },
         });
+    }
+    resetGame() {
+        // 모든 활성 Scene을 종료
+        this.scene.manager.scenes.forEach((scene) => {
+            if (scene.scene.isActive()) {
+                this.scene.stop(scene.scene.key);
+            }
+        });
+
+        // MenuScene 시작
+        this.scene.start("MenuScene");
     }
 }
 

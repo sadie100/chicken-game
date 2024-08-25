@@ -89,25 +89,6 @@ export class NormalScene extends BaseScene {
         }
     }
 
-    startNextRound(nextSceneKey) {
-        console.log(this.player);
-        // 아이템 설명 숨기기
-        if (this.itemManager) {
-            this.itemManager.hideAllDescriptions();
-        }
-
-        this.scene.stop(this.scene.key);
-        // 다음 Scene으로 전환 시 fade out 효과 대신 즉시 전환
-        this.scene.start(nextSceneKey, {
-            x: this.scale.width,
-            player: this.player,
-            points: this.points,
-            lives: this.player.getLives(),
-            heldItem: this.player.heldItem,
-        });
-        this.previousSceneKey = this.scene.key;
-    }
-
     resetVariables() {
         this.gameTime = 0;
         this.elapsedSeconds = 0;

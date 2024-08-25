@@ -13,7 +13,6 @@ export class HudScene extends Scene {
     create() {
         // 생명력 UI 생성
         this.lives_group = this.add.group();
-        this.updateLives(5); // 초기 생명력 설정
 
         // 점수 텍스트 생성 (생명력 UI 아래에 위치)
         this.points_text = this.add.bitmapText(
@@ -45,30 +44,35 @@ export class HudScene extends Scene {
     }
 
     update_points(points) {
-        this.points_text.setText(
-            `POINTS:${points.toString().padStart(4, "0")}`
-        );
+        if (this.points_text) {
+            this.points_text.setText(
+                `POINTS:${points.toString().padStart(4, "0")}`
+            );
+        }
     }
 
     updateLives(lives) {
-        if (!this.lives_group) {
-            this.create();
-        }
-        this.lives_group.clear(true, true);
-        for (let i = 0; i < lives; i++) {
-            const life = this.add.image(20 + i * 30, 25, "life").setScale(1.5);
-            this.lives_group.add(life);
+        if (this.lives_group) {
+            this.lives_group.clear(true, true);
+            for (let i = 0; i < lives; i++) {
+                const life = this.add
+                    .image(20 + i * 30, 25, "life")
+                    .setScale(1.5);
+                this.lives_group.add(life);
+            }
         }
     }
 
     updateTime(seconds) {
-        const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = seconds % 60;
-        this.time_text.setText(
-            `TIME: ${minutes.toString().padStart(2, "0")}:${remainingSeconds
-                .toString()
-                .padStart(2, "0")}`
-        );
+        if (this.time_text) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            this.time_text.setText(
+                `TIME: ${minutes.toString().padStart(2, "0")}:${remainingSeconds
+                    .toString()
+                    .padStart(2, "0")}`
+            );
+        }
     }
 
     updateBulletInfo(text) {

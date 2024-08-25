@@ -14,6 +14,7 @@ export class BaseScene extends Scene {
     gameTime = 0;
     background = null;
     itemManager = null;
+    lives = 5;
 
     //라운드 종료
     elapsedSeconds = 0;
@@ -33,9 +34,7 @@ export class BaseScene extends Scene {
             this.effects = data.player.getEffects();
         }
         this.points = data.points || 0;
-        if (data.lives) {
-            this.player.setLives(data.lives);
-        }
+        this.lives = data.lives || 5;
 
         if (data.heldItem) {
             this.player.heldItem = data.heldItem;
@@ -65,6 +64,8 @@ export class BaseScene extends Scene {
         if (this.effects) {
             this.player.setEffects(this.effects);
         }
+
+        this.player.setLives(this.lives);
 
         // Monsters group
         this.monsters = this.physics.add.group({
@@ -205,7 +206,6 @@ export class BaseScene extends Scene {
     }
 
     setupHUD() {
-        this.scene.launch("HudScene");
         this.hudScene = this.scene.get("HudScene");
         this.hudScene.updateLives(this.player.getLives());
         this.player.updateHUD(); // 아이템 효과가 적용된 상태로 HUD 업데이트
@@ -274,6 +274,7 @@ export class BaseScene extends Scene {
 
     gameOver() {
         console.log("Game Over called");
+        this.scene.stop();
         this.scene.start("GameOverScene", {
             points: this.points,
             lastPlayedScene: this.scene.key,
@@ -313,6 +314,24 @@ export class BaseScene extends Scene {
         ) {
             this.player.playIdleAnimation();
         }
+    }
+
+    startNextRound(nextSceneKey) {
+        // 아이템 설명 숨기기
+        if (this.itemManager) {
+            this.itemManager.hideAllDescriptions();
+        }
+
+        this.scene.stop(this.scene.key);
+        // 다음 Scene으로 전환 시 fade out 효과 대신 즉시 전환
+        this.scene.start(nextSceneKey, {
+            x: this.scale.width,
+            player: this.player,
+            points: this.points,
+            lives: this.player.getLives(),
+            heldItem: this.player.heldItem,
+        });
+        this.previousSceneKey = this.scene.key;
     }
 }
 

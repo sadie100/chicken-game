@@ -50,6 +50,7 @@ export class MenuScene extends Scene {
             text: "게임 시작",
             onClick: () => {
                 this.scene.stop("MenuScene");
+                this.scene.start("HudScene");
                 this.scene.start("FirstScene", { restart: true });
             },
         });
