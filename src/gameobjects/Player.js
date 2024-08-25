@@ -255,5 +255,21 @@ export class Player extends Physics.Arcade.Sprite {
     setLives(lives) {
         this.lives = lives;
     }
+
+    setEffects({ speed, bulletDamage, bulletSpeed, eggSize }) {
+        this.speed = speed;
+        this.bulletDamage = bulletDamage;
+        this.bulletSpeed = bulletSpeed;
+        this.eggSize = eggSize;
+    }
+
+    getEffects() {
+        return {
+            speed: this.speed,
+            bulletDamage: this.bulletDamage,
+            bulletSpeed: this.bulletSpeed,
+            eggSize: this.eggSize,
+        };
+    }
 }
 

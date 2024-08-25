@@ -4,7 +4,7 @@ import { BaseScene } from "./BaseScene";
 export class NormalScene extends BaseScene {
     spawnTimer = null;
     gameTime = 0;
-    stageTime = 10000; // 1분으로 변경 (60000ms = 1분)
+    stageTime = 60000; // 1분으로 변경 (60000ms = 1분)
 
     // 몬스터 스폰 관련 변수
 
@@ -90,8 +90,8 @@ export class NormalScene extends BaseScene {
     }
 
     startNextRound(nextSceneKey) {
+        console.log(this.player);
         // 아이템 설명 숨기기
-        console.log("itemManager", this.itemManager);
         if (this.itemManager) {
             this.itemManager.hideAllDescriptions();
         }

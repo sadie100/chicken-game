@@ -29,6 +29,9 @@ export class BaseScene extends Scene {
             return;
         }
         this.player = data.player;
+        if (this.player) {
+            this.effects = data.player.getEffects();
+        }
         this.points = data.points || 0;
         if (data.lives) {
             this.player.setLives(data.lives);
@@ -59,6 +62,9 @@ export class BaseScene extends Scene {
 
         // Player
         this.player = new Player({ scene: this });
+        if (this.effects) {
+            this.player.setEffects(this.effects);
+        }
 
         // Monsters group
         this.monsters = this.physics.add.group({
