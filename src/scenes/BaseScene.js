@@ -46,6 +46,7 @@ export class BaseScene extends Scene {
     resetScene() {
         // Reset necessary variables and game state
         this.points = 0;
+        this.resetVariables();
         // Add any other reset logic specific to this scene
     }
 
