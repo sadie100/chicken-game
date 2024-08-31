@@ -71,7 +71,7 @@ export class Preloader extends Phaser.Scene {
         this.load.image("health_bar_fill", "monsters/health_bar_fill.png");
         this.load.image("health_bar_border", "monsters/health_bar_border.png");
 
-        this.load.audio("bgm1", "assets/bgm1.mp3");
+        this.load.audio("bgm1", "sounds/bgm1.mp3");
     }
 
     create() {

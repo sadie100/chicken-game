@@ -322,6 +322,10 @@ export class BaseScene extends Scene {
             this.itemManager.hideAllDescriptions();
         }
 
+        if (this.bgm) {
+            this.bgm.stop();
+        }
+
         this.scene.stop(this.scene.key);
         // 다음 Scene으로 전환 시 fade out 효과 대신 즉시 전환
         this.scene.start(nextSceneKey, {
@@ -334,4 +338,3 @@ export class BaseScene extends Scene {
         this.previousSceneKey = this.scene.key;
     }
 }
-
