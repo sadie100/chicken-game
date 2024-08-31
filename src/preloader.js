@@ -4,31 +4,7 @@ export class Preloader extends Phaser.Scene {
     }
 
     preload() {
-        /*** Loading Bar ***/
-        let progressBar = this.add.graphics();
-        let loadingText = this.add.text(
-            this.cameras.main.width / 2,
-            this.cameras.main.height / 3,
-            "Heading to the Chicken World...",
-            {
-                fontFamily: "Impact",
-                fontSize: "48px",
-                color: "#ffffff",
-            }
-        );
-        loadingText.setOrigin(0.5, 0.5);
-
-        let percentText = this.add.text(
-            this.cameras.main.width / 2,
-            this.cameras.main.height / 2,
-            "0%",
-            {
-                fontFamily: "Impact",
-                fontSize: "48px",
-                color: "#ffffff",
-            }
-        );
-        percentText.setOrigin(0.5, 0.5);
+        this.displayLoadingBar();
 
         this.load.setPath("assets");
         // 배경 에셋 로드
@@ -95,25 +71,7 @@ export class Preloader extends Phaser.Scene {
         this.load.image("health_bar_fill", "monsters/health_bar_fill.png");
         this.load.image("health_bar_border", "monsters/health_bar_border.png");
 
-        const camera = this.cameras.main;
-
-        this.load.on("progress", function (value) {
-            percentText.setText(`${Math.ceil(value * 100)}%`);
-            progressBar.clear();
-            progressBar.fillStyle(0x8b0000, 1);
-            progressBar.fillRect(
-                camera.width / 4,
-                camera.height / 2.5,
-                (value * camera.width) / 2,
-                camera.height / 20
-            );
-        });
-
-        this.load.on("complete", function () {
-            progressBar.destroy();
-            loadingText.destroy();
-            percentText.destroy();
-        });
+        this.load.audio("bgm1", "assets/bgm1.mp3");
     }
 
     create() {
@@ -226,5 +184,52 @@ export class Preloader extends Phaser.Scene {
         this.load.image("prologue", "illusts/prologue.jpg");
         this.load.image("menu", "illusts/menu.png");
     }
-}
 
+    displayLoadingBar() {
+        /*** Loading Bar ***/
+        let progressBar = this.add.graphics();
+        let loadingText = this.add.text(
+            this.cameras.main.width / 2,
+            this.cameras.main.height / 3,
+            "Heading to the Chicken World...",
+            {
+                fontFamily: "Impact",
+                fontSize: "48px",
+                color: "#ffffff",
+            }
+        );
+        loadingText.setOrigin(0.5, 0.5);
+
+        let percentText = this.add.text(
+            this.cameras.main.width / 2,
+            this.cameras.main.height / 2,
+            "0%",
+            {
+                fontFamily: "Impact",
+                fontSize: "48px",
+                color: "#ffffff",
+            }
+        );
+        percentText.setOrigin(0.5, 0.5);
+
+        const camera = this.cameras.main;
+
+        this.load.on("progress", function (value) {
+            percentText.setText(`${Math.ceil(value * 100)}%`);
+            progressBar.clear();
+            progressBar.fillStyle(0x8b0000, 1);
+            progressBar.fillRect(
+                camera.width / 4,
+                camera.height / 2.5,
+                (value * camera.width) / 2,
+                camera.height / 20
+            );
+        });
+
+        this.load.on("complete", function () {
+            progressBar.destroy();
+            loadingText.destroy();
+            percentText.destroy();
+        });
+    }
+}
