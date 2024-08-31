@@ -48,6 +48,10 @@ export class NormalScene extends BaseScene {
             callbackScope: this,
             loop: true,
         });
+
+        // Play background music
+        this.bgm = this.sound.add("bgm1", { loop: true, volume: 0.3 });
+        this.bgm.play();
     }
 
     createItems() {
@@ -231,4 +235,3 @@ export class NormalScene extends BaseScene {
         return this.initialSpawnDelay;
     }
 }
-
