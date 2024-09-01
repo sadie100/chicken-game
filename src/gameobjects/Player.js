@@ -238,6 +238,11 @@ export class Player extends Physics.Arcade.Sprite {
     loseLife() {
         if (this.isInvulnerable) return this.lives;
 
+        // Play the hit sound effect
+        if (this.soundManager) {
+            this.soundManager.playSound("hitSound");
+        }
+
         this.lives--;
         this.flashRed();
         return this.lives;
