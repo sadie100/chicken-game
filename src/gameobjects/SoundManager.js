@@ -56,88 +56,125 @@ export class SoundManager {
     }
 
     createVolumeControl() {
-        if (!this.currentScene) return;
+        const width = 150;
+        const height = 15;
+        const x = 10;
+        const y = this.currentScene.scale.height - 30;
 
-        if (this.volumeControl) {
-            this.volumeControl.destroy();
-        }
-
-        const width = 200;
-        const height = 20;
-        const x = this.currentScene.scale.width - width - 10;
-        const y = 40;
-
-        // Create background for slider
-        const background = this.currentScene.add.rectangle(
+        // 배경 생성 (클릭 가능한 영역)
+        this.sliderBackground = this.currentScene.add.rectangle(
             0,
             0,
             width,
             height,
-            0x000000,
-            0.5
+            0x333333
         );
-        background.setOrigin(0, 0.5);
+        this.sliderBackground.setOrigin(0, 0.5);
+        this.sliderBackground.setInteractive(
+            new Phaser.Geom.Rectangle(0, -height / 2, width, height),
+            Phaser.Geom.Rectangle.Contains
+        );
+        this.addPointerEffect(this.sliderBackground);
 
-        // Create slider
-        const slider = this.currentScene.add.rectangle(
+        // 볼륨 레벨을 나타내는 막대 생성
+        this.volumeBar = this.currentScene.add.rectangle(
             0,
             0,
-            width,
+            width * this.volume,
             height,
-            0xffffff
+            0xea8015
         );
-        slider.setOrigin(0, 0.5);
+        this.volumeBar.setOrigin(0, 0.5);
 
-        // Create handle
-        const handle = this.currentScene.add.circle(
-            width,
+        // 슬라이더 핸들 생성
+        this.handle = this.currentScene.add.circle(
+            width * this.volume,
             0,
-            height / 2,
+            height / 2 + 5,
             0xffffff
         );
+        this.handle.setInteractive({ draggable: true });
+        this.addPointerEffect(this.handle);
 
-        // Make handle interactive
-        handle.setInteractive({ draggable: true });
+        // 배경 클릭 이벤트 처리
+        this.sliderBackground.on("pointerdown", this.onSliderClick, this);
 
-        // Update volume on drag
-        handle.on("drag", (pointer, dragX) => {
-            dragX = Phaser.Math.Clamp(dragX, 0, width);
-            handle.x = dragX;
-            slider.width = dragX;
-            this.setVolume(dragX / width);
+        // 드래그 이벤트 처리
+        this.handle.on("drag", (pointer, dragX) => {
+            this.updateVolumeFromPosition(dragX);
         });
 
-        // Create mute button
-        const muteButton = this.currentScene.add.text(-50, 0, "🔊", {
-            fontSize: "24px",
+        // 볼륨 텍스트 생성
+        this.volumeText = this.currentScene.add.text(width + 20, 0, "100%", {
+            fontSize: "16px",
+            color: "#ffffff",
         });
-        muteButton.setOrigin(0.5);
-        muteButton.setInteractive({ useHandCursor: true });
+        this.volumeText.setOrigin(0, 0.5);
 
-        muteButton.on("pointerdown", () => {
+        // 음소거 버튼 생성
+        this.muteButton = this.currentScene.add.text(
+            width + 70,
+            0,
+            this.isMuted ? "🔇" : "🔊",
+            { fontSize: "20px" }
+        );
+        this.muteButton.setOrigin(0, 0.5);
+        this.muteButton.setInteractive({ useHandCursor: true });
+
+        this.muteButton.on("pointerdown", () => {
             this.toggleMute();
-            muteButton.setText(this.isMuted ? "🔇" : "🔊");
+            this.muteButton.setText(this.isMuted ? "🔇" : "🔊");
+            this.updateVolumeDisplay();
         });
 
-        // Add all elements to a container for easy management
+        // 모든 요소를 컨테이너에 추가
         this.volumeControl = this.currentScene.add.container(x, y, [
-            background,
-            slider,
-            handle,
-            muteButton,
+            this.sliderBackground,
+            this.volumeBar,
+            this.handle,
+            this.volumeText,
+            this.muteButton,
         ]);
-        this.volumeControl.setDepth(1000); // Ensure it's on top of other game elements
+        this.volumeControl.setDepth(1000);
 
-        // Listen for scene resize events
-        this.currentScene.scale.on("resize", this.updateUIPosition, this);
+        this.updateVolumeDisplay();
     }
 
-    updateUIPosition() {
-        if (this.volumeControl && this.currentScene) {
-            const width = 200;
-            const x = this.currentScene.scale.width - width - 10;
-            const y = 40;
-            this.volumeControl.setPosition(x, y);
-        }
+    onSliderClick(pointer) {
+        console.log("pointer", pointer);
+        const localX =
+            pointer.x - this.volumeControl.x - this.sliderBackground.x;
+        this.updateVolumeFromPosition(localX);
+    }
+
+    updateVolumeFromPosition(position) {
+        const width = 150;
+        position = Phaser.Math.Clamp(position, 0, width);
+        this.handle.x = position;
+        this.volumeBar.width = position;
+        const newVolume = position / width;
+        this.setVolume(newVolume);
+        this.updateVolumeText(newVolume);
+    }
+
+    updateVolumeDisplay() {
+        const volume = this.isMuted ? 0 : this.volume;
+        this.volumeBar.width = 150 * volume;
+        this.handle.x = 150 * volume;
+        this.updateVolumeText(volume);
+    }
+
+    updateVolumeText(volume) {
+        this.volumeText.setText(`${Math.round(volume * 100)}%`);
+    }
+
+    addPointerEffect(gameObject) {
+        gameObject.on("pointerover", () => {
+            this.currentScene.input.setDefaultCursor("pointer");
+        });
+
+        gameObject.on("pointerout", () => {
+            this.currentScene.input.setDefaultCursor("default");
+        });
     }
 }
