@@ -75,8 +75,13 @@ export class Preloader extends Phaser.Scene {
 
         //효과음, bgm
         this.load.audio("bgm1", "sounds/bgm1.mp3");
+        this.load.audio("bgm2", "sounds/bgm2.mp3");
+        this.load.audio("bgm3", "sounds/bgm3.mp3");
+        this.load.audio("gameclear", "sounds/gameclear.mp3");
+        this.load.audio("stageclear", "sounds/stageclear.wav");
         this.load.audio("eggSound", "sounds/egg.mp3");
         this.load.audio("hitSound", "sounds/hit.wav");
+        this.load.audio("gameover", "sounds/gameover.wav");
     }
 
     create() {

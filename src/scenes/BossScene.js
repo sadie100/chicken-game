@@ -29,6 +29,8 @@ export class BossScene extends BaseScene {
     create() {
         super.create();
 
+        this.soundManager.changeBGM("bgm3");
+
         this.spawnBossMonster();
 
         // 게임 시간 및 난이도 조절을 위한 타이머
@@ -121,4 +123,3 @@ export class BossScene extends BaseScene {
         }
     }
 }
-

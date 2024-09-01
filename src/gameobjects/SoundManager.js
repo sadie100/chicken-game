@@ -4,6 +4,7 @@ export class SoundManager {
         this.isMuted = false;
         this.volume = 1;
         this.currentScene = null;
+        this.currentBGM = null;
     }
 
     setScene(scene) {
@@ -20,22 +21,54 @@ export class SoundManager {
         }
         this.sounds[key] = this.currentScene.sound.add(key, {
             loop: config.loop || false,
-            volume: this.volume * (config.volume || 1),
+            volume: config.volume || 1,
         });
         return this.sounds[key];
     }
 
-    playSound(key) {
-        if (this.sounds[key] && !this.isMuted) {
-            this.sounds[key].play({ volume: this.volume });
+    playSound(key, config = {}) {
+        if (!this.sounds[key]) {
+            this.addSound(key, config);
         }
+        if (this.sounds[key] && !this.isMuted) {
+            return this.sounds[key].play({
+                ...config,
+                volume: this.volume * (config.volume || 1),
+            });
+        }
+    }
+
+    fadeOut(key, duration = 1000) {
+        if (this.sounds[key]) {
+            this.currentScene.tweens.add({
+                targets: this.sounds[key],
+                volume: 0,
+                duration: duration,
+                onComplete: () => {
+                    this.stopSound(key);
+                },
+            });
+        }
+    }
+
+    changeBGM(newBGMKey, fadeOutDuration = 1000) {
+        if (this.currentBGM) {
+            this.fadeOut(this.currentBGM, fadeOutDuration);
+        }
+        this.currentBGM = newBGMKey;
+        this.playSound(newBGMKey, { loop: true, volume: 0.3 });
     }
 
     setVolume(volume) {
         this.volume = volume;
         Object.values(this.sounds).forEach((sound) => {
-            sound.setVolume(this.volume);
+            sound.setVolume(this.volume * sound.volume);
         });
+    }
+
+    stopCurrentBGM() {
+        this.stopSound(this.currentBGM);
+        this.currentBGM = null;
     }
 
     stopSound(key) {
@@ -141,7 +174,6 @@ export class SoundManager {
     }
 
     onSliderClick(pointer) {
-        console.log("pointer", pointer);
         const localX =
             pointer.x - this.volumeControl.x - this.sliderBackground.x;
         this.updateVolumeFromPosition(localX);

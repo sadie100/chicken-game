@@ -76,7 +76,7 @@ export class Player extends Physics.Arcade.Sprite {
             const middleY = this.y + this.height / 2.5;
             // Play the egg sound effect
             if (this.soundManager) {
-                this.soundManager.playSound("eggSound");
+                this.soundManager.playSound("eggSound", { volume: 0.5 });
             }
             egg.fire(this.x, middleY, this.bulletSpeed);
             egg.setScale(this.eggSize);
@@ -240,7 +240,7 @@ export class Player extends Physics.Arcade.Sprite {
 
         // Play the hit sound effect
         if (this.soundManager) {
-            this.soundManager.playSound("hitSound");
+            this.soundManager.playSound("hitSound", { volume: 1 });
         }
 
         this.lives--;

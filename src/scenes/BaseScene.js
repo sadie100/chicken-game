@@ -154,9 +154,6 @@ export class BaseScene extends Scene {
 
         // Get SoundManager from registry
         this.soundManager = this.game.registry.get("soundManager");
-        // Add this line to add the egg sound effect
-        this.soundManager.addSound("eggSound", { volume: 0.5 });
-        this.soundManager.addSound("hitSound", { volume: 1 });
     }
 
     onSceneWake() {
@@ -327,8 +324,6 @@ export class BaseScene extends Scene {
         if (this.itemManager) {
             this.itemManager.hideAllDescriptions();
         }
-
-        this.soundManager.stopSound("bgm1");
 
         this.scene.stop(this.scene.key);
         // 다음 Scene으로 전환 시 fade out 효과 대신 즉시 전환
