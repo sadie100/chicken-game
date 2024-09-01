@@ -123,4 +123,3 @@ export class MenuScene extends Scene {
         this.dialog.setVisible(false);
     }
 }
-
