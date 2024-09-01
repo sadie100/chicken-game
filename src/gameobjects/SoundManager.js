@@ -8,10 +8,8 @@ export class SoundManager {
     }
 
     setScene(scene) {
-        if (this.currentScene !== scene) {
-            this.currentScene = scene;
-            this.createVolumeControl();
-        }
+        this.currentScene = scene;
+        this.createVolumeControl();
     }
 
     addSound(key, config = {}) {
