@@ -151,6 +151,9 @@ export class BaseScene extends Scene {
             duration: 500,
             ease: "Power2",
         });
+
+        // Get SoundManager from registry
+        this.soundManager = this.game.registry.get("soundManager");
     }
 
     onSceneWake() {
@@ -322,9 +325,7 @@ export class BaseScene extends Scene {
             this.itemManager.hideAllDescriptions();
         }
 
-        if (this.bgm) {
-            this.bgm.stop();
-        }
+        this.soundManager.stopSound("bgm1");
 
         this.scene.stop(this.scene.key);
         // 다음 Scene으로 전환 시 fade out 효과 대신 즉시 전환

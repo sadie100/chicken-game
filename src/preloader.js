@@ -1,3 +1,5 @@
+import { SoundManager } from "./gameobjects/SoundManager";
+
 export class Preloader extends Phaser.Scene {
     constructor() {
         super({ key: "Preloader" });
@@ -80,6 +82,12 @@ export class Preloader extends Phaser.Scene {
         this.add.image(32, 16, "itemList1", 1);
         this.add.image(48, 16, "itemList1", 2);
         this.add.image(64, 16, "itemList1", 3);
+
+        // Initialize SoundManager
+        this.game.sound.mute = false; // Ensure sound is not muted by default
+        this.soundManager = new SoundManager(this);
+        this.game.registry.set("soundManager", this.soundManager);
+
         this.scene.start("MenuScene");
     }
 
