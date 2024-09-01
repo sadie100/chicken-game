@@ -47,6 +47,8 @@ export class Player extends Physics.Arcade.Sprite {
         // 스턴 관련 변수
         this.canStun = false;
         this.stunDuration = 2000; // 2초간 스턴
+
+        this.soundManager = this.scene.game.registry.get("soundManager");
     }
 
     updateCooldown(delta) {
@@ -72,8 +74,12 @@ export class Player extends Physics.Arcade.Sprite {
         const egg = this.eggs.get();
         if (egg) {
             const middleY = this.y + this.height / 2.5;
+            // Play the egg sound effect
+            if (this.soundManager) {
+                this.soundManager.playSound("eggSound");
+            }
             egg.fire(this.x, middleY, this.bulletSpeed);
-            egg.setScale(this.eggSize); // 새로 추가된 줄
+            egg.setScale(this.eggSize);
             egg.damage = this.bulletDamage;
             egg.body.onWorldBounds = true;
             egg.body.world.on("worldbounds", (body) => {
@@ -297,4 +303,3 @@ export class Player extends Physics.Arcade.Sprite {
         return effects;
     }
 }
-

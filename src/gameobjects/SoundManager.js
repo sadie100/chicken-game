@@ -27,8 +27,15 @@ export class SoundManager {
 
     playSound(key) {
         if (this.sounds[key] && !this.isMuted) {
-            this.sounds[key].play();
+            this.sounds[key].play({ volume: this.volume });
         }
+    }
+
+    setVolume(volume) {
+        this.volume = volume;
+        Object.values(this.sounds).forEach((sound) => {
+            sound.setVolume(this.volume);
+        });
     }
 
     stopSound(key) {
@@ -39,13 +46,6 @@ export class SoundManager {
 
     stopAllSounds() {
         Object.values(this.sounds).forEach((sound) => sound.stop());
-    }
-
-    setVolume(volume) {
-        this.volume = volume;
-        Object.values(this.sounds).forEach((sound) => {
-            sound.setVolume(this.volume);
-        });
     }
 
     toggleMute() {

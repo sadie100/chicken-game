@@ -154,6 +154,8 @@ export class BaseScene extends Scene {
 
         // Get SoundManager from registry
         this.soundManager = this.game.registry.get("soundManager");
+        // Add this line to add the egg sound effect
+        this.soundManager.addSound("eggSound", { volume: 0.5 });
     }
 
     onSceneWake() {
