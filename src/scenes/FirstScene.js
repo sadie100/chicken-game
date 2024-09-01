@@ -11,12 +11,7 @@ export class FirstScene extends NormalScene {
         super.create();
         // FirstScene 특정 생성 로직...
 
-        if (this.soundManager) {
-            this.soundManager.addSound("bgm1", { loop: true, volume: 0.5 });
-            this.soundManager.playSound("bgm1");
-        } else {
-            console.error("SoundManager not found in FirstScene");
-        }
+        this.soundManager.changeBGM("bgm1");
 
         // 전환 오버레이 페이드 아웃
         this.tweens.add({

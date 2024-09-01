@@ -69,6 +69,10 @@ export class NormalScene extends BaseScene {
             this.spawnTimer.remove();
         }
 
+        if (this.soundManager) {
+            this.soundManager.playSound("stageclear", { volume: 0.5 });
+        }
+
         this.showNextRoundArrow();
         this.createItems();
     }

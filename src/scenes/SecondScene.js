@@ -16,6 +16,11 @@ export class SecondScene extends NormalScene {
         return new Background(this, "background2", 3);
     }
 
+    create() {
+        super.create();
+        this.soundManager.changeBGM("bgm2");
+    }
+
     createItems() {
         const centerX = this.scale.width / 2;
         const centerY = this.scale.height / 2;
@@ -66,4 +71,3 @@ export class SecondScene extends NormalScene {
         super.startNextRound("BossScene");
     }
 }
-

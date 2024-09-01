@@ -14,6 +14,10 @@ export class GameClearScene extends Scene {
     }
 
     create() {
+        // Get SoundManager from registry
+        this.soundManager = this.game.registry.get("soundManager");
+        this.soundManager.changeBGM("gameclear");
+
         // Backgrounds
         const wallpaper = this.add
             .image(this.x, this.y, "ending")
@@ -97,4 +101,3 @@ export class GameClearScene extends Scene {
         this.scene.start("MenuScene");
     }
 }
-

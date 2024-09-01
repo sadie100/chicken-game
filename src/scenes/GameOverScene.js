@@ -14,6 +14,11 @@ export class GameOverScene extends Scene {
     }
 
     create() {
+        // Get SoundManager from registry
+        this.soundManager = this.game.registry.get("soundManager");
+        this.soundManager.stopCurrentBGM();
+        this.soundManager.playSound("gameover", { volume: 0.5 });
+
         // Backgrounds
         const wallpaper = this.add
             .image(this.x, this.y, "gameover")
@@ -87,4 +92,3 @@ export class GameOverScene extends Scene {
         });
     }
 }
-
