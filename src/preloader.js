@@ -76,6 +76,7 @@ export class Preloader extends Phaser.Scene {
         //효과음, bgm
         this.load.audio("bgm1", "sounds/bgm1.mp3");
         this.load.audio("eggSound", "sounds/egg.mp3");
+        this.load.audio("hitSound", "sounds/hit.wav");
     }
 
     create() {
