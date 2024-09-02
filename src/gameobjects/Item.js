@@ -44,7 +44,7 @@ export class Item extends Phaser.Physics.Arcade.Sprite {
                 };
             case "EggSpeedBooster":
                 return (player) => {
-                    player.increaseBulletSpeed(100);
+                    player.increaseBulletSpeed(200);
                 };
             case "SpeedBooster":
                 return (player) => {
@@ -95,7 +95,7 @@ export class Item extends Phaser.Physics.Arcade.Sprite {
             case "BulletBooster":
                 return "달걀 데미지를 강화합니다.";
             case "EggSpeedBooster":
-                return "달걀의 이동속도가 빨라집니다.";
+                return "달걀이 발사되는 속도가 빨라집니다.";
             case "SpeedBooster":
                 return "이동속도가 빨라집니다.";
             case "EggSizeBooster":
