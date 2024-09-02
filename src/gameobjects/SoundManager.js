@@ -5,6 +5,7 @@ export class SoundManager {
         this.volume = 1;
         this.currentScene = null;
         this.currentBGM = null;
+        this.originalVolumes = {}; // 각 사운드의 원래 볼륨을 저장
     }
 
     setScene(scene) {
@@ -17,10 +18,9 @@ export class SoundManager {
             console.error("No current scene set for SoundManager");
             return;
         }
-        this.sounds[key] = this.currentScene.sound.add(key, {
-            loop: config.loop || false,
-            volume: config.volume || 1,
-        });
+        const originalVolume = config.volume || 1;
+        this.sounds[key] = this.currentScene.sound.add(key, config);
+        this.originalVolumes[key] = originalVolume;
         return this.sounds[key];
     }
 
@@ -28,11 +28,13 @@ export class SoundManager {
         if (!this.sounds[key]) {
             this.addSound(key, config);
         }
-        if (this.sounds[key] && !this.isMuted) {
-            return this.sounds[key].play({
+        if (this.sounds[key]) {
+            const originalVolume = this.originalVolumes[key];
+            this.sounds[key].play({
                 ...config,
-                volume: this.volume * (config.volume || 1),
+                volume: originalVolume * this.volume,
             });
+            this.sounds[key].setMute(this.isMuted);
         }
     }
 
@@ -59,8 +61,9 @@ export class SoundManager {
 
     setVolume(volume) {
         this.volume = volume;
-        Object.values(this.sounds).forEach((sound) => {
-            sound.setVolume(this.volume * sound.volume);
+        Object.keys(this.sounds).forEach((key) => {
+            const originalVolume = this.originalVolumes[key];
+            this.sounds[key].setVolume(originalVolume * this.volume);
         });
     }
 
@@ -84,6 +87,7 @@ export class SoundManager {
         Object.values(this.sounds).forEach((sound) => {
             sound.setMute(this.isMuted);
         });
+        this.muteButton.setText(this.isMuted ? "🔇" : "🔊");
     }
 
     createVolumeControl() {
@@ -127,10 +131,9 @@ export class SoundManager {
         this.handle.setInteractive({ draggable: true });
         this.addPointerEffect(this.handle);
 
-        // 배경 클릭 이벤트 처리
+        // 볼륨 조절 로직 수정
         this.sliderBackground.on("pointerdown", this.onSliderClick, this);
 
-        // 드래그 이벤트 처리
         this.handle.on("drag", (pointer, dragX) => {
             this.updateVolumeFromPosition(dragX);
         });
@@ -154,7 +157,6 @@ export class SoundManager {
 
         this.muteButton.on("pointerdown", () => {
             this.toggleMute();
-            this.muteButton.setText(this.isMuted ? "🔇" : "🔊");
             this.updateVolumeDisplay();
         });
 
@@ -185,6 +187,11 @@ export class SoundManager {
         const newVolume = position / width;
         this.setVolume(newVolume);
         this.updateVolumeText(newVolume);
+        if (newVolume <= 0 && this.isMuted === false) {
+            this.toggleMute();
+        } else if (newVolume > 0 && this.isMuted === true) {
+            this.toggleMute();
+        }
     }
 
     updateVolumeDisplay() {
@@ -208,3 +215,4 @@ export class SoundManager {
         });
     }
 }
+
