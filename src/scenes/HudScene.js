@@ -1,10 +1,12 @@
 import { Scene } from "phaser";
+import { ITEM_DEFS } from "../config/items";
 
 export class HudScene extends Scene {
     points_text;
     lives_group;
     time_text;
     bullet_info_text;
+    effectNodes;
 
     constructor() {
         super("HudScene");
@@ -44,29 +46,76 @@ export class HudScene extends Scene {
 
         // Initialize SoundManager
         this.initializeSoundManager();
+        this.effectNodes = [];
     }
 
     updateEffects(effects) {
-        // 간단한 텍스트 대체 표시 (아이콘 UI는 차후 개선 가능)
-        const order = [
-            { key: "bullet", label: "데미지", frame: 0 },
-            { key: "eggSpeed", label: "알속도", frame: 1 },
-            { key: "speed", label: "이동속도", frame: 2 },
-            { key: "eggSize", label: "알크기", frame: 3 },
-        ];
-
-        const lines = [];
-        for (const { key, label } of order) {
-            const count = effects[key] || 0;
-            if (count > 0) {
-                lines.push(`${label}: ${"[■] ".repeat(count).trim()}`);
-            }
+        // 기존 노드 제거
+        if (this.effectNodes && this.effectNodes.length) {
+            this.effectNodes.forEach((n) => n.destroy());
+            this.effectNodes = [];
         }
 
-        if (lines.length === 0) {
+        const mapping = [
+            { key: "bullet", label: "데미지", id: "BulletBooster" },
+            { key: "eggSpeed", label: "알속도", id: "EggSpeedBooster" },
+            { key: "speed", label: "이동속도", id: "SpeedBooster" },
+            { key: "eggSize", label: "알크기", id: "EggSizeBooster" },
+        ];
+
+        const rows = mapping
+            .map((m) => ({ ...m, count: effects[m.key] || 0 }))
+            .filter((m) => m.count > 0);
+
+        if (rows.length === 0) {
             this.updateBulletInfo("강화된 효과 없음");
-        } else {
-            this.updateBulletInfo(lines.join("\n"));
+            return;
+        }
+
+        // 기존 텍스트는 지움(겹치지 않도록)
+        this.updateBulletInfo("");
+
+        const marginRight = 10;
+        const marginBottom = 10;
+        const lineGap = 6;
+        const iconBaseSize = 16; // 스프라이트 기본 프레임 크기
+        const iconTarget = 24; // 표시 크기(px)
+        const textStyle = { fontSize: 18, color: "#ffffff" };
+
+        let cursorY = this.scale.height - marginBottom;
+
+        // 우하단 정렬: 아래 → 위로 쌓기
+        for (const row of rows) {
+            const def = ITEM_DEFS[row.id];
+            const fallbackFrames = {
+                bullet: 0,
+                eggSpeed: 1,
+                speed: 3,
+                eggSize: 2,
+            };
+            const texture = def?.texture || "itemList1";
+            const frame = def?.frame ?? fallbackFrames[row.key] ?? 0;
+
+            const textObj = this.add.text(
+                this.scale.width - marginRight,
+                cursorY,
+                `${row.label} : ${row.count}`,
+                textStyle
+            );
+            textObj.setOrigin(1, 1);
+
+            const icon = this.add.image(
+                textObj.x - textObj.displayWidth - 8,
+                cursorY,
+                texture,
+                frame
+            );
+            icon.setOrigin(1, 1);
+            icon.setScale(iconTarget / iconBaseSize);
+
+            this.effectNodes.push(textObj, icon);
+            cursorY -=
+                Math.max(icon.displayHeight, textObj.displayHeight) + lineGap;
         }
     }
 
