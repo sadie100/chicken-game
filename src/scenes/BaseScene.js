@@ -220,7 +220,7 @@ export class BaseScene extends Scene {
         const name = monster && monster.constructor && monster.constructor.name;
         const dropRate = getDropRateForMonster(name);
         if (Math.random() < dropRate) {
-            const drop = pickDropFor(monster);
+            const drop = pickDropFor(monster, this.player);
             if (drop) {
                 const { id, texture, frame } = drop;
                 this.itemManager.addItem(x, y, texture, frame, id);

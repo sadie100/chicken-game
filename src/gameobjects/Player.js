@@ -102,11 +102,14 @@ export class Player extends Physics.Arcade.Sprite {
     }
 
     // 효과 시스템 (누적형)
-    addEffect(key, amount = 1) {
+    addEffect(key, amount = 1, maxStacks = Infinity) {
         if (this.activeEffects[key] === undefined) {
             this.activeEffects[key] = 0;
         }
-        this.activeEffects[key] += amount;
+        this.activeEffects[key] = Math.min(
+            maxStacks,
+            this.activeEffects[key] + amount
+        );
         if (key === "stun") {
             // 스턴은 0/1만 허용
             this.activeEffects[key] = Math.min(1, this.activeEffects[key]);
