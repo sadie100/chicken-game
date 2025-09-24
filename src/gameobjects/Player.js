@@ -21,6 +21,7 @@ export class Player extends Physics.Arcade.Sprite {
     baseEggSize = 1;
     eggSize = 1;
     fireDelay = 200; // 0.2초 간격으로 발사
+    baseFireDelay = 200;
     fireTimer = 0;
 
     constructor({ scene }) {
@@ -125,6 +126,7 @@ export class Player extends Physics.Arcade.Sprite {
         const { bullet, eggSpeed, speed, eggSize, stun } = this.activeEffects;
         this.bulletDamage = this.baseBulletDamage + bullet * 1;
         this.bulletSpeed = this.baseBulletSpeed + eggSpeed * 200;
+        this.fireDelay = this.baseFireDelay - eggSpeed * 10;
         this.speed = this.baseSpeed + speed * 100;
         this.eggSize = this.baseEggSize + eggSize * 0.5;
         this.canStun = stun > 0;
@@ -159,18 +161,7 @@ export class Player extends Physics.Arcade.Sprite {
     updateHUD() {
         const hudScene = this.scene.scene.get("HudScene");
         if (hudScene && hudScene.scene.isActive()) {
-            if (typeof hudScene.updateEffects === "function") {
-                hudScene.updateEffects(this.activeEffects);
-            } else {
-                const effects = this.getUpdatedEffects();
-                if (effects.length === 0) {
-                    hudScene.updateBulletInfo(`강화된 효과 없음`);
-                } else {
-                    hudScene.updateBulletInfo(
-                        `강화된 효과 : ${effects.join(", ")}`
-                    );
-                }
-            }
+            hudScene.updateEffects(this.activeEffects);
         }
     }
 
@@ -292,22 +283,5 @@ export class Player extends Physics.Arcade.Sprite {
 
     getEffects() {
         return { ...this.activeEffects };
-    }
-
-    getUpdatedEffects() {
-        const effects = [];
-        if (this.speed !== this.baseSpeed) {
-            effects.push("스피드");
-        }
-        if (this.bulletDamage !== this.baseBulletDamage) {
-            effects.push("달걀 데미지");
-        }
-        if (this.bulletSpeed !== this.baseBulletSpeed) {
-            effects.push("달걀 속도");
-        }
-        if (this.eggSize !== this.baseEggSize) {
-            effects.push("달걀 크기");
-        }
-        return effects;
     }
 }
