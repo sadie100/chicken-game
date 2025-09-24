@@ -46,6 +46,30 @@ export class HudScene extends Scene {
         this.initializeSoundManager();
     }
 
+    updateEffects(effects) {
+        // 간단한 텍스트 대체 표시 (아이콘 UI는 차후 개선 가능)
+        const order = [
+            { key: "bullet", label: "데미지", frame: 0 },
+            { key: "eggSpeed", label: "알속도", frame: 1 },
+            { key: "speed", label: "이동속도", frame: 2 },
+            { key: "eggSize", label: "알크기", frame: 3 },
+        ];
+
+        const lines = [];
+        for (const { key, label } of order) {
+            const count = effects[key] || 0;
+            if (count > 0) {
+                lines.push(`${label}: ${"[■] ".repeat(count).trim()}`);
+            }
+        }
+
+        if (lines.length === 0) {
+            this.updateBulletInfo("강화된 효과 없음");
+        } else {
+            this.updateBulletInfo(lines.join("\n"));
+        }
+    }
+
     update_points(points) {
         if (this.points_text) {
             this.points_text.setText(

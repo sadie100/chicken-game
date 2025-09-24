@@ -28,14 +28,14 @@ export class Monster extends Phaser.Physics.Arcade.Sprite {
             },
         });
 
-        if (this.health <= 0) {
-            console.log(`${this.constructor.name} destroyed`);
-            this.destroy();
+        const isKilled = this.health <= 0;
+        if (isKilled) {
+            console.log(`${this.constructor.name} killed`);
         }
+        return isKilled;
     }
 
     destroy(fromScene) {
         super.destroy(fromScene);
     }
 }
-

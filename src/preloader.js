@@ -66,7 +66,7 @@ export class Preloader extends Phaser.Scene {
         });
         this.load.spritesheet("itemList2", "items/items2.png", {
             frameWidth: 16,
-            frameHeight: 16,
+            frameHeight: 32,
         });
 
         //보스 헬스 바
@@ -90,6 +90,9 @@ export class Preloader extends Phaser.Scene {
         this.add.image(32, 16, "itemList1", 1);
         this.add.image(48, 16, "itemList1", 2);
         this.add.image(64, 16, "itemList1", 3);
+
+        this.add.image(96, 16, "itemList2", 0);
+        this.add.image(96, 32, "itemList2", 1);
 
         // Initialize SoundManager
         this.game.sound.mute = false; // Ensure sound is not muted by default
