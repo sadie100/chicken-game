@@ -7,21 +7,21 @@ export class NormalScene extends BaseScene {
 
     // 몬스터 스폰 관련 변수
 
-    initialSpawnDelay = 1000; // 1초로 변경
-    minSpawnDelay = 500;
-    spawnReductionRate = 200;
-    currentSpawnDelay = 1000; // 초기 스폰 딜레이도 1초로 변경
+    initialSpawnDelay = 800; // 초기 스폰 딜레이
+    minSpawnDelay = 500; // 최소 스폰 딜레이
+    spawnReductionRate = 200; // 스폰 딜레이 감소 속도
+    currentSpawnDelay = 800; // 현재 스폰 딜레이
 
     // 몬스터 속도 관련 변수
-    initialMonsterSpeed = 150; // 150으로 변경
-    currentMonsterSpeed = 150; // 현재 속도도 150으로 초기화
-    monsterSpeedIncreaseRate = 5;
+    initialMonsterSpeed = 200; // 최초 속도
+    currentMonsterSpeed = 200; // 현재 속도
+    monsterSpeedIncreaseRate = 5; // 몬스터 속도 증가 속도
 
     middleSpawnTime = 20000; // 20초 후 중급 스폰 시작
     updownSpawnTime = 30000; // 30초 후 맵 위 아래 스폰 시작
     // 고급 스폰 시스템
     advancedSpawnTime = 40000; // 40초 후 고급 스폰 시작
-    monstersPerSpawn = 1;
+    monstersPerSpawn = 1; // 한 번에 스폰되는 몬스터 수
 
     //라운드 종료
     elapsedSeconds = 0;
@@ -39,6 +39,11 @@ export class NormalScene extends BaseScene {
     create() {
         super.create();
 
+        // 씬별 스폰 설정 적용 훅
+        this.applySpawnConfig(this.getSpawnConfig());
+        // 초기값으로 리셋
+        this.resetVariables();
+
         this.setupSpawnTimer();
         this.isStageComplete = false;
         // 게임 시간 및 난이도 조절을 위한 타이머
@@ -50,14 +55,8 @@ export class NormalScene extends BaseScene {
         });
     }
 
-    createItems() {
-        // 이 메서드는 자식 클래스에서 오버라이드됩니다.
-    }
-
     collectItem(player, item) {
-        if (player.heldItem) {
-            player.heldItem.return();
-        }
+        // 다중 아이템: 기존 아이템 반환/교체 없이 누적 적용
         player.collectItem(item);
         item.collect();
     }
@@ -74,7 +73,6 @@ export class NormalScene extends BaseScene {
         }
 
         this.showNextRoundArrow();
-        this.createItems();
     }
 
     showNextRoundArrow() {
@@ -104,6 +102,44 @@ export class NormalScene extends BaseScene {
         if (this.hudScene) {
             this.hudScene.updateTime(0);
         }
+    }
+
+    // 기본 스폰 설정. 각 씬에서 오버라이드 가능
+    getSpawnConfig() {
+        return {
+            stageTime: this.stageTime,
+            initialSpawnDelay: this.initialSpawnDelay,
+            minSpawnDelay: this.minSpawnDelay,
+            spawnReductionRate: this.spawnReductionRate,
+            initialMonsterSpeed: this.initialMonsterSpeed,
+            monsterSpeedIncreaseRate: this.monsterSpeedIncreaseRate,
+            middleSpawnTime: this.middleSpawnTime,
+            updownSpawnTime: this.updownSpawnTime,
+            advancedSpawnTime: this.advancedSpawnTime,
+        };
+    }
+
+    // 설정 적용기. 외부에서 안전하게 호출 가능
+    applySpawnConfig(config) {
+        if (!config) return;
+        if (typeof config.stageTime === "number")
+            this.stageTime = config.stageTime;
+        if (typeof config.initialSpawnDelay === "number")
+            this.initialSpawnDelay = config.initialSpawnDelay;
+        if (typeof config.minSpawnDelay === "number")
+            this.minSpawnDelay = config.minSpawnDelay;
+        if (typeof config.spawnReductionRate === "number")
+            this.spawnReductionRate = config.spawnReductionRate;
+        if (typeof config.initialMonsterSpeed === "number")
+            this.initialMonsterSpeed = config.initialMonsterSpeed;
+        if (typeof config.monsterSpeedIncreaseRate === "number")
+            this.monsterSpeedIncreaseRate = config.monsterSpeedIncreaseRate;
+        if (typeof config.middleSpawnTime === "number")
+            this.middleSpawnTime = config.middleSpawnTime;
+        if (typeof config.updownSpawnTime === "number")
+            this.updownSpawnTime = config.updownSpawnTime;
+        if (typeof config.advancedSpawnTime === "number")
+            this.advancedSpawnTime = config.advancedSpawnTime;
     }
 
     setupSpawnTimer() {
@@ -218,16 +254,10 @@ export class NormalScene extends BaseScene {
         }
         return { x, y, direction };
     }
-    hitMonster(egg, monster) {
-        console.log("Egg hit monster. Damage:", egg.damage);
-        monster.hit(egg.damage);
-        this.points += 10;
-        this.hudScene.update_points(this.points);
-        egg.destroy();
-    }
-
     playerHitMonster(player, monster) {
         super.playerHitMonster(player, monster);
+        // 접촉으로 몬스터를 파괴하는 경우에도 드랍 시도
+        this.tryDropItem(monster.x, monster.y, monster);
         monster.destroy();
     }
 

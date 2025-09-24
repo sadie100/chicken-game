@@ -6,6 +6,8 @@ export class Player extends Physics.Arcade.Sprite {
     eggs = null;
     isMoving = false;
     heldItem = null;
+    activeItems = [];
+    activeEffects = { bullet: 0, eggSpeed: 0, speed: 0, eggSize: 0, stun: 0 };
     lives = 5;
     isInvulnerable = false;
     realWidth = 0;
@@ -19,6 +21,7 @@ export class Player extends Physics.Arcade.Sprite {
     baseEggSize = 1;
     eggSize = 1;
     fireDelay = 200; // 0.2초 간격으로 발사
+    baseFireDelay = 200;
     fireTimer = 0;
 
     constructor({ scene }) {
@@ -91,18 +94,57 @@ export class Player extends Physics.Arcade.Sprite {
     }
 
     collectItem(item) {
-        if (this.heldItem) {
-            this.heldItem.removeEffect(this);
-        }
-        this.heldItem = item;
+        // 다중 아이템 적용: 기존 아이템 유지, 신규 아이템 효과 누적
+        this.heldItem = item; // 하위 호환 유지(마지막 획득 아이템)
+        this.activeItems.push(item);
         item.applyEffect(this);
         this.updateHUD();
     }
 
+    // 효과 시스템 (누적형)
+    addEffect(key, amount = 1, maxStacks = Infinity) {
+        if (this.activeEffects[key] === undefined) {
+            this.activeEffects[key] = 0;
+        }
+        this.activeEffects[key] = Math.min(
+            maxStacks,
+            this.activeEffects[key] + amount
+        );
+        if (key === "stun") {
+            // 스턴은 0/1만 허용
+            this.activeEffects[key] = Math.min(1, this.activeEffects[key]);
+        }
+        this.recomputeStatsFromEffects();
+    }
+
+    removeEffect(key, amount = 1) {
+        if (this.activeEffects[key] === undefined) {
+            return;
+        }
+        this.activeEffects[key] = Math.max(0, this.activeEffects[key] - amount);
+        this.recomputeStatsFromEffects();
+    }
+
+    recomputeStatsFromEffects() {
+        const { bullet, eggSpeed, speed, eggSize, stun } = this.activeEffects;
+        this.bulletDamage = this.baseBulletDamage + bullet * 1;
+        this.bulletSpeed = this.baseBulletSpeed + eggSpeed * 100;
+        this.fireDelay = this.baseFireDelay - eggSpeed * 10;
+        this.speed = this.baseSpeed + speed * 50;
+        this.eggSize = this.baseEggSize + eggSize * 0.3;
+        this.canStun = stun > 0;
+        this.updateHUD();
+    }
+
     resetItemEffects() {
-        this.bulletDamage = this.baseBulletDamage;
-        this.bulletSpeed = this.baseBulletSpeed;
-        this.canStun = false;
+        this.activeEffects = {
+            bullet: 0,
+            eggSpeed: 0,
+            speed: 0,
+            eggSize: 0,
+            stun: 0,
+        };
+        this.recomputeStatsFromEffects();
     }
 
     enableStun() {
@@ -119,56 +161,10 @@ export class Player extends Physics.Arcade.Sprite {
         }
     }
 
-    increaseBulletDamage(amount) {
-        this.bulletDamage += amount;
-    }
-
-    increaseBulletSpeed(amount) {
-        this.bulletSpeed += amount;
-    }
-
-    increaseSpeed(amount) {
-        this.speed += amount;
-    }
-
-    increaseEggSize() {
-        this.eggSize = 1.5;
-    }
-
-    decreaseBulletDamage(amount) {
-        this.bulletDamage = Math.max(
-            this.baseBulletDamage,
-            this.bulletDamage - amount
-        );
-    }
-
-    decreaseBulletSpeed(amount) {
-        this.bulletSpeed = Math.max(
-            this.baseBulletSpeed,
-            this.bulletSpeed - amount
-        );
-    }
-
-    decreaseSpeed(amount) {
-        this.speed = Math.max(this.baseSpeed, this.speed - amount);
-    }
-
-    decreaseEggSize() {
-        this.eggSize = this.baseEggSize;
-    }
-
     updateHUD() {
         const hudScene = this.scene.scene.get("HudScene");
-        const effects = this.getUpdatedEffects();
-
         if (hudScene && hudScene.scene.isActive()) {
-            if (effects.length === 0) {
-                hudScene.updateBulletInfo(`강화된 효과 없음`);
-            } else {
-                hudScene.updateBulletInfo(
-                    `강화된 효과 : ${effects.join(", ")}`
-                );
-            }
+            hudScene.updateEffects(this.activeEffects);
         }
     }
 
@@ -275,36 +271,20 @@ export class Player extends Physics.Arcade.Sprite {
         this.lives = lives;
     }
 
-    setEffects({ speed, bulletDamage, bulletSpeed, eggSize }) {
-        this.speed = speed;
-        this.bulletDamage = bulletDamage;
-        this.bulletSpeed = bulletSpeed;
-        this.eggSize = eggSize;
+    setEffects(effects) {
+        // effects는 activeEffects 형태라고 가정
+        this.activeEffects = {
+            bullet: 0,
+            eggSpeed: 0,
+            speed: 0,
+            eggSize: 0,
+            stun: 0,
+            ...effects,
+        };
+        this.recomputeStatsFromEffects();
     }
 
     getEffects() {
-        return {
-            speed: this.speed,
-            bulletDamage: this.bulletDamage,
-            bulletSpeed: this.bulletSpeed,
-            eggSize: this.eggSize,
-        };
-    }
-
-    getUpdatedEffects() {
-        const effects = [];
-        if (this.speed !== this.baseSpeed) {
-            effects.push("스피드");
-        }
-        if (this.bulletDamage !== this.baseBulletDamage) {
-            effects.push("달걀 데미지");
-        }
-        if (this.bulletSpeed !== this.baseBulletSpeed) {
-            effects.push("달걀 속도");
-        }
-        if (this.eggSize !== this.baseEggSize) {
-            effects.push("달걀 크기");
-        }
-        return effects;
+        return { ...this.activeEffects };
     }
 }

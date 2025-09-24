@@ -86,10 +86,6 @@ export class Preloader extends Phaser.Scene {
 
     create() {
         this.createAnimations();
-        this.add.image(16, 16, "itemList1", 0);
-        this.add.image(32, 16, "itemList1", 1);
-        this.add.image(48, 16, "itemList1", 2);
-        this.add.image(64, 16, "itemList1", 3);
 
         // Initialize SoundManager
         this.game.sound.mute = false; // Ensure sound is not muted by default

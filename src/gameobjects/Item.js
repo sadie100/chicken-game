@@ -1,4 +1,5 @@
 import { Scene } from "phaser";
+import { ITEM_DEFS, ITEM_TIMING_DEFAULT } from "../config/items";
 
 export class Item extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, texture, frame, id) {
@@ -13,99 +14,25 @@ export class Item extends Phaser.Physics.Arcade.Sprite {
         this.originalX = x;
         this.originalY = y;
 
-        this.effect = this.getEffect(id);
-        this.removeEffect = this.getRemoveEffect(id);
-        this.description = this.getDescription(id);
-        // 텍스트 스타일 수정
-        const textStyle = {
-            fontSize: "16px",
-            backgroundColor: "#000000",
-            padding: { x: 5, y: 5 },
-            align: "center",
-            wordWrap: { width: 150, useAdvancedWrap: true },
-        };
-
-        // 텍스트 생성 및 설정 수정
-        this.descriptionText = scene.add.text(
-            x,
-            y + this.height + 10,
-            this.description,
-            textStyle
-        );
-        this.descriptionText.setOrigin(0.5, 0);
-        this.descriptionText.setDepth(1000);
-    }
-
-    getEffect(id) {
-        switch (id) {
-            case "BulletBooster":
-                return (player) => {
-                    player.increaseBulletDamage(1);
-                };
-            case "EggSpeedBooster":
-                return (player) => {
-                    player.increaseBulletSpeed(200);
-                };
-            case "SpeedBooster":
-                return (player) => {
-                    player.increaseSpeed(100);
-                };
-            case "EggSizeBooster":
-                return (player) => {
-                    player.increaseEggSize();
-                };
-            case "StunAbility":
-                return (player) => {
-                    player.enableStun();
-                };
-            default:
-                return () => {};
+        const def = ITEM_DEFS[id];
+        if (def) {
+            this.effect = def.apply;
+            this.removeEffect = def.remove;
+            this.description = def.description;
+        } else {
+            this.effect = () => {};
+            this.removeEffect = () => {};
+            this.description = "Unknown item";
         }
+        // 아이템 설명 텍스트는 생성하지 않음 (요청에 따라 비활성화)
+        this.descriptionText = null;
+
+        // 수명/깜빡임 설정 및 시작
+        const timing = (def && def.timing) || ITEM_TIMING_DEFAULT;
+        this.initLifetime(timing);
     }
 
-    getRemoveEffect(id) {
-        switch (id) {
-            case "BulletBooster":
-                return (player) => {
-                    player.decreaseBulletDamage(1);
-                };
-            case "EggSpeedBooster":
-                return (player) => {
-                    player.decreaseBulletSpeed(100);
-                };
-            case "SpeedBooster":
-                return (player) => {
-                    player.decreaseSpeed(100);
-                };
-            case "EggSizeBooster":
-                return (player) => {
-                    player.decreaseEggSize();
-                };
-            case "StunAbility":
-                return (player) => {
-                    player.canStun = false;
-                };
-            default:
-                return () => {};
-        }
-    }
-
-    getDescription(id) {
-        switch (id) {
-            case "BulletBooster":
-                return "달걀 데미지를 강화합니다.";
-            case "EggSpeedBooster":
-                return "달걀이 발사되는 속도가 빨라집니다.";
-            case "SpeedBooster":
-                return "이동속도가 빨라집니다.";
-            case "EggSizeBooster":
-                return "달걀 크기가 커집니다.";
-            case "StunAbility":
-                return "알에 맞은 몬스터를 잠시 기절시키는 능력을 얻습니다. 보스 몬스터에는 통하지 않습니다.";
-            default:
-                return "Unknown item";
-        }
-    }
+    // 효과/제거/설명은 ITEM_DEFS에서 주입됨
 
     collect() {
         this.setVisible(false);
@@ -122,16 +49,57 @@ export class Item extends Phaser.Physics.Arcade.Sprite {
         this.effect(player);
     }
 
-    hideDescription() {
-        if (this.descriptionText) {
-            this.descriptionText.setVisible(false);
-        }
+    initLifetime(timing) {
+        const { lifetimeMs, blinkStartMs, blinkIntervalMs } = timing;
+        this.blinkIntervalMs = blinkIntervalMs;
+
+        this.blinkTimer = this.scene.time.delayedCall(
+            blinkStartMs,
+            () => this.startBlink(),
+            null,
+            this
+        );
+
+        this.despawnTimer = this.scene.time.delayedCall(
+            lifetimeMs,
+            () => this.despawn(),
+            null,
+            this
+        );
     }
 
-    showDescription() {
-        if (this.descriptionText) {
-            this.descriptionText.setVisible(true);
+    startBlink() {
+        if (this.blinkTween) return;
+        this.blinkTween = this.scene.tweens.add({
+            targets: this,
+            alpha: 0.2,
+            duration: this.blinkIntervalMs,
+            yoyo: true,
+            repeat: -1,
+        });
+    }
+
+    stopBlink() {
+        if (this.blinkTween) {
+            this.scene.tweens.killTweensOf(this);
+            this.blinkTween = null;
         }
+        this.setAlpha(1);
+    }
+
+    despawn() {
+        this.stopBlink();
+        this.body.enable = false;
+        this.setVisible(false);
+        this.destroy();
+    }
+
+    collect() {
+        if (this.blinkTimer) this.blinkTimer.remove();
+        if (this.despawnTimer) this.despawnTimer.remove();
+        this.stopBlink();
+        this.setVisible(false);
+        this.body.enable = false;
     }
 }
 
@@ -146,13 +114,4 @@ export class ItemManager {
         this.items.push(item);
         return item;
     }
-
-    hideAllDescriptions() {
-        this.items.forEach((item) => item.hideDescription());
-    }
-
-    showAllDescriptions() {
-        this.items.forEach((item) => item.showDescription());
-    }
 }
-

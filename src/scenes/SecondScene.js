@@ -12,6 +12,17 @@ export class SecondScene extends NormalScene {
         super.init(data);
     }
 
+    // SecondScene 전용 스폰 설정
+    getSpawnConfig() {
+        return {
+            initialSpawnDelay: 750, // 더 빠르게 시작
+            minSpawnDelay: 450,
+            spawnReductionRate: 180,
+            initialMonsterSpeed: 200, // 약간 빠름
+            monsterSpeedIncreaseRate: 5,
+        };
+    }
+
     getBackground() {
         return new Background(this, "background2", 3);
     }
@@ -19,27 +30,6 @@ export class SecondScene extends NormalScene {
     create() {
         super.create();
         this.soundManager.changeBGM("bgm2");
-    }
-
-    createItems() {
-        const centerX = this.scale.width / 2;
-        const centerY = this.scale.height / 2;
-
-        // SecondScene에서는 아이템 3과 4를 생성합니다 (예시)
-        this.itemManager.addItem(
-            centerX - 100,
-            centerY,
-            "itemList1",
-            2,
-            "SpeedBooster"
-        );
-        this.itemManager.addItem(
-            centerX + 100,
-            centerY,
-            "itemList1",
-            3,
-            "EggSizeBooster"
-        );
     }
 
     spawnSingleMonster() {
