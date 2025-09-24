@@ -73,8 +73,6 @@ export class BossScene extends BaseScene {
         return new Background(this, "background3", 4);
     }
 
-    createItems() {}
-
     spawnBossMonster() {
         this.boss = new GoldPig(this, 600, 300);
         this.boss.setHealth(100);
