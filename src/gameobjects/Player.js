@@ -128,10 +128,10 @@ export class Player extends Physics.Arcade.Sprite {
     recomputeStatsFromEffects() {
         const { bullet, eggSpeed, speed, eggSize, stun } = this.activeEffects;
         this.bulletDamage = this.baseBulletDamage + bullet * 1;
-        this.bulletSpeed = this.baseBulletSpeed + eggSpeed * 200;
+        this.bulletSpeed = this.baseBulletSpeed + eggSpeed * 100;
         this.fireDelay = this.baseFireDelay - eggSpeed * 10;
-        this.speed = this.baseSpeed + speed * 100;
-        this.eggSize = this.baseEggSize + eggSize * 0.5;
+        this.speed = this.baseSpeed + speed * 50;
+        this.eggSize = this.baseEggSize + eggSize * 0.3;
         this.canStun = stun > 0;
         this.updateHUD();
     }
