@@ -36,3 +36,10 @@ export const ITEM_DEFS = {
         remove: (player) => player.removeEffect("stun", 1),
     },
 };
+
+// 아이템 기본 수명/깜빡임 설정 (개별 아이템에서 timing으로 오버라이드 가능)
+export const ITEM_TIMING_DEFAULT = {
+    lifetimeMs: 10000, // 스폰 후 소멸하기까지의 시간
+    blinkStartMs: 5000, // 깜빡임이 시작되는 시간
+    blinkIntervalMs: 150, // 깜빡임 주기(ms)
+};
