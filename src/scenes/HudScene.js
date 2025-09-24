@@ -57,10 +57,10 @@ export class HudScene extends Scene {
         }
 
         const mapping = [
-            { key: "bullet", label: "데미지", id: "BulletBooster" },
+            { key: "bullet", label: "대미지", id: "BulletBooster" },
+            { key: "eggSize", label: "알크기", id: "EggSizeBooster" },
             { key: "eggSpeed", label: "발사속도", id: "EggSpeedBooster" },
             { key: "speed", label: "이동속도", id: "SpeedBooster" },
-            { key: "eggSize", label: "알크기", id: "EggSizeBooster" },
         ];
 
         const rows = mapping.map((m) => ({ ...m, count: effects[m.key] || 0 }));
