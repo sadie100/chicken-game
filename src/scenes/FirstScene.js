@@ -7,6 +7,21 @@ export class FirstScene extends NormalScene {
         super("FirstScene");
     }
 
+    // FirstScene 전용 스폰 설정
+    getSpawnConfig() {
+        return {
+            stageTime: 60000,
+            initialSpawnDelay: 900, // 초반은 조금 여유롭게
+            minSpawnDelay: 550,
+            spawnReductionRate: 150,
+            initialMonsterSpeed: 180, // 기본보다 약간 느리게 시작
+            monsterSpeedIncreaseRate: 6,
+            middleSpawnTime: 25000,
+            updownSpawnTime: 35000,
+            advancedSpawnTime: 45000,
+        };
+    }
+
     create() {
         super.create();
         // FirstScene 특정 생성 로직...
@@ -52,26 +67,5 @@ export class FirstScene extends NormalScene {
 
     startNextRound() {
         super.startNextRound("SecondScene");
-    }
-
-    createItems() {
-        const centerX = this.scale.width / 2;
-        const centerY = this.scale.height / 2;
-
-        // FirstScene에서는 아이템 1과 2를 생성합니다
-        this.itemManager.addItem(
-            centerX - 100,
-            centerY,
-            "itemList1",
-            0,
-            "BulletBooster"
-        );
-        this.itemManager.addItem(
-            centerX + 100,
-            centerY,
-            "itemList1",
-            1,
-            "EggSpeedBooster"
-        );
     }
 }
