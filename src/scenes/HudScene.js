@@ -57,20 +57,13 @@ export class HudScene extends Scene {
         }
 
         const mapping = [
-            { key: "bullet", label: "데미지", id: "BulletBooster" },
-            { key: "eggSpeed", label: "알속도", id: "EggSpeedBooster" },
+            // { key: "bullet", label: "데미지", id: "BulletBooster" },
+            { key: "eggSpeed", label: "발사속도", id: "EggSpeedBooster" },
             { key: "speed", label: "이동속도", id: "SpeedBooster" },
-            { key: "eggSize", label: "알크기", id: "EggSizeBooster" },
+            // { key: "eggSize", label: "알크기", id: "EggSizeBooster" },
         ];
 
-        const rows = mapping
-            .map((m) => ({ ...m, count: effects[m.key] || 0 }))
-            .filter((m) => m.count > 0);
-
-        if (rows.length === 0) {
-            this.updateBulletInfo("강화된 효과 없음");
-            return;
-        }
+        const rows = mapping.map((m) => ({ ...m, count: effects[m.key] || 0 }));
 
         // 기존 텍스트는 지움(겹치지 않도록)
         this.updateBulletInfo("");
@@ -80,7 +73,7 @@ export class HudScene extends Scene {
         const lineGap = 6;
         const iconBaseSize = 16; // 스프라이트 기본 프레임 크기
         const iconTarget = 24; // 표시 크기(px)
-        const textStyle = { fontSize: 18, color: "#ffffff" };
+        const textStyle = { fontSize: 16, color: "#ffffff" };
 
         let cursorY = this.scale.height - marginBottom;
 
