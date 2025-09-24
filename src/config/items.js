@@ -48,8 +48,8 @@ export const ITEM_DEFS = {
         allowedMonsters: ["cat", "pig"],
     },
     PowerEgg: {
-        texture: "itemList1",
-        frame: 0,
+        texture: "itemList3",
+        frame: 28,
         effectKey: "powerEgg",
         maxStacks: MAX_STACK.powerEgg,
         description: "5초간 달걀을 세 갈래로 발사합니다.",

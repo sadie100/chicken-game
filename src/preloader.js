@@ -68,6 +68,10 @@ export class Preloader extends Phaser.Scene {
             frameWidth: 16,
             frameHeight: 16,
         });
+        this.load.spritesheet("itemList3", "items/items3.png", {
+            frameWidth: 16,
+            frameHeight: 16,
+        });
 
         //보스 헬스 바
         this.load.image("health_bar_fill", "monsters/health_bar_fill.png");

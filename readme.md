@@ -15,11 +15,10 @@ https://sadie100.github.io/chicken-game/
 -   하트 아이콘 : https://yrixsasow.itch.io/heart-icon-2
 -   보스 체력바 : https://skristi.itch.io/heart-and-health-bars
 -   화살표 아이콘 : https://leo-red.itch.io/lucid-icon-pack
--   아이템 및 달걀 총알 : https://cupnooble.itch.io/sprout-lands-asset-pack
+-   아이템 및 달걀 총알 : https://cupnooble.itch.io/sprout-lands-asset-pack, https://henrysoftware.itch.io/pixel-food
 -   배경 : https://free-game-assets.itch.io/free-summer-pixel-art-backgrounds
 -   bgm 및 효과음 : uppbeat.io ([LICENSE](LICENSE.md) 참고, https://uppbeat.io/sfx/happy-banjo-music-loop/11344/29713)
 
     mixkit(https://mixkit.co/free-sound-effects/)
 
 아이콘 등 일러스트 이미지는 Dall-E로 제작하였습니다.
-
