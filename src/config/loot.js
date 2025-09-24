@@ -16,6 +16,7 @@ const DEFAULT_TABLE = [
     { id: "EggSpeedBooster", w: 3 },
     { id: "SpeedBooster", w: 2 },
     { id: "EggSizeBooster", w: 2 },
+    { id: "PowerEgg", w: 1 },
 ];
 
 export function pickDropFor(monster, player) {
@@ -24,6 +25,12 @@ export function pickDropFor(monster, player) {
     const filtered = DEFAULT_TABLE.filter((entry) => {
         const def = ITEM_DEFS[entry.id];
         if (!def) return false;
+        if (entry.id === "PowerEgg") {
+            const hasPowerEgg = (player?.activeEffects?.powerEgg ?? 0) >= 1;
+            if (hasPowerEgg) return false;
+            // 추가 확률 게이트로 희귀도 강화 (예: 30%만 최종 통과)
+            if (Math.random() > 0.3) return false;
+        }
         const key = def.effectKey;
         const max = def.maxStacks ?? Infinity;
         if (!key) return true;

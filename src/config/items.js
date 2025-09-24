@@ -3,6 +3,7 @@ export const MAX_STACK = {
     eggSpeed: 5,
     eggSize: 5,
     speed: 10,
+    powerEgg: 1,
 };
 
 export const ITEM_DEFS = {
@@ -44,6 +45,17 @@ export const ITEM_DEFS = {
         description: "이동속도가 빨라집니다.",
         apply: (player) => player.addEffect("speed", 1, MAX_STACK.speed),
         remove: (player) => player.removeEffect("speed", 1),
+        allowedMonsters: ["cat", "pig"],
+    },
+    PowerEgg: {
+        texture: "itemList1",
+        frame: 0,
+        effectKey: "powerEgg",
+        maxStacks: MAX_STACK.powerEgg,
+        description: "5초간 달걀을 세 갈래로 발사합니다.",
+        apply: (player) =>
+            player.addTimedEffect("powerEgg", 5000, MAX_STACK.powerEgg),
+        remove: (player) => player.removeEffect("powerEgg", 1),
         allowedMonsters: ["cat", "pig"],
     },
     // StunAbility: {

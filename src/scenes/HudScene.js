@@ -61,6 +61,7 @@ export class HudScene extends Scene {
             { key: "eggSize", label: "알크기", id: "EggSizeBooster" },
             { key: "eggSpeed", label: "발사속도", id: "EggSpeedBooster" },
             { key: "speed", label: "이동속도", id: "SpeedBooster" },
+            // 파워에그는 HUD 표시에서 제외 (시간 제한 버프)
         ];
 
         const rows = mapping.map((m) => ({ ...m, count: effects[m.key] || 0 }));

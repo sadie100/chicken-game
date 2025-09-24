@@ -1,4 +1,3 @@
-import { Scene } from "phaser";
 import { ITEM_DEFS, ITEM_TIMING_DEFAULT } from "../config/items";
 
 export class Item extends Phaser.Physics.Arcade.Sprite {

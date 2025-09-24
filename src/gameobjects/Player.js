@@ -7,7 +7,14 @@ export class Player extends Physics.Arcade.Sprite {
     isMoving = false;
     heldItem = null;
     activeItems = [];
-    activeEffects = { bullet: 0, eggSpeed: 0, speed: 0, eggSize: 0, stun: 0 };
+    activeEffects = {
+        bullet: 0,
+        eggSpeed: 0,
+        speed: 0,
+        eggSize: 0,
+        stun: 0,
+        powerEgg: 0,
+    };
     lives = 5;
     isInvulnerable = false;
     realWidth = 0;
@@ -23,6 +30,7 @@ export class Player extends Physics.Arcade.Sprite {
     fireDelay = 200; // 0.2초 간격으로 발사
     baseFireDelay = 200;
     fireTimer = 0;
+    timedEffectTimers = {};
 
     constructor({ scene }) {
         super(scene, 100, scene.scale.height / 2, "chicken_idle");
@@ -52,6 +60,8 @@ export class Player extends Physics.Arcade.Sprite {
         this.stunDuration = 2000; // 2초간 스턴
 
         this.soundManager = this.scene.game.registry.get("soundManager");
+        // PowerEgg 점멸 트윈 핸들러
+        this.powerEggBlinkTween = null;
     }
 
     updateCooldown(delta) {
@@ -74,23 +84,67 @@ export class Player extends Physics.Arcade.Sprite {
         }
         this.fireTimer = this.fireDelay;
 
-        const egg = this.eggs.get();
-        if (egg) {
-            const middleY = this.y + this.height / 2.5;
-            // Play the egg sound effect
-            if (this.soundManager) {
-                this.soundManager.playSound("eggSound", { volume: 0.5 });
-            }
-            egg.fire(this.x, middleY, this.bulletSpeed);
-            egg.setScale(this.eggSize);
-            egg.damage = this.bulletDamage;
-            egg.body.onWorldBounds = true;
-            egg.body.world.on("worldbounds", (body) => {
-                if (body.gameObject === egg) {
-                    egg.destroy();
-                }
-            });
+        const middleY = this.y + this.height / 2.5;
+        const isTriple = (this.activeEffects?.powerEgg ?? 0) > 0;
+        if (this.soundManager) {
+            this.soundManager.playSound("eggSound", { volume: 0.5 });
         }
+        if (isTriple) {
+            const angles = [-15, 0, 15];
+            for (const angle of angles) {
+                const egg = this.eggs.get();
+                if (!egg) continue;
+                egg.fireWithAngle(this.x, middleY, this.bulletSpeed, angle);
+                egg.setScale(this.eggSize);
+                egg.damage = this.bulletDamage;
+                egg.body.onWorldBounds = true;
+                egg.body.world.on("worldbounds", (body) => {
+                    if (body.gameObject === egg) {
+                        egg.destroy();
+                    }
+                });
+            }
+        } else {
+            const egg = this.eggs.get();
+            if (egg) {
+                egg.fire(this.x, middleY, this.bulletSpeed);
+                egg.setScale(this.eggSize);
+                egg.damage = this.bulletDamage;
+                egg.body.onWorldBounds = true;
+                egg.body.world.on("worldbounds", (body) => {
+                    if (body.gameObject === egg) {
+                        egg.destroy();
+                    }
+                });
+            }
+        }
+    }
+
+    addTimedEffect(key, durationMs, maxStacks = Infinity) {
+        if (!this.timedEffectTimers) this.timedEffectTimers = {};
+        const existing = this.timedEffectTimers[key];
+        if (existing && existing.remove) {
+            existing.remove();
+        }
+        this.addEffect(key, 1, maxStacks);
+        if (key === "powerEgg") {
+            this.startPowerBlink();
+        }
+        const timer = this.scene.time.delayedCall(
+            durationMs,
+            () => {
+                this.removeEffect(key, 1);
+                if (key === "powerEgg") {
+                    this.stopPowerBlink();
+                }
+                if (this.timedEffectTimers) {
+                    delete this.timedEffectTimers[key];
+                }
+            },
+            null,
+            this
+        );
+        this.timedEffectTimers[key] = timer;
     }
 
     collectItem(item) {
@@ -137,12 +191,21 @@ export class Player extends Physics.Arcade.Sprite {
     }
 
     resetItemEffects() {
+        // 타임드 이펙트 타이머 모두 해제
+        if (this.timedEffectTimers) {
+            Object.values(this.timedEffectTimers).forEach(
+                (t) => t && t.remove && t.remove()
+            );
+            this.timedEffectTimers = {};
+        }
+        this.stopPowerBlink();
         this.activeEffects = {
             bullet: 0,
             eggSpeed: 0,
             speed: 0,
             eggSize: 0,
             stun: 0,
+            powerEgg: 0,
         };
         this.recomputeStatsFromEffects();
     }
@@ -279,6 +342,7 @@ export class Player extends Physics.Arcade.Sprite {
             speed: 0,
             eggSize: 0,
             stun: 0,
+            powerEgg: 0,
             ...effects,
         };
         this.recomputeStatsFromEffects();
@@ -286,5 +350,24 @@ export class Player extends Physics.Arcade.Sprite {
 
     getEffects() {
         return { ...this.activeEffects };
+    }
+
+    startPowerBlink() {
+        if (this.powerEggBlinkTween) return;
+        this.powerEggBlinkTween = this.scene.tweens.add({
+            targets: this,
+            tint: 0xff4444,
+            duration: 80,
+            yoyo: true,
+            repeat: -1,
+        });
+    }
+
+    stopPowerBlink() {
+        if (this.powerEggBlinkTween) {
+            this.scene.tweens.killTweensOf(this);
+            this.powerEggBlinkTween = null;
+            this.clearTint();
+        }
     }
 }
