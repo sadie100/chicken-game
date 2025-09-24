@@ -3,6 +3,7 @@ import { Player } from "../gameobjects/Player";
 import { Monster } from "../gameobjects/monsters/Monster";
 import { Heart } from "../gameobjects/Heart";
 import { ItemManager } from "../gameobjects/Item";
+import { getDropRateForMonster, pickDropFor } from "../config/loot";
 
 export class BaseScene extends Scene {
     player = null;
@@ -214,12 +215,32 @@ export class BaseScene extends Scene {
         this.player.updateHUD(); // 아이템 효과가 적용된 상태로 HUD 업데이트
     }
 
+    // 아이템 드랍 관련 헬퍼들
+    tryDropItem(x, y, monster) {
+        const name = monster && monster.constructor && monster.constructor.name;
+        const dropRate = getDropRateForMonster(name);
+        if (Math.random() < dropRate) {
+            const drop = pickDropFor(monster);
+            if (drop) {
+                const { id, texture, frame } = drop;
+                this.itemManager.addItem(x, y, texture, frame, id);
+            }
+        }
+    }
+
     hitMonster(egg, monster) {
         console.log("Egg hit monster. Damage:", egg.damage);
-        monster.hit(egg.damage);
+        const isKilled = monster.hit(egg.damage);
         this.points += 10;
         this.hudScene.update_points(this.points);
         egg.destroy();
+
+        if (isKilled) {
+            // 처치 시 드랍 판정 및 드랍 처리
+            this.tryDropItem(monster.x, monster.y, monster);
+            // 실제 파괴는 여기에서 일괄 처리
+            monster.destroy();
+        }
     }
 
     playerHitMonster(player, monster) {
@@ -320,11 +341,6 @@ export class BaseScene extends Scene {
     }
 
     startNextRound(nextSceneKey) {
-        // 아이템 설명 숨기기
-        if (this.itemManager) {
-            this.itemManager.hideAllDescriptions();
-        }
-
         this.scene.stop(this.scene.key);
         // 다음 Scene으로 전환 시 fade out 효과 대신 즉시 전환
         this.scene.start(nextSceneKey, {

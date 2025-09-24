@@ -13,8 +13,8 @@ export class NormalScene extends BaseScene {
     currentSpawnDelay = 1000; // 초기 스폰 딜레이도 1초로 변경
 
     // 몬스터 속도 관련 변수
-    initialMonsterSpeed = 150; // 150으로 변경
-    currentMonsterSpeed = 150; // 현재 속도도 150으로 초기화
+    initialMonsterSpeed = 200; // 최초 속도
+    currentMonsterSpeed = 200; // 현재 속도
     monsterSpeedIncreaseRate = 5;
 
     middleSpawnTime = 20000; // 20초 후 중급 스폰 시작
@@ -55,9 +55,7 @@ export class NormalScene extends BaseScene {
     }
 
     collectItem(player, item) {
-        if (player.heldItem) {
-            player.heldItem.return();
-        }
+        // 다중 아이템: 기존 아이템 반환/교체 없이 누적 적용
         player.collectItem(item);
         item.collect();
     }
@@ -74,7 +72,6 @@ export class NormalScene extends BaseScene {
         }
 
         this.showNextRoundArrow();
-        this.createItems();
     }
 
     showNextRoundArrow() {
@@ -218,16 +215,10 @@ export class NormalScene extends BaseScene {
         }
         return { x, y, direction };
     }
-    hitMonster(egg, monster) {
-        console.log("Egg hit monster. Damage:", egg.damage);
-        monster.hit(egg.damage);
-        this.points += 10;
-        this.hudScene.update_points(this.points);
-        egg.destroy();
-    }
-
     playerHitMonster(player, monster) {
         super.playerHitMonster(player, monster);
+        // 접촉으로 몬스터를 파괴하는 경우에도 드랍 시도
+        this.tryDropItem(monster.x, monster.y, monster);
         monster.destroy();
     }
 
