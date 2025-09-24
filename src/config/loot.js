@@ -1,10 +1,10 @@
 import { ITEM_DEFS } from "./items";
 
-export function getDropRateForMonster(name) {
-    switch (name) {
-        case "Cat":
+export function getDropRateForMonster(key) {
+    switch (key) {
+        case "cat":
             return 0.3;
-        case "Pig":
+        case "pig":
             return 0.2;
         default:
             return 0.2;
@@ -19,8 +19,7 @@ const DEFAULT_TABLE = [
 ];
 
 export function pickDropFor(monster, player) {
-    const monsterName =
-        monster && monster.constructor && monster.constructor.name;
+    const monsterKey = monster?.texture?.key;
     // 플레이어 상태로 상한 도달 아이템 제외
     const filtered = DEFAULT_TABLE.filter((entry) => {
         const def = ITEM_DEFS[entry.id];
@@ -31,10 +30,10 @@ export function pickDropFor(monster, player) {
         const current = player?.activeEffects?.[key] ?? 0;
         if (current >= max) return false;
 
-        // 특정 몬스터 전용 아이템 필터링
+        // 특정 몬스터 전용 아이템 필터링 (texture key 기반)
         const allowed = def.allowedMonsters;
         if (Array.isArray(allowed) && allowed.length > 0) {
-            return allowed.includes(monsterName);
+            return allowed.includes(monsterKey);
         }
         return true;
     });

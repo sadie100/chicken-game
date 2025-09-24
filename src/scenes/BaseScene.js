@@ -217,7 +217,7 @@ export class BaseScene extends Scene {
 
     // 아이템 드랍 관련 헬퍼들
     tryDropItem(x, y, monster) {
-        const name = monster && monster.constructor && monster.constructor.name;
+        const name = monster?.texture?.key;
         const dropRate = getDropRateForMonster(name);
         if (Math.random() < dropRate) {
             const drop = pickDropFor(monster, this.player);

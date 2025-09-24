@@ -14,7 +14,7 @@ export const ITEM_DEFS = {
         description: "달걀 데미지를 강화합니다.",
         apply: (player) => player.addEffect("bullet", 1, MAX_STACK.bullet),
         remove: (player) => player.removeEffect("bullet", 1),
-        allowedMonsters: ["Cat"],
+        allowedMonsters: ["cat"],
     },
     EggSpeedBooster: {
         texture: "itemList1",
@@ -24,7 +24,7 @@ export const ITEM_DEFS = {
         description: "달걀이 발사되는 속도가 빨라집니다.",
         apply: (player) => player.addEffect("eggSpeed", 1, MAX_STACK.eggSpeed),
         remove: (player) => player.removeEffect("eggSpeed", 1),
-        allowedMonsters: ["Cat", "Pig"],
+        allowedMonsters: ["cat", "pig"],
     },
     EggSizeBooster: {
         texture: "itemList2",
@@ -34,7 +34,7 @@ export const ITEM_DEFS = {
         description: "달걀 크기가 커집니다.",
         apply: (player) => player.addEffect("eggSize", 1, MAX_STACK.eggSize),
         remove: (player) => player.removeEffect("eggSize", 1),
-        allowedMonsters: ["Cat"],
+        allowedMonsters: ["cat"],
     },
     SpeedBooster: {
         texture: "itemList1",
@@ -44,7 +44,7 @@ export const ITEM_DEFS = {
         description: "이동속도가 빨라집니다.",
         apply: (player) => player.addEffect("speed", 1, MAX_STACK.speed),
         remove: (player) => player.removeEffect("speed", 1),
-        allowedMonsters: ["Cat", "Pig"],
+        allowedMonsters: ["cat", "pig"],
     },
     // StunAbility: {
     //     texture: "itemList2",
