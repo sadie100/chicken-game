@@ -2,12 +2,13 @@ import { Monster } from "./Monster";
 import { Bullet } from "../Bullet";
 import { Pig } from "./Pig";
 import { Cat } from "./Cat";
+import { BOSS_HEALTH } from "../../config/monster";
 
 export class GoldPig extends Monster {
     constructor(scene, x, y) {
         super(scene, x, y, "gold_pig");
-        this.health = 100;
-        this.maxHealth = 100;
+        this.health = BOSS_HEALTH;
+        this.maxHealth = BOSS_HEALTH;
         this.setScale(5);
         this.bullets = scene.physics.add.group({
             classType: Bullet,
@@ -371,4 +372,3 @@ export class GoldPig extends Monster {
         patternWithDelay(1); // 처음 실행 + 1번 더 반복 = 총 2번 실행
     }
 }
-

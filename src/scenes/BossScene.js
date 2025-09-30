@@ -2,6 +2,7 @@ import { BaseScene } from "./BaseScene";
 import { GoldPig } from "../gameobjects/monsters/GoldPig";
 import { Background } from "../backgrounds/Background";
 import { BossHealthBar } from "../gameobjects/BossHealthBar";
+import { BOSS_HEALTH } from "../config/monster";
 
 export class BossScene extends BaseScene {
     constructor() {
@@ -75,7 +76,7 @@ export class BossScene extends BaseScene {
 
     spawnBossMonster() {
         this.boss = new GoldPig(this, 600, 300);
-        this.boss.setHealth(100);
+        this.boss.setHealth(BOSS_HEALTH);
 
         this.bossHealthBar = new BossHealthBar(this);
 
