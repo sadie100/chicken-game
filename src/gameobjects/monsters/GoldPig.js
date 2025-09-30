@@ -47,7 +47,7 @@ export class GoldPig extends Monster {
 
     startNextPattern() {
         if (!this.isPatternActive) {
-            if (this.health <= 50 && !this.isUltimateUsed) {
+            if (this.health <= BOSS_HEALTH / 2 && !this.isUltimateUsed) {
                 this.patterns.push(this.ultimatePattern.bind(this));
                 this.ultimatePattern();
                 this.isUltimateUsed = true;
@@ -266,7 +266,7 @@ export class GoldPig extends Monster {
     pattern4() {
         this.isPatternActive = true;
         let spawnCount = 0;
-        const maxSpawns = 10;
+        const maxSpawns = 30;
 
         const spawnMonster = () => {
             if (spawnCount >= maxSpawns) {
@@ -300,11 +300,12 @@ export class GoldPig extends Monster {
             }
 
             const monsterType = Math.random() < 0.5 ? Pig : Cat;
-            const monster = new monsterType(this.scene, x, y, 300, direction);
+            const monster = new monsterType(this.scene, x, y, 500, direction);
+            monster.noItemDrop = true; // 아이템 드롭 방지 플래그 추가
             this.scene.monsters.add(monster);
 
             spawnCount++;
-            this.scene.time.delayedCall(500, spawnMonster);
+            this.scene.time.delayedCall(100, spawnMonster);
         };
 
         spawnMonster();

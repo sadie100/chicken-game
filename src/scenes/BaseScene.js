@@ -33,6 +33,10 @@ export class BaseScene extends Scene {
         if (this.player) {
             this.effects = data.player.getEffects();
         }
+        // 직접 effects 데이터가 전달된 경우 (테스트용)
+        if (data.effects) {
+            this.effects = data.effects;
+        }
         this.points = data.points || 0;
         this.lives = data.lives || 5;
 
@@ -217,6 +221,11 @@ export class BaseScene extends Scene {
 
     // 아이템 드랍 관련 헬퍼들
     tryDropItem(x, y, monster) {
+        // 아이템 드롭 방지 플래그가 설정된 몬스터는 아이템을 드롭하지 않음
+        if (monster?.noItemDrop) {
+            return;
+        }
+
         const name = monster?.texture?.key;
         const dropRate = getDropRateForMonster(name);
         if (Math.random() < dropRate) {
