@@ -13,7 +13,7 @@ export class GoldPig extends Monster {
         this.bullets = scene.physics.add.group({
             classType: Bullet,
             runChildUpdate: true,
-            maxSize: 30,
+            maxSize: 100, // 30 -> 100으로 증가 (탄막 패턴 강화)
         });
         this.patterns = [
             this.pattern1.bind(this),
@@ -145,12 +145,13 @@ export class GoldPig extends Monster {
         this.isPatternActive = true;
         let delay = 0;
 
-        const fireTripleBullet = () => {
-            for (let i = -1; i <= 1; i++) {
+        const fireMultiBullet = () => {
+            // 5방향 탄막으로 증가, 속도도 증가
+            for (let i = -2; i <= 2; i++) {
                 const bullet = this.bullets.get(this.x, this.y, "enemy-bullet");
                 if (bullet) {
-                    bullet.setScale(2);
-                    bullet.fire(this.x, this.y, -400, i * 50);
+                    bullet.setScale(2.5); // 크기 증가
+                    bullet.fire(this.x, this.y, -500, i * 70); // 속도 400 -> 500
                 }
             }
         };
@@ -162,7 +163,7 @@ export class GoldPig extends Monster {
             duration: 1000,
             ease: "Sine.easeInOut",
             onUpdate: () => {
-                if (Math.random() < 0.1) fireTripleBullet();
+                if (Math.random() < 0.4) fireMultiBullet(); // 0.1 -> 0.4 (4배 증가)
             },
             delay: delay,
         });
@@ -175,7 +176,7 @@ export class GoldPig extends Monster {
             duration: 2000,
             ease: "Sine.easeInOut",
             onUpdate: () => {
-                if (Math.random() < 0.1) fireTripleBullet();
+                if (Math.random() < 0.4) fireMultiBullet(); // 0.1 -> 0.4 (4배 증가)
             },
             delay: delay,
         });
@@ -188,7 +189,7 @@ export class GoldPig extends Monster {
             duration: 1000,
             ease: "Sine.easeInOut",
             onUpdate: () => {
-                if (Math.random() < 0.1) fireTripleBullet();
+                if (Math.random() < 0.4) fireMultiBullet(); // 0.1 -> 0.4 (4배 증가)
             },
             delay: delay,
             onComplete: () => {
@@ -214,6 +215,28 @@ export class GoldPig extends Monster {
             { x: this.scene.scale.width - 100, y: this.scene.scale.height / 2 },
         ];
 
+        // 플레이어 방향으로 탄막 발사 (약간 느리게)
+        const fireAtPlayer = () => {
+            const player = this.scene.player;
+            if (!player) return;
+
+            const angle = Phaser.Math.Angle.Between(
+                this.x,
+                this.y,
+                player.x,
+                player.y
+            );
+
+            // 플레이어 방향으로 1발만
+            const bullet = this.bullets.get(this.x, this.y, "enemy-bullet");
+            if (bullet) {
+                bullet.setScale(2);
+                const velocityX = Math.cos(angle) * 350; // 속도 감소 450 -> 350
+                const velocityY = Math.sin(angle) * 350;
+                bullet.fire(this.x, this.y, velocityX, velocityY);
+            }
+        };
+
         // 위 중앙으로 이동
         this.scene.tweens.add({
             targets: this,
@@ -222,11 +245,14 @@ export class GoldPig extends Monster {
             duration: 1000,
             ease: "Power2",
             delay: delay,
+            onUpdate: () => {
+                if (Math.random() < 0.08) fireAtPlayer(); // 0.15 -> 0.08로 감소
+            },
         });
         delay += 1000;
 
-        // 다이아몬드 모양 이동
-        diamondPoints.forEach((point) => {
+        // 다이아몬드 모양 이동 - 각 꼭짓점에서 약한 탄막
+        diamondPoints.forEach((point, index) => {
             this.scene.tweens.add({
                 targets: this,
                 x: point.x,
@@ -234,6 +260,25 @@ export class GoldPig extends Monster {
                 duration: 500,
                 ease: "Linear",
                 delay: delay,
+                onStart: () => {
+                    for (let i = 0; i < 4; i++) {
+                        const bullet = this.bullets.get(
+                            this.x,
+                            this.y,
+                            "enemy-bullet"
+                        );
+                        if (bullet) {
+                            bullet.setScale(2);
+                            const angle = (i * 90 * Math.PI) / 180; // 90도씩 (상하좌우)
+                            const velocityX = Math.cos(angle) * 300; // 속도 감소 350 -> 300
+                            const velocityY = Math.sin(angle) * 300;
+                            bullet.fire(this.x, this.y, velocityX, velocityY);
+                        }
+                    }
+                },
+                onUpdate: () => {
+                    if (Math.random() < 0.1) fireAtPlayer(); // 0.2 -> 0.1로 감소
+                },
             });
             delay += 500;
         });
@@ -316,12 +361,12 @@ export class GoldPig extends Monster {
 
         const centerX = this.x;
         const centerY = this.y;
-        const bulletCount = 32;
-        const bulletSpeed = 300;
+        const bulletCount = 40; // 32 -> 40으로 증가
+        const bulletSpeed = 350; // 300 -> 350으로 증가
         let angle = 0;
 
         const fireBullets = () => {
-            for (let i = 0; i < 8; i++) {
+            for (let i = 0; i < 10; i++) {
                 const bullet = this.bullets.get(
                     centerX,
                     centerY,
@@ -336,7 +381,7 @@ export class GoldPig extends Monster {
                     bullet.setRotation(radians);
                 }
             }
-            angle += 11.5; // 360 / 32 = 11.25 (한 바퀴를 32번에 나눔)
+            angle += 11.5;
         };
 
         const executePattern = (callback) => {
@@ -350,10 +395,10 @@ export class GoldPig extends Monster {
             });
 
             for (let i = 0; i < bulletCount; i++) {
-                this.scene.time.delayedCall(i * 100, fireBullets);
+                this.scene.time.delayedCall(i * 80, fireBullets); // 100ms -> 80ms (더 빠르게)
             }
 
-            this.scene.time.delayedCall(bulletCount * 100 + 1000, () => {
+            this.scene.time.delayedCall(bulletCount * 80 + 1000, () => {
                 this.scene.tweens.killTweensOf(this);
                 this.setScale(5);
                 if (callback) callback();
@@ -370,6 +415,6 @@ export class GoldPig extends Monster {
             });
         };
 
-        patternWithDelay(1); // 처음 실행 + 1번 더 반복 = 총 2번 실행
+        patternWithDelay(1);
     }
 }

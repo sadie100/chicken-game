@@ -52,6 +52,18 @@ export class MenuScene extends Scene {
                 this.scene.stop("MenuScene");
                 this.scene.start("HudScene");
                 this.scene.start("FirstScene", { restart: true });
+
+                // // 테스트용: 보스 씬으로 바로 이동, 모든 아이템 최대치
+                // this.scene.start("BossScene", {
+                //     restart: true,
+                //     effects: {
+                //         bullet: MAX_STACK.bullet,
+                //         eggSpeed: MAX_STACK.eggSpeed,
+                //         eggSize: MAX_STACK.eggSize,
+                //         speed: MAX_STACK.speed,
+                //         powerEgg: 0, // PowerEgg는 시간 제한이 있어서 0으로 시작
+                //     },
+                // });
             },
         });
 
