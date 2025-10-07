@@ -1,5 +1,6 @@
 import { Scene } from "phaser";
 import { Button } from "../gameobjects/Button";
+// import { MAX_STACK } from "../config/items";
 
 export class MenuScene extends Scene {
     constructor() {
@@ -135,3 +136,4 @@ export class MenuScene extends Scene {
         this.dialog.setVisible(false);
     }
 }
+

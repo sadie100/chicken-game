@@ -346,6 +346,10 @@ export class Player extends Physics.Arcade.Sprite {
             ...effects,
         };
         this.recomputeStatsFromEffects();
+        // powerEgg 효과가 이미 적용되어 있다면 시각적 효과를 복원
+        if ((this.activeEffects?.powerEgg ?? 0) > 0) {
+            this.startPowerBlink();
+        }
     }
 
     getEffects() {
@@ -370,4 +374,48 @@ export class Player extends Physics.Arcade.Sprite {
             this.clearTint();
         }
     }
+
+    // 다음 씬으로 넘어왔을 때, 남은 시간만큼 타임드 이펙트 만료를 재스케줄
+    scheduleTimedEffectRemoval(key, remainingMs) {
+        if (!this.timedEffectTimers) this.timedEffectTimers = {};
+        const existing = this.timedEffectTimers[key];
+        if (existing && existing.remove) {
+            existing.remove();
+        }
+
+        const delay = Math.max(0, (remainingMs ?? 0) | 0);
+        const timer = this.scene.time.delayedCall(
+            delay,
+            () => {
+                this.removeEffect(key, 1);
+                if (key === "powerEgg") {
+                    this.stopPowerBlink();
+                }
+                if (this.timedEffectTimers) {
+                    delete this.timedEffectTimers[key];
+                }
+            },
+            null,
+            this
+        );
+        this.timedEffectTimers[key] = timer;
+    }
+
+    // 현재 적용 중인 타임드 이펙트들의 남은 시간을 반환
+    getTimedEffectsRemaining() {
+        const result = {};
+        if (!this.timedEffectTimers) return result;
+        for (const [key, timer] of Object.entries(this.timedEffectTimers)) {
+            if (!timer) continue;
+            const elapsed =
+                typeof timer.getElapsed === "function" ? timer.getElapsed() : 0;
+            const delay = timer.delay ?? 0;
+            const remaining = Math.max(0, delay - elapsed);
+            if (remaining > 0) {
+                result[key] = remaining;
+            }
+        }
+        return result;
+    }
 }
+

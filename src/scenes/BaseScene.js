@@ -33,6 +33,8 @@ export class BaseScene extends Scene {
         if (this.player) {
             this.effects = data.player.getEffects();
         }
+        // 전 씬에서 전달된 타임드 이펙트 남은 시간 정보
+        this.timedEffectsRemaining = data.timedEffectsRemaining || null;
         // 직접 effects 데이터가 전달된 경우 (테스트용)
         if (data.effects) {
             this.effects = data.effects;
@@ -68,6 +70,16 @@ export class BaseScene extends Scene {
         this.player = new Player({ scene: this });
         if (this.effects) {
             this.player.setEffects(this.effects);
+        }
+
+        // 씬 진입 시, 남은 시간에 맞춰 타임드 이펙트 만료 예약 복원
+        if (this.timedEffectsRemaining) {
+            Object.entries(this.timedEffectsRemaining).forEach(
+                ([key, remaining]) => {
+                    // 이미 효과량이 적용되어 있다고 가정(setEffects 통해)
+                    this.player.scheduleTimedEffectRemoval(key, remaining);
+                }
+            );
         }
 
         this.player.setLives(this.lives);
@@ -350,6 +362,12 @@ export class BaseScene extends Scene {
     }
 
     startNextRound(nextSceneKey) {
+        // 현재 플레이어 타임드 이펙트 남은시간 계산
+        const timedEffectsRemaining =
+            typeof this.player.getTimedEffectsRemaining === "function"
+                ? this.player.getTimedEffectsRemaining()
+                : null;
+
         this.scene.stop(this.scene.key);
         // 다음 Scene으로 전환 시 fade out 효과 대신 즉시 전환
         this.scene.start(nextSceneKey, {
@@ -358,7 +376,9 @@ export class BaseScene extends Scene {
             points: this.points,
             lives: this.player.getLives(),
             heldItem: this.player.heldItem,
+            timedEffectsRemaining,
         });
         this.previousSceneKey = this.scene.key;
     }
 }
+
