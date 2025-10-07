@@ -12,6 +12,8 @@ import { GameClearScene } from "./scenes/GameClearScene";
 const config = {
     type: Phaser.AUTO,
     parent: "phaser-container",
+    width: window.innerWidth,
+    height: window.innerHeight,
     // width: 960,
     // height: 540,
     backgroundColor: "#1c172e",
@@ -44,3 +46,4 @@ const config = {
 };
 
 new Game(config);
+

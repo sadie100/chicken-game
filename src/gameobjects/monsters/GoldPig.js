@@ -381,7 +381,7 @@ export class GoldPig extends Monster {
                     bullet.setRotation(radians);
                 }
             }
-            angle += 11.5;
+            angle += 20;
         };
 
         const executePattern = (callback) => {
@@ -400,7 +400,7 @@ export class GoldPig extends Monster {
 
             this.scene.time.delayedCall(bulletCount * 80 + 1000, () => {
                 this.scene.tweens.killTweensOf(this);
-                this.setScale(5);
+                this.setScale(10);
                 if (callback) callback();
             });
         };
