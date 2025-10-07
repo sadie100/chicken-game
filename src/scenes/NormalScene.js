@@ -224,7 +224,7 @@ export class NormalScene extends BaseScene {
         let x, y, direction;
 
         if (this.gameTime >= this.advancedSpawnTime) {
-            return this.getSpecialSpawnPosition(this.scale.width * 0.3);
+            return this.getSpecialSpawnPosition(this.scale.width * 0.5);
         } else if (this.gameTime >= this.updownSpawnTime) {
             return this.getSpecialSpawnPosition(this.scale.width * 0.7);
         } else {
@@ -265,3 +265,4 @@ export class NormalScene extends BaseScene {
         return this.initialSpawnDelay;
     }
 }
+
