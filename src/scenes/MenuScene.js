@@ -1,5 +1,11 @@
 import { Scene } from "phaser";
 import { Button } from "../gameobjects/Button";
+import {
+    t,
+    changeLanguage,
+    onLanguageChanged,
+    currentLanguage,
+} from "../i18n/i18n";
 // import { MAX_STACK } from "../config/items";
 
 export class MenuScene extends Scene {
@@ -30,10 +36,10 @@ export class MenuScene extends Scene {
             .setOrigin(0, 0.5);
 
         // Logo
-        const logo_game = this.add.text(
+        this.logo_game = this.add.text(
             this.scale.width / 2,
             this.scale.height / 4,
-            "치킨게임",
+            t("menu.title"),
             {
                 fontFamily: "Impact",
                 fontSize: 52,
@@ -41,14 +47,14 @@ export class MenuScene extends Scene {
                 fontStyle: "bold",
             }
         );
-        logo_game.setOrigin(0.5, 0.5);
-        logo_game.postFX.addShine();
+        this.logo_game.setOrigin(0.5, 0.5);
+        this.logo_game.postFX.addShine();
 
-        new Button({
+        this.playBtn = new Button({
             scene: this,
             x: this.scale.width / 2,
             y: this.scale.height / 2,
-            text: "게임 시작",
+            text: t("menu.play"),
             onClick: () => {
                 this.scene.stop("MenuScene");
                 this.scene.start("HudScene");
@@ -68,17 +74,45 @@ export class MenuScene extends Scene {
             },
         });
 
-        new Button({
+        this.helpBtn = new Button({
             scene: this,
             x: this.scale.width / 2,
             y: this.scale.height / 2 + 85,
-            text: "게임 설명",
+            text: t("menu.help"),
             onClick: () => {
                 this.showDialog();
             },
         });
 
+        // Language toggle (KO/EN)
+        this.langBtn = new Button({
+            scene: this,
+            x: this.scale.width - 100,
+            y: 40,
+            text: currentLanguage().toUpperCase().startsWith("en")
+                ? "EN"
+                : "KO",
+            onClick: async () => {
+                const next = currentLanguage().startsWith("en") ? "ko" : "en";
+                await changeLanguage(next);
+            },
+        });
+
         this.createDialog();
+
+        // 언어 변경 시 즉시 UI 갱신
+        this.refreshTexts = () => {
+            this.logo_game.setText(t("menu.title"));
+            this.playBtn.button.setText(t("menu.play"));
+            this.helpBtn.button.setText(t("menu.help"));
+            if (this.dialogContent) {
+                this.dialogContent.setText(t("menu.story"));
+            }
+            this.langBtn.button.setText(
+                currentLanguage().startsWith("en") ? "EN" : "KO"
+            );
+        };
+        this._i18nUnsub = onLanguageChanged(this.refreshTexts);
     }
 
     createDialog() {
@@ -101,29 +135,15 @@ export class MenuScene extends Scene {
         closeButton.setInteractive({ useHandCursor: true });
         closeButton.on("pointerdown", () => this.hideDialog());
 
-        const content = this.add.text(
-            0,
-            0,
-            `
-            평화로운 삶을 살고 있던 엄마닭 꼬꼬.
-            어느 날 마을에 무서운 황금 돼지가 나타나
-            꼬꼬의 소중한 아기 병아리를 납치했다.
-            황금 돼지를 무찌르고 아기 병아리를 구해라!
+        this.dialogContent = this.add.text(0, 0, t("menu.story"), {
+            fontSize: "24px",
+            color: "#000000",
+            wordWrap: { width: width - 40, useAdvancedWrap: true },
+            lineSpacing: 10,
+        });
+        this.dialogContent.setOrigin(0.5);
 
-            방향키 혹은 wasd로 이동하고 스페이스바로 공격한다.
-            스페이스바를 꾹 누르고 있으면 자동 공격이 된다.
-            
-            `,
-            {
-                fontSize: "24px",
-                color: "#000000",
-                wordWrap: { width: width - 40, useAdvancedWrap: true },
-                lineSpacing: 10,
-            }
-        );
-        content.setOrigin(0.5);
-
-        this.dialog.add([background, closeButton, content]);
+        this.dialog.add([background, closeButton, this.dialogContent]);
         this.dialog.setSize(width, height);
         this.dialog.setVisible(false);
     }
@@ -134,6 +154,12 @@ export class MenuScene extends Scene {
 
     hideDialog() {
         this.dialog.setVisible(false);
+    }
+    shutdown() {
+        if (this._i18nUnsub) {
+            this._i18nUnsub();
+            this._i18nUnsub = null;
+        }
     }
 }
 

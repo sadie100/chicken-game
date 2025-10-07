@@ -1,0 +1,26 @@
+{
+    "menu": {
+        "title": "Chicken Game",
+        "play": "Play",
+        "help": "How to Play",
+        "story": "Kkoko the hen lived peacefully.\nOne day, a fearsome Golden Pig appeared\nand kidnapped her precious chicks.\nDefeat the pig and rescue them!\n\nMove with arrows or WASD and attack with Space.\nHold Space for auto fire."
+    },
+    "hud": {
+        "points": "POINTS",
+        "time": "TIME",
+        "effects": {
+            "bullet": "Damage",
+            "eggSize": "Egg Size",
+            "eggSpeed": "Fire Rate",
+            "speed": "Move Speed"
+        }
+    },
+    "gameclear": {
+        "story": "Kkoko defeated the Golden Pig\nand successfully rescued the precious chicks.\nUpon returning to the village,\nshe was welcomed as a hero.\nWith great courage and wise choices,\nKkoko saved the village\nand will be remembered as its hero.\n\nYour score: {{score}}\n\nThank you for playing.\n",
+        "skip": "CLICK TO SKIP"
+    },
+    "loader": {
+        "heading": "Heading to the Chicken World..."
+    }
+}
+

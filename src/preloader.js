@@ -1,4 +1,5 @@
 import { SoundManager } from "./gameobjects/SoundManager";
+import { t } from "./i18n/i18n";
 
 export class Preloader extends Phaser.Scene {
     constructor() {
@@ -207,7 +208,7 @@ export class Preloader extends Phaser.Scene {
         let loadingText = this.add.text(
             this.cameras.main.width / 2,
             this.cameras.main.height / 3,
-            "Heading to the Chicken World...",
+            t("loader.heading"),
             {
                 fontFamily: "Impact",
                 fontSize: "48px",
@@ -249,3 +250,4 @@ export class Preloader extends Phaser.Scene {
         });
     }
 }
+

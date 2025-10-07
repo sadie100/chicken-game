@@ -1,4 +1,5 @@
 import { Scene } from "phaser";
+import { t, onLanguageChanged } from "../i18n/i18n";
 
 export class GameClearScene extends Scene {
     lastPlayedScene = "FirstScene"; // Default to FirstScene
@@ -28,16 +29,7 @@ export class GameClearScene extends Scene {
         const storyText = this.add.text(
             this.scale.width / 2,
             this.scale.height,
-            `꼬꼬는 황금 돼지를 무찌르고\n
-            소중한 아기 병아리를 구하는 데 성공했다.\n
-            마을로 돌아온 꼬꼬는\n
-            영웅으로 환영받았다.\n
-            커다란 용기와 지혜로운 선택으로\n
-            마을을 구한 꼬꼬는\n
-            마을의 영웅으로 기억될 것이다.\n\n
-
-            당신의 점수 : ${this.end_points}\n\n
-            플레이 해주셔서 감사합니다.\n`,
+            t("gameclear.story", { score: this.end_points }),
             {
                 font: "32px Arial",
                 fill: "#ffffff",
@@ -51,6 +43,9 @@ export class GameClearScene extends Scene {
                 padding: 20,
             }
         );
+        this._i18nUnsub = onLanguageChanged(() => {
+            storyText.setText(t("gameclear.story", { score: this.end_points }));
+        });
         storyText.setOrigin(0.5, 0); // 텍스트의 기준점을 아래 가운데로 설정
         storyText.setAlpha(0.9);
         // 2초 딜레이 후 텍스트 애니메이션 시작
@@ -68,6 +63,12 @@ export class GameClearScene extends Scene {
                 },
             });
         });
+        this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+            if (this._i18nUnsub) {
+                this._i18nUnsub();
+                this._i18nUnsub = null;
+            }
+        });
 
         // 재시작 안내
         this.add
@@ -75,7 +76,7 @@ export class GameClearScene extends Scene {
                 this.scale.width - 10,
                 this.scale.height - 10,
                 "pixelfont",
-                "CLICK TO SKIP",
+                t("gameclear.skip"),
                 20
             )
             .setOrigin(1, 1);
@@ -101,3 +102,4 @@ export class GameClearScene extends Scene {
         this.scene.start("MenuScene");
     }
 }
+

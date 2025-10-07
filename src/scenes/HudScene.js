@@ -1,5 +1,6 @@
 import { Scene } from "phaser";
 import { ITEM_DEFS } from "../config/items";
+import { t } from "../i18n/i18n";
 
 export class HudScene extends Scene {
     points_text;
@@ -21,7 +22,7 @@ export class HudScene extends Scene {
             10,
             50,
             "pixelfont",
-            "POINTS:0000",
+            `${t("hud.points")}:0000`,
             24
         );
 
@@ -30,7 +31,7 @@ export class HudScene extends Scene {
             this.scale.width - 10,
             10,
             "pixelfont",
-            "TIME: 00:00",
+            `${t("hud.time")}: 00:00`,
             24
         );
         this.time_text.setOrigin(1, 0); // 우측 상단 정렬
@@ -57,10 +58,22 @@ export class HudScene extends Scene {
         }
 
         const mapping = [
-            { key: "bullet", label: "대미지", id: "BulletBooster" },
-            { key: "eggSize", label: "알크기", id: "EggSizeBooster" },
-            { key: "eggSpeed", label: "발사속도", id: "EggSpeedBooster" },
-            { key: "speed", label: "이동속도", id: "SpeedBooster" },
+            {
+                key: "bullet",
+                label: t("hud.effects.bullet"),
+                id: "BulletBooster",
+            },
+            {
+                key: "eggSize",
+                label: t("hud.effects.eggSize"),
+                id: "EggSizeBooster",
+            },
+            {
+                key: "eggSpeed",
+                label: t("hud.effects.eggSpeed"),
+                id: "EggSpeedBooster",
+            },
+            { key: "speed", label: t("hud.effects.speed"), id: "SpeedBooster" },
             // 파워에그는 HUD 표시에서 제외 (시간 제한 버프)
         ];
 
@@ -138,7 +151,9 @@ export class HudScene extends Scene {
             const minutes = Math.floor(seconds / 60);
             const remainingSeconds = seconds % 60;
             this.time_text.setText(
-                `TIME: ${minutes.toString().padStart(2, "0")}:${remainingSeconds
+                `${t("hud.time")}: ${minutes
+                    .toString()
+                    .padStart(2, "0")}:${remainingSeconds
                     .toString()
                     .padStart(2, "0")}`
             );
@@ -160,3 +175,4 @@ export class HudScene extends Scene {
         }
     }
 }
+
