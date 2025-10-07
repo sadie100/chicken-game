@@ -96,6 +96,7 @@ export class Preloader extends Phaser.Scene {
         this.soundManager = new SoundManager(this);
         this.game.registry.set("soundManager", this.soundManager);
 
+        // 메뉴 씬 시작 전, 배경 씬은 유지하여 Menu에서도 같은 배경을 사용
         this.scene.start("MenuScene");
     }
 
@@ -202,11 +203,28 @@ export class Preloader extends Phaser.Scene {
     }
 
     displayLoadingBar() {
-        /*** Loading Bar ***/
-        let progressBar = this.add.graphics();
-        let loadingText = this.add.text(
-            this.cameras.main.width / 2,
-            this.cameras.main.height / 3,
+        // 배경 씬 실행 (이미 실행 중이면 무시)
+        const isBgActive =
+            this.scene.isActive && this.scene.isActive("BackgroundScene");
+        if (!isBgActive) {
+            this.scene.launch("BackgroundScene");
+            this.scene.sendToBack("BackgroundScene");
+        }
+
+        /*** Wood/Farm Pixel Themed Loading Bar ***/
+        const camera = this.cameras.main;
+        const barX = camera.width / 4;
+        const barY = camera.height / 2.5;
+        const barW = camera.width / 2;
+        const barH = camera.height / 20;
+
+        const border = this.add.graphics();
+        const fill = this.add.graphics();
+
+        // Title
+        const loadingText = this.add.text(
+            camera.width / 2,
+            camera.height / 3,
             "Heading to the Chicken World...",
             {
                 fontFamily: "Impact",
@@ -216,9 +234,10 @@ export class Preloader extends Phaser.Scene {
         );
         loadingText.setOrigin(0.5, 0.5);
 
-        let percentText = this.add.text(
-            this.cameras.main.width / 2,
-            this.cameras.main.height / 2,
+        // Percentage
+        const percentText = this.add.text(
+            camera.width / 2,
+            camera.height / 2,
             "0%",
             {
                 fontFamily: "Impact",
@@ -228,24 +247,87 @@ export class Preloader extends Phaser.Scene {
         );
         percentText.setOrigin(0.5, 0.5);
 
-        const camera = this.cameras.main;
+        // Static wooden border
+        border.lineStyle(6, 0x4b2e16, 1);
+        border.fillStyle(0x2a1a0f, 0.6); // dark shadow under bar
+        border.fillRect(barX - 4, barY + barH + 6, barW + 8, 8);
+        border.fillStyle(0x8b5a2b, 1); // base wood background
+        border.fillRect(barX, barY, barW, barH);
+        border.lineStyle(6, 0x2a1a0f, 1);
+        border.strokeRect(barX, barY, barW, barH);
 
-        this.load.on("progress", function (value) {
+        // Plank separators for pixel feel
+        const plankWidth = 24;
+        const plankLines = this.add.graphics();
+        plankLines.lineStyle(2, 0x6d3f1f, 0.7);
+        for (let px = barX + plankWidth; px < barX + barW; px += plankWidth) {
+            plankLines.beginPath();
+            plankLines.moveTo(px, barY + 3);
+            plankLines.lineTo(px, barY + barH - 3);
+            plankLines.strokePath();
+        }
+
+        // Chicken icon that moves along the bar
+        let chickenIcon = null;
+        const updateChicken = (progress) => {
+            if (
+                !this.textures.exists("chicken_walk") &&
+                !this.textures.exists("chicken_idle")
+            ) {
+                return;
+            }
+            if (!chickenIcon) {
+                const key = this.textures.exists("chicken_walk")
+                    ? "chicken_walk"
+                    : "chicken_idle";
+                chickenIcon = this.add.sprite(barX, barY + barH / 2, key, 0);
+                chickenIcon.setScale(1.5);
+                chickenIcon.setOrigin(0.5, 0.5);
+            }
+            const clamped = Phaser.Math.Clamp(progress, 0, 1);
+            const posX = barX + clamped * barW;
+            chickenIcon.x = posX;
+            chickenIcon.y = barY + barH / 2 - 6;
+        };
+
+        // Update fill by progress
+        this.load.on("progress", (value) => {
             percentText.setText(`${Math.ceil(value * 100)}%`);
-            progressBar.clear();
-            progressBar.fillStyle(0x8b0000, 1);
-            progressBar.fillRect(
-                camera.width / 4,
-                camera.height / 2.5,
-                (value * camera.width) / 2,
-                camera.height / 20
+            fill.clear();
+            fill.fillStyle(0xc69c6d, 1); // lighter wood fill
+            const innerPad = 4;
+            const width = Math.max(0, value * (barW - innerPad * 2));
+            fill.fillRect(
+                barX + innerPad,
+                barY + innerPad,
+                width,
+                barH - innerPad * 2
             );
+            updateChicken(value);
         });
 
-        this.load.on("complete", function () {
-            progressBar.destroy();
-            loadingText.destroy();
-            percentText.destroy();
+        this.load.on("complete", () => {
+            // small finish move
+            if (chickenIcon) {
+                this.tweens.add({
+                    targets: chickenIcon,
+                    y: chickenIcon.y - 6,
+                    duration: 200,
+                    yoyo: true,
+                    repeat: 1,
+                    ease: "Sine.easeInOut",
+                });
+            }
+            // clean up UI after a short delay (so finish animation is visible)
+            this.time.delayedCall(150, () => {
+                border.destroy();
+                fill.destroy();
+                plankLines.destroy();
+                loadingText.destroy();
+                percentText.destroy();
+                if (chickenIcon) chickenIcon.destroy();
+            });
         });
     }
 }
+

@@ -1,5 +1,6 @@
 import { Game } from "phaser";
 import { Preloader } from "./preloader";
+import { BackgroundScene } from "./scenes/BackgroundScene";
 import { GameOverScene } from "./scenes/GameOverScene";
 import { HudScene } from "./scenes/HudScene";
 import { MenuScene } from "./scenes/MenuScene";
@@ -35,6 +36,7 @@ const config = {
     },
     scene: [
         Preloader,
+        BackgroundScene,
         FirstScene,
         SecondScene,
         BossScene,

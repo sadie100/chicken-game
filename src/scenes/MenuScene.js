@@ -7,16 +7,10 @@ export class MenuScene extends Scene {
         super("MenuScene");
     }
 
-    init() {
-        this.cameras.main.fadeIn(1000, 0, 0, 0);
-    }
-
     create() {
         // Backgrounds
-        const wallpaper = this.add
-            .image(this.x, this.y, "menu")
-            .setOrigin(0, 0);
-        wallpaper.setDisplaySize(this.scale.width, this.scale.height);
+        // 배경 월페이퍼 제거. Preloader에서 실행한 BackgroundScene을 유지해서 사용
+        // (필요 시 UI 대비를 위해 투명/박스 요소만 유지)
 
         this.add
             .rectangle(
@@ -51,6 +45,13 @@ export class MenuScene extends Scene {
             text: "게임 시작",
             onClick: () => {
                 this.scene.stop("MenuScene");
+                // 게임 시작 시 프리로더에서 유지하던 배경 씬 정리
+                if (
+                    this.scene.isActive &&
+                    this.scene.isActive("BackgroundScene")
+                ) {
+                    this.scene.stop("BackgroundScene");
+                }
                 this.scene.start("HudScene");
                 this.scene.start("FirstScene", { restart: true });
 
