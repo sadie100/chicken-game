@@ -9,7 +9,7 @@ export class GoldPig extends Monster {
         super(scene, x, y, "gold_pig");
         this.health = BOSS_HEALTH;
         this.maxHealth = BOSS_HEALTH;
-        this.setScale(5);
+        this.setScale(10);
         this.bullets = scene.physics.add.group({
             classType: Bullet,
             runChildUpdate: true,
@@ -418,3 +418,4 @@ export class GoldPig extends Monster {
         patternWithDelay(1);
     }
 }
+
