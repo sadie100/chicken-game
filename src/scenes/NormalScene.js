@@ -256,8 +256,7 @@ export class NormalScene extends BaseScene {
     }
     playerHitMonster(player, monster) {
         super.playerHitMonster(player, monster);
-        // 접촉으로 몬스터를 파괴하는 경우에도 드랍 시도
-        this.tryDropItem(monster.x, monster.y, monster);
+        // 접촉으로 죽은 몬스터는 아이템을 드랍하지 않는다 (드랍은 알로 처치 시에만)
         monster.destroy();
     }
 
