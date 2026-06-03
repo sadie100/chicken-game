@@ -52,7 +52,7 @@ export class GameOverScene extends Scene {
         // Game Over 텍스트
         this.add
             .text(this.scale.width / 2, this.scale.height / 2, "GAME\nOVER", {
-                fontFamily: "pixel",
+                fontFamily: "Galmuri11",
                 fontSize: 62,
                 color: "#000000",
                 align: "center",
@@ -61,23 +61,21 @@ export class GameOverScene extends Scene {
 
         // 점수 표시
         this.add
-            .bitmapText(
+            .text(
                 this.scale.width / 2,
                 this.scale.height / 2 + 85,
-                "pixelfont",
                 `YOUR POINTS: ${this.end_points}`,
-                24
+                { fontSize: 24, color: "#ffffff" }
             )
             .setOrigin(0.5, 0.5);
 
         // 재시작 안내
         this.add
-            .bitmapText(
+            .text(
                 this.scale.width / 2,
                 this.scale.height / 2 + 130,
-                "pixelfont",
                 "CLICK TO RESTART",
-                24
+                { fontSize: 24, color: "#ffffff" }
             )
             .setOrigin(0.5, 0.5);
 

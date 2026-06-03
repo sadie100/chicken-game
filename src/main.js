@@ -14,6 +14,24 @@ import { GameClearScene } from "./scenes/GameClearScene";
 // i18n 초기화
 initI18n({ ko, en });
 
+// 전역 기본 폰트: 폰트를 명시하지 않은 모든 add.text를 Galmuri11(한글 픽셀 폰트)로 렌더링
+// (로고 Impact 등 명시적으로 폰트를 준 곳은 그대로 유지된다)
+// 내장 "text" 팩토리는 이미 등록돼 있어 register()로는 덮어쓸 수 없으므로 프로토타입에 직접 할당한다.
+Phaser.GameObjects.GameObjectFactory.prototype.text = function (
+    x,
+    y,
+    text,
+    style
+) {
+    style = style || {};
+    if (!style.fontFamily && !style.font) {
+        style.fontFamily = "Galmuri11";
+    }
+    return this.displayList.add(
+        new Phaser.GameObjects.Text(this.scene, x, y, text, style)
+    );
+};
+
 // More information about config: https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
 const config = {
     type: Phaser.AUTO,

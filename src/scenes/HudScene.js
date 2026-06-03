@@ -18,21 +18,19 @@ export class HudScene extends Scene {
         this.lives_group = this.add.group();
 
         // 점수 텍스트 생성 (생명력 UI 아래에 위치)
-        this.points_text = this.add.bitmapText(
+        this.points_text = this.add.text(
             10,
             50,
-            "pixelfont",
             `${t("hud.points")}:0000`,
-            24
+            { fontSize: 24, color: "#ffffff" }
         );
 
         // 시간 텍스트 생성 (우측 상단에 위치)
-        this.time_text = this.add.bitmapText(
+        this.time_text = this.add.text(
             this.scale.width - 10,
             10,
-            "pixelfont",
             `${t("hud.time")}: 00:00`,
-            24
+            { fontSize: 24, color: "#ffffff" }
         );
         this.time_text.setOrigin(1, 0); // 우측 상단 정렬
 

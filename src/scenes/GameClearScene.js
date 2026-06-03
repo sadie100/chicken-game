@@ -31,7 +31,8 @@ export class GameClearScene extends Scene {
             this.scale.height,
             t("gameclear.story", { score: this.end_points }),
             {
-                font: "32px Arial",
+                fontFamily: "Galmuri11",
+                fontSize: "32px",
                 fill: "#ffffff",
                 align: "center",
                 wordWrap: {
@@ -72,12 +73,11 @@ export class GameClearScene extends Scene {
 
         // 재시작 안내
         this.add
-            .bitmapText(
+            .text(
                 this.scale.width - 10,
                 this.scale.height - 10,
-                "pixelfont",
                 t("gameclear.skip"),
-                20
+                { fontSize: 20, color: "#ffffff" }
             )
             .setOrigin(1, 1);
 
