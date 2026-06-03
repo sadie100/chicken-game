@@ -1,5 +1,6 @@
 import { SoundManager } from "./gameobjects/SoundManager";
 import { t } from "./i18n/i18n";
+import { tryStartDebugScene } from "./debug/debugEntry";
 
 export class Preloader extends Phaser.Scene {
     constructor() {
@@ -97,7 +98,9 @@ export class Preloader extends Phaser.Scene {
         this.soundManager = new SoundManager(this);
         this.game.registry.set("soundManager", this.soundManager);
 
-        this.scene.start("MenuScene");
+        if (!tryStartDebugScene(this)) {
+            this.scene.start("MenuScene");
+        }
     }
 
     createAnimations() {
