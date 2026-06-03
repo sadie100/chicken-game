@@ -23,18 +23,12 @@ export class Background {
     }
 
     createLayer(key, scrollFactor, width, height) {
-        const image = this.scene.textures.get(key);
-        const sourceWidth = image.source[0].width;
-        const sourceHeight = image.source[0].height;
-
-        const scale = height / sourceHeight;
-
         const layer = this.scene.add.tileSprite(0, 0, width, height, key);
         layer.setOrigin(0, 0);
         layer.setScrollFactor(0);
 
-        layer.setScale(scale);
-        layer.tileScaleX = 1 / scale;
+        layer.setScale(1);
+        layer.tileScaleX = 1;
         layer.tileScaleY = 1;
 
         this.container.add(layer);

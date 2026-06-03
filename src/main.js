@@ -18,13 +18,11 @@ initI18n({ ko, en });
 const config = {
     type: Phaser.AUTO,
     parent: "phaser-container",
-    width: window.innerWidth,
-    height: window.innerHeight,
-    // width: 960,
-    // height: 540,
+    width: 480,
+    height: 270,
     backgroundColor: "#1c172e",
     pixelArt: true,
-    roundPixel: false,
+    roundPixels: true,
     // max: {
     //     width: 800,
     //     height: 600,
