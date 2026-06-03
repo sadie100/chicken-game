@@ -322,6 +322,56 @@ export class Player extends Physics.Arcade.Sprite {
         });
     }
 
+    // 체력이 0이 됐을 때 터지는 연출
+    playBurst(onComplete) {
+        this.setData("isFiring", false);
+        this.isInvulnerable = true;
+        this.stopPowerBlink();
+        this.scene.tweens.killTweensOf(this);
+        this.anims.stop();
+        this.setTint(0xffffff);
+        this.scene.tweens.add({
+            targets: this,
+            scale: 5,
+            angle: 360,
+            alpha: 0,
+            duration: 500,
+            ease: "Cubic.easeOut",
+            onComplete: () => {
+                this.setVisible(false);
+                if (onComplete) onComplete();
+            },
+        });
+    }
+
+    // 부활 시 burst 연출로 바뀐 상태를 원상복구
+    resetFromBurst() {
+        this.scene.tweens.killTweensOf(this);
+        this.setVisible(true);
+        this.setAlpha(1);
+        this.setScale(3);
+        this.setAngle(0);
+        this.clearTint();
+        this.playIdleAnimation();
+    }
+
+    // 일정 시간 무적 + 점멸 (부활 직후 즉사 방지)
+    setInvulnerable(durationMs) {
+        this.isInvulnerable = true;
+        const blink = this.scene.tweens.add({
+            targets: this,
+            alpha: 0.3,
+            duration: 120,
+            yoyo: true,
+            repeat: -1,
+        });
+        this.scene.time.delayedCall(durationMs, () => {
+            blink.remove();
+            this.setAlpha(1);
+            this.isInvulnerable = false;
+        });
+    }
+
     isInvulnerable() {
         return this.isInvulnerable;
     }

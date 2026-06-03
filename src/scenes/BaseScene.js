@@ -58,6 +58,9 @@ export class BaseScene extends Scene {
     }
 
     create() {
+        // 죽음 상태 초기화 (씬을 새로 시작할 때마다)
+        this.isPlayerDead = false;
+
         // 대신, 즉시 불투명해지도록 설정
         this.cameras.main.alpha = 1;
 
@@ -318,12 +321,36 @@ export class BaseScene extends Scene {
     }
 
     gameOver() {
-        console.log("Game Over called");
-        this.scene.stop();
-        this.scene.start("GameOverScene", {
-            points: this.points,
-            lastPlayedScene: this.scene.key,
+        // 이미 죽는 연출 중이면 중복 처리 방지
+        if (this.isPlayerDead) {
+            return;
+        }
+        this.isPlayerDead = true;
+
+        // 죽을 때마다 점수 페널티 (최소 0)
+        this.points = Math.max(0, this.points - 500);
+        this.hudScene.update_points(this.points);
+
+        // 부활 입력 대기 (타임아웃으로 남은 이전 리스너 제거 후 재등록)
+        this.events.off("revive", this.revivePlayer, this);
+        this.events.once("revive", this.revivePlayer, this);
+
+        // 꼬꼬 burst 후 Continue 카운트다운 씬을 띄우고 게임 씬을 멈춘다
+        this.player.playBurst(() => {
+            this.scene.launch("ContinueScene", {
+                parentSceneKey: this.scene.key,
+                points: this.points,
+            });
+            this.scene.pause();
         });
+    }
+
+    revivePlayer() {
+        this.isPlayerDead = false;
+        this.player.resetFromBurst();
+        this.player.setLives(5);
+        this.hudScene.updateLives(5);
+        this.player.setInvulnerable(2500);
     }
 
     handlePlayerMovement(delta) {

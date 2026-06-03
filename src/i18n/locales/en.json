@@ -15,6 +15,11 @@
             "speed": "Move Speed"
         }
     },
+    "continue": {
+        "title": "GAME OVER",
+        "prompt": "Continue?",
+        "hint": "PRESS ENTER OR CLICK"
+    },
     "gameclear": {
         "story": "Kkoko defeated the Golden Pig\nand successfully rescued the precious chicks.\nUpon returning to the village,\nshe was welcomed as a hero.\nWith great courage and wise choices,\nKkoko saved the village\nand will be remembered as its hero.\n\nYour score: {{score}}\n\nThank you for playing.\n",
         "skip": "CLICK TO SKIP"

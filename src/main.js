@@ -4,6 +4,7 @@ import ko from "./i18n/locales/ko.json";
 import en from "./i18n/locales/en.json";
 import { Preloader } from "./preloader";
 import { GameOverScene } from "./scenes/GameOverScene";
+import { ContinueScene } from "./scenes/ContinueScene";
 import { HudScene } from "./scenes/HudScene";
 import { MenuScene } from "./scenes/MenuScene";
 import { FirstScene } from "./scenes/FirstScene";
@@ -65,6 +66,7 @@ const config = {
         MenuScene,
         HudScene,
         GameOverScene,
+        ContinueScene,
         GameClearScene,
     ],
 };
