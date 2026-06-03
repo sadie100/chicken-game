@@ -38,7 +38,7 @@ export class Player extends Physics.Arcade.Sprite {
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
-        this.setScale(3);
+        this.setScale(1);
 
         this.body.setSize(this.width * 0.3, this.height * 0.5);
         this.body.setOffset(this.width * 0.35, this.height * 0.5);

@@ -4,12 +4,14 @@ import { Pig } from "./Pig";
 import { Cat } from "./Cat";
 import { BOSS_HEALTH } from "../../config/monster";
 
+const BOSS_BASE_SCALE = 4;
+
 export class GoldPig extends Monster {
     constructor(scene, x, y) {
         super(scene, x, y, "gold_pig");
         this.health = BOSS_HEALTH;
         this.maxHealth = BOSS_HEALTH;
-        this.setScale(10);
+        this.setScale(BOSS_BASE_SCALE);
         this.bullets = scene.physics.add.group({
             classType: Bullet,
             runChildUpdate: true,
@@ -387,8 +389,8 @@ export class GoldPig extends Monster {
         const executePattern = (callback) => {
             this.scene.tweens.add({
                 targets: this,
-                scaleX: 5.5,
-                scaleY: 5.5,
+                scaleX: BOSS_BASE_SCALE * 0.55,
+                scaleY: BOSS_BASE_SCALE * 0.55,
                 duration: 500,
                 yoyo: true,
                 repeat: -1,
@@ -400,7 +402,7 @@ export class GoldPig extends Monster {
 
             this.scene.time.delayedCall(bulletCount * 80 + 1000, () => {
                 this.scene.tweens.killTweensOf(this);
-                this.setScale(10);
+                this.setScale(BOSS_BASE_SCALE);
                 if (callback) callback();
             });
         };

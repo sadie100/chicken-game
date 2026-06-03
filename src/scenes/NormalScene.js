@@ -77,9 +77,9 @@ export class NormalScene extends BaseScene {
 
     showNextRoundArrow() {
         this.nextRoundArrow = this.add
-            .image(this.scale.width - 50, this.scale.height / 2, "next-arrow")
+            .image(this.scale.width - 15, this.scale.height / 2, "next-arrow")
             .setInteractive();
-        this.nextRoundArrow.setScale(2);
+        this.nextRoundArrow.setScale(1);
     }
 
     update(time, delta) {
