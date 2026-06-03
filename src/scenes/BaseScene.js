@@ -275,7 +275,7 @@ export class BaseScene extends Scene {
             this.hudScene.updateLives(remainingLives);
 
             if (remainingLives <= 0) {
-                monster.destroy();
+                // 부활 후 이어가므로 죽인 몬스터(보스 포함)를 파괴하지 않는다
                 this.gameOver();
             } else {
                 this.startHeartSpawnTimer();
