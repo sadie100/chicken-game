@@ -56,14 +56,19 @@ roundPixels: true,   // 오타(roundPixel) 수정 — 서브픽셀 떨림 제거
 
 ### 4.3 스프라이트 표시 배율 (도트 통일의 핵심)
 
+모든 프레임 크기 확인 결과: chicken 48×48, pig·cat·gold_pig 32×32, egg 16×16, enemy-bullet 10×10. 도트 통일을 위해 일반 스프라이트는 **정수 배율(주로 1배)**로 맞춘다(소스 도트 = 배경 도트).
+
 | 대상 | 현재 | 제안 시작값 | 근거 |
 | --- | --- | --- | --- |
 | 꼬꼬 [Player.js:41](../../../src/gameobjects/Player.js#L41) | `setScale(3)` | `1` | 48px → 270칸 중 18%, 적당 |
-| 보스 [GoldPig.js:12](../../../src/gameobjects/monsters/GoldPig.js#L12) | `setScale(10)` | `3` (상수화) | base 배율을 상수로 빼서 복원(:403)·ultimate(5.5) 동기화 |
-| 적 탄막 setScale(2~2.5) | 2~2.5 | `1~1.5` | 16px 탄을 화면에 맞게 |
-| next-arrow [NormalScene.js:82](../../../src/scenes/NormalScene.js#L82) | `setScale(2)` | `1` | |
+| 돼지 [Pig.js:7](../../../src/gameobjects/monsters/Pig.js#L7) | `setScale(3)` | `1` | 32px, 꼬꼬보다 약간 작음 |
+| 고양이 [Cat.js:8](../../../src/gameobjects/monsters/Cat.js#L8) | `setScale(4)` | `1` | 32px |
+| 보스 [GoldPig.js:12](../../../src/gameobjects/monsters/GoldPig.js#L12) | `setScale(10)` | `4` (상수화) | 32px×4=128px(보스감). 소스가 32px라 도트는 다소 굵음(에셋 한계, 후속) |
+| 적 탄막 setScale(2~2.5) (GoldPig) | 2~2.5 | `1` | 10px 탄을 화면에 맞게 |
+| next-arrow [NormalScene.js:82](../../../src/scenes/NormalScene.js#L82) | `setScale(2)` | `1` | 18×28px |
+| egg [Player.js](../../../src/gameobjects/Player.js) | `eggSize`(기본 1) | 변경 없음 | 16px, 이미 1배 |
 
-보스는 `BASE_SCALE` 상수 하나로 빼서 생성/복원/ultimate 배율이 한 값에서 파생되도록 정리한다.
+보스는 `BASE_SCALE` 상수 하나로 빼서 생성/복원([GoldPig.js:403](../../../src/gameobjects/monsters/GoldPig.js#L403))·ultimate(현재 5.5) 배율이 한 값에서 파생되도록 정리한다. 보스는 소스 32px라 크게 키우면 도트가 배경보다 굵어지는데, 완전 통일은 보스 에셋 재작업(범위 밖)이 필요하므로 이번엔 "큰 보스" 우선으로 둔다.
 
 ### 4.4 월드 속도/오프셋 (게임 feel — 플레이테스트로 튜닝)
 
@@ -77,7 +82,7 @@ roundPixels: true,   // 오타(roundPixel) 수정 — 서브픽셀 떨림 제거
 | 보스 탄/소환 속도 (GoldPig 300~500) | 300~500 | ~120~200 |
 | 플레이어 시작 x [Player.js:36](../../../src/gameobjects/Player.js#L36) | 100 | ~30 |
 | 하트 스폰 여백 [BaseScene.js:297](../../../src/scenes/BaseScene.js#L297) | 100 | ~30 |
-| 보스 패턴 ±100/-100 오프셋 (GoldPig) | ±100 | ~÷4 (±25) |
+| 보스 패턴 ±100/-100 오프셋 (GoldPig) | ±100 | ~×0.4 (±40) |
 
 ### 4.5 HUD/UI — [src/scenes/HudScene.js](../../../src/scenes/HudScene.js)
 
