@@ -18,13 +18,13 @@ initI18n({ ko, en });
 const config = {
     type: Phaser.AUTO,
     parent: "phaser-container",
-    width: window.innerWidth,
-    height: window.innerHeight,
-    // width: 960,
-    // height: 540,
+    // width: window.innerWidth,
+    // height: window.innerHeight,
+    width: 1280,
+    height: 720,
     backgroundColor: "#1c172e",
     pixelArt: true,
-    roundPixel: false,
+    roundPixels: true,
     // max: {
     //     width: 800,
     //     height: 600,
@@ -52,4 +52,3 @@ const config = {
 };
 
 new Game(config);
-
