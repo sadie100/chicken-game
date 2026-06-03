@@ -214,7 +214,7 @@ export class Preloader extends Phaser.Scene {
             t("loader.heading"),
             {
                 fontFamily: "Impact",
-                fontSize: "48px",
+                fontSize: "16px",
                 color: "#ffffff",
             }
         );
@@ -226,7 +226,7 @@ export class Preloader extends Phaser.Scene {
             "0%",
             {
                 fontFamily: "Impact",
-                fontSize: "48px",
+                fontSize: "16px",
                 color: "#ffffff",
             }
         );

@@ -6,7 +6,7 @@ export class Heart extends Physics.Arcade.Sprite {
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
-        this.setScale(2.5); // 기존 스케일 유지
+        this.setScale(1);
         this.setActive(false);
         this.setVisible(false);
 

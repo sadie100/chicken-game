@@ -8,12 +8,12 @@ export class Button {
 
         const button = scene.add
             .text(x, y, text, {
-                fontSize: "32px",
-                padding: { top: 20, bottom: 20 },
+                fontSize: "12px",
+                padding: { top: 6, bottom: 6 },
                 backgroundColor: "gray",
                 color: "#ffffff",
                 align: "center",
-                fixedWidth: 300,
+                fixedWidth: 110,
             })
             .setAlpha(0.9)
             .setOrigin(0.5, 0.5);

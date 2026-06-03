@@ -31,16 +31,16 @@ export class GameClearScene extends Scene {
             this.scale.height,
             t("gameclear.story", { score: this.end_points }),
             {
-                font: "32px Arial",
+                font: "10px Arial",
                 fill: "#ffffff",
                 align: "center",
                 wordWrap: {
-                    width: this.scale.width - 100,
+                    width: this.scale.width - 30,
                     useAdvancedWrap: true,
                 }, // 자동 줄바꿈
                 backgroundColor: "#646464",
-                width: this.scale.width - 100,
-                padding: 20,
+                width: this.scale.width - 30,
+                padding: 6,
             }
         );
         this._i18nUnsub = onLanguageChanged(() => {
@@ -73,11 +73,11 @@ export class GameClearScene extends Scene {
         // 재시작 안내
         this.add
             .bitmapText(
-                this.scale.width - 10,
-                this.scale.height - 10,
+                this.scale.width - 6,
+                this.scale.height - 6,
                 "pixelfont",
                 t("gameclear.skip"),
-                20
+                8
             )
             .setOrigin(1, 1);
 

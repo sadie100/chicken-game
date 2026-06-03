@@ -29,7 +29,7 @@ export class MenuScene extends Scene {
                 0,
                 this.scale.height / 4,
                 this.scale.width,
-                120,
+                30,
                 0xffffff
             )
             .setAlpha(0.8)
@@ -42,7 +42,7 @@ export class MenuScene extends Scene {
             t("menu.title"),
             {
                 fontFamily: "Impact",
-                fontSize: 52,
+                fontSize: 20,
                 color: "#000000",
                 fontStyle: "bold",
             }
@@ -77,7 +77,7 @@ export class MenuScene extends Scene {
         this.helpBtn = new Button({
             scene: this,
             x: this.scale.width / 2,
-            y: this.scale.height / 2 + 85,
+            y: this.scale.height / 2 + 24,
             text: t("menu.help"),
             onClick: () => {
                 this.showDialog();
@@ -87,8 +87,8 @@ export class MenuScene extends Scene {
         // Language toggle (KO/EN)
         this.langBtn = new Button({
             scene: this,
-            x: this.scale.width - 100,
-            y: 40,
+            x: this.scale.width - 30,
+            y: 14,
             text: currentLanguage().toUpperCase().startsWith("en")
                 ? "EN"
                 : "KO",
@@ -116,7 +116,7 @@ export class MenuScene extends Scene {
     }
 
     createDialog() {
-        const width = 500;
+        const width = 260;
         const height = this.cameras.main.height * 0.8;
 
         this.dialog = this.add.container(
@@ -128,18 +128,18 @@ export class MenuScene extends Scene {
         background.setStrokeStyle(2, 0x000000);
 
         const closeButton = this.add.image(
-            width / 2 - 20,
-            -height / 2 + 20,
+            width / 2 - 8,
+            -height / 2 + 8,
             "close"
         );
         closeButton.setInteractive({ useHandCursor: true });
         closeButton.on("pointerdown", () => this.hideDialog());
 
         this.dialogContent = this.add.text(0, 0, t("menu.story"), {
-            fontSize: "24px",
+            fontSize: "9px",
             color: "#000000",
-            wordWrap: { width: width - 40, useAdvancedWrap: true },
-            lineSpacing: 10,
+            wordWrap: { width: width - 16, useAdvancedWrap: true },
+            lineSpacing: 3,
         });
         this.dialogContent.setOrigin(0.5);
 

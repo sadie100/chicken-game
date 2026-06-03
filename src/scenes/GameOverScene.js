@@ -33,7 +33,7 @@ export class GameOverScene extends Scene {
                 0,
                 this.scale.height / 2,
                 this.scale.width,
-                120,
+                48,
                 0xffffff
             )
             .setAlpha(0.8)
@@ -41,9 +41,9 @@ export class GameOverScene extends Scene {
         this.add
             .rectangle(
                 0,
-                this.scale.height / 2 + 105,
+                this.scale.height / 2 + 38,
                 this.scale.width,
-                90,
+                26,
                 0x000000
             )
             .setAlpha(0.8)
@@ -53,7 +53,7 @@ export class GameOverScene extends Scene {
         this.add
             .text(this.scale.width / 2, this.scale.height / 2, "GAME\nOVER", {
                 fontFamily: "pixel",
-                fontSize: 62,
+                fontSize: 18,
                 color: "#000000",
                 align: "center",
             })
@@ -63,10 +63,10 @@ export class GameOverScene extends Scene {
         this.add
             .bitmapText(
                 this.scale.width / 2,
-                this.scale.height / 2 + 85,
+                this.scale.height / 2 + 33,
                 "pixelfont",
                 `YOUR POINTS: ${this.end_points}`,
-                24
+                9
             )
             .setOrigin(0.5, 0.5);
 
@@ -74,10 +74,10 @@ export class GameOverScene extends Scene {
         this.add
             .bitmapText(
                 this.scale.width / 2,
-                this.scale.height / 2 + 130,
+                this.scale.height / 2 + 44,
                 "pixelfont",
                 "CLICK TO RESTART",
-                24
+                9
             )
             .setOrigin(0.5, 0.5);
 
