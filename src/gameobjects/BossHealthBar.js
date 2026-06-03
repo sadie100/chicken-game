@@ -1,10 +1,10 @@
 export class BossHealthBar {
-    initialWidth = 300;
+    initialWidth = 160;
     constructor(scene) {
         this.scene = scene;
         this.width = this.initialWidth;
         this.x = (this.scene.scale.width - this.width) / 2;
-        this.y = 100;
+        this.y = 24;
 
         this.border = scene.add
             .image(this.x, this.y, "health_bar_border")

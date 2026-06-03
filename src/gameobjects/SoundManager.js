@@ -91,10 +91,10 @@ export class SoundManager {
     }
 
     createVolumeControl() {
-        const width = 150;
-        const height = 15;
+        const width = 90;
+        const height = 9;
         const x = 10;
-        const y = this.currentScene.scale.height - 30;
+        const y = this.currentScene.scale.height - 16;
 
         // 배경 생성 (클릭 가능한 영역)
         this.sliderBackground = this.currentScene.add.rectangle(
@@ -125,7 +125,7 @@ export class SoundManager {
         this.handle = this.currentScene.add.circle(
             width * this.volume,
             0,
-            height / 2 + 5,
+            height / 2 + 3,
             0xffffff
         );
         this.handle.setInteractive({ draggable: true });
@@ -139,18 +139,18 @@ export class SoundManager {
         });
 
         // 볼륨 텍스트 생성
-        this.volumeText = this.currentScene.add.text(width + 20, 0, "100%", {
-            fontSize: "16px",
+        this.volumeText = this.currentScene.add.text(width + 8, 0, "100%", {
+            fontSize: "8px",
             color: "#ffffff",
         });
         this.volumeText.setOrigin(0, 0.5);
 
         // 음소거 버튼 생성
         this.muteButton = this.currentScene.add.text(
-            width + 70,
+            width + 30,
             0,
             this.isMuted ? "🔇" : "🔊",
-            { fontSize: "20px" }
+            { fontSize: "10px" }
         );
         this.muteButton.setOrigin(0, 0.5);
         this.muteButton.setInteractive({ useHandCursor: true });
@@ -180,7 +180,7 @@ export class SoundManager {
     }
 
     updateVolumeFromPosition(position) {
-        const width = 150;
+        const width = 90;
         position = Phaser.Math.Clamp(position, 0, width);
         this.handle.x = position;
         this.volumeBar.width = position;
@@ -196,8 +196,8 @@ export class SoundManager {
 
     updateVolumeDisplay() {
         const volume = this.isMuted ? 0 : this.volume;
-        this.volumeBar.width = 150 * volume;
-        this.handle.x = 150 * volume;
+        this.volumeBar.width = 90 * volume;
+        this.handle.x = 90 * volume;
         this.updateVolumeText(volume);
     }
 

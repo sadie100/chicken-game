@@ -19,29 +19,29 @@ export class HudScene extends Scene {
 
         // 점수 텍스트 생성 (생명력 UI 아래에 위치)
         this.points_text = this.add.bitmapText(
-            10,
-            50,
+            6,
+            22,
             "pixelfont",
             `${t("hud.points")}:0000`,
-            24
+            10
         );
 
         // 시간 텍스트 생성 (우측 상단에 위치)
         this.time_text = this.add.bitmapText(
-            this.scale.width - 10,
-            10,
+            this.scale.width - 6,
+            6,
             "pixelfont",
             `${t("hud.time")}: 00:00`,
-            24
+            10
         );
         this.time_text.setOrigin(1, 0); // 우측 상단 정렬
 
         // 총알 정보 텍스트 생성 (우측 하단에 위치)
         this.bullet_info_text = this.add.text(
-            this.scale.width - 10,
-            this.scale.height - 10,
+            this.scale.width - 6,
+            this.scale.height - 6,
             "",
-            { fontSize: 20 }
+            { fontSize: 8 }
         );
         this.bullet_info_text.setOrigin(1, 1); // 우측 하단 정렬
 
@@ -82,12 +82,12 @@ export class HudScene extends Scene {
         // 기존 텍스트는 지움(겹치지 않도록)
         this.updateBulletInfo("");
 
-        const marginRight = 10;
-        const marginBottom = 10;
-        const lineGap = 6;
+        const marginRight = 6;
+        const marginBottom = 6;
+        const lineGap = 3;
         const iconBaseSize = 16; // 스프라이트 기본 프레임 크기
-        const iconTarget = 24; // 표시 크기(px)
-        const textStyle = { fontSize: 16, color: "#ffffff" };
+        const iconTarget = 10; // 표시 크기(px)
+        const textStyle = { fontSize: 8, color: "#ffffff" };
 
         let cursorY = this.scale.height - marginBottom;
 
@@ -139,8 +139,8 @@ export class HudScene extends Scene {
             this.lives_group.clear(true, true);
             for (let i = 0; i < lives; i++) {
                 const life = this.add
-                    .image(20 + i * 30, 25, "life")
-                    .setScale(1.5);
+                    .image(8 + i * 12, 10, "life")
+                    .setScale(1);
                 this.lives_group.add(life);
             }
         }
