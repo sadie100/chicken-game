@@ -19,12 +19,12 @@ export class Player extends Physics.Arcade.Sprite {
     isInvulnerable = false;
     realWidth = 0;
     realHeight = 0;
-    speed = 200;
-    baseSpeed = 200;
+    speed = 80;
+    baseSpeed = 80;
     baseBulletDamage = 1;
-    baseBulletSpeed = 400;
+    baseBulletSpeed = 160;
     bulletDamage = 1;
-    bulletSpeed = 400;
+    bulletSpeed = 160;
     baseEggSize = 1;
     eggSize = 1;
     fireDelay = 200; // 0.2초 간격으로 발사
@@ -33,7 +33,7 @@ export class Player extends Physics.Arcade.Sprite {
     timedEffectTimers = {};
 
     constructor({ scene }) {
-        super(scene, 100, scene.scale.height / 2, "chicken_idle");
+        super(scene, 30, scene.scale.height / 2, "chicken_idle");
         this.scene = scene;
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);

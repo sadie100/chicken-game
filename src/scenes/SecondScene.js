@@ -18,8 +18,8 @@ export class SecondScene extends NormalScene {
             initialSpawnDelay: 750, // 더 빠르게 시작
             minSpawnDelay: 450,
             spawnReductionRate: 180,
-            initialMonsterSpeed: 200, // 약간 빠름
-            monsterSpeedIncreaseRate: 5,
+            initialMonsterSpeed: 80, // 약간 빠름
+            monsterSpeedIncreaseRate: 2,
         };
     }
 

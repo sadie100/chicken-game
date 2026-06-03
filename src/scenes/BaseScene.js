@@ -294,8 +294,8 @@ export class BaseScene extends Scene {
 
     spawnHeart() {
         if (this.player.getLives() < 5) {
-            const x = Phaser.Math.Between(100, this.scale.width - 100);
-            const y = Phaser.Math.Between(100, this.scale.height - 100);
+            const x = Phaser.Math.Between(30, this.scale.width - 30);
+            const y = Phaser.Math.Between(30, this.scale.height - 30);
             const heart = new Heart(this, x, y);
             this.hearts.add(heart);
             heart.spawn(x, y);

@@ -14,8 +14,8 @@ export class FirstScene extends NormalScene {
             initialSpawnDelay: 900, // 초반은 조금 여유롭게
             minSpawnDelay: 550,
             spawnReductionRate: 150,
-            initialMonsterSpeed: 180, // 기본보다 약간 느리게 시작
-            monsterSpeedIncreaseRate: 6,
+            initialMonsterSpeed: 72, // 기본보다 약간 느리게 시작
+            monsterSpeedIncreaseRate: 2,
             middleSpawnTime: 25000,
             updownSpawnTime: 35000,
             advancedSpawnTime: 45000,

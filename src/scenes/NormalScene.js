@@ -13,9 +13,9 @@ export class NormalScene extends BaseScene {
     currentSpawnDelay = 800; // 현재 스폰 딜레이
 
     // 몬스터 속도 관련 변수
-    initialMonsterSpeed = 200; // 최초 속도
-    currentMonsterSpeed = 200; // 현재 속도
-    monsterSpeedIncreaseRate = 5; // 몬스터 속도 증가 속도
+    initialMonsterSpeed = 80; // 최초 속도
+    currentMonsterSpeed = 80; // 현재 속도
+    monsterSpeedIncreaseRate = 2; // 몬스터 속도 증가 속도
 
     middleSpawnTime = 20000; // 20초 후 중급 스폰 시작
     updownSpawnTime = 30000; // 30초 후 맵 위 아래 스폰 시작
