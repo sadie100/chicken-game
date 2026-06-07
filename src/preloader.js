@@ -212,46 +212,73 @@ export class Preloader extends Phaser.Scene {
 
     displayLoadingBar() {
         /*** Loading Bar ***/
-        let progressBar = this.add.graphics();
-        let loadingText = this.add.text(
-            this.cameras.main.width / 2,
-            this.cameras.main.height / 3,
-            t("loader.heading"),
-            {
-                fontFamily: "Impact",
-                fontSize: "48px",
-                color: "#ffffff",
-            },
-        );
-        loadingText.setOrigin(0.5, 0.5);
-
-        let percentText = this.add.text(
-            this.cameras.main.width / 2,
-            this.cameras.main.height / 2,
-            "0%",
-            {
-                fontFamily: "Impact",
-                fontSize: "48px",
-                color: "#ffffff",
-            },
-        );
-        percentText.setOrigin(0.5, 0.5);
-
         const camera = this.cameras.main;
+        const cx = camera.width / 2;
 
-        this.load.on("progress", function (value) {
-            percentText.setText(`${Math.ceil(value * 100)}%`);
+        // 제목 (픽셀 폰트 + 크림색)
+        let loadingText = this.add
+            .text(cx, camera.height / 2 - 70, t("loader.heading"), {
+                fontFamily: "Galmuri11",
+                fontSize: "36px",
+                color: "#fff8e7",
+            })
+            .setOrigin(0.5);
+
+        // 진행바 (둥근 다크 트랙 + 골든 채움 — 메뉴/버튼 톤)
+        const barW = Math.min(560, camera.width * 0.6);
+        const barH = 34;
+        const barX = cx - barW / 2;
+        const barY = camera.height / 2 - 12;
+        const pad = 5;
+
+        const progressBar = this.add.graphics();
+        const drawBar = (value) => {
             progressBar.clear();
-            progressBar.fillStyle(0x8b0000, 1);
-            progressBar.fillRect(
-                camera.width / 4,
-                camera.height / 2.5,
-                (value * camera.width) / 2,
-                camera.height / 20,
-            );
+            // 트랙
+            progressBar.fillStyle(0x2a2118, 1);
+            progressBar.fillRoundedRect(barX, barY, barW, barH, barH / 2);
+            progressBar.lineStyle(4, 0xb9831a, 1);
+            progressBar.strokeRoundedRect(barX, barY, barW, barH, barH / 2);
+            // 채움
+            const fillW = (barW - pad * 2) * value;
+            if (fillW > 1) {
+                const fr = Math.min((barH - pad * 2) / 2, fillW / 2);
+                progressBar.fillStyle(0xffcf3f, 1);
+                progressBar.fillRoundedRect(
+                    barX + pad,
+                    barY + pad,
+                    fillW,
+                    barH - pad * 2,
+                    fr,
+                );
+                // 상단 하이라이트
+                progressBar.fillStyle(0xffe07a, 0.6);
+                progressBar.fillRoundedRect(
+                    barX + pad,
+                    barY + pad,
+                    fillW,
+                    (barH - pad * 2) * 0.45,
+                    fr,
+                );
+            }
+        };
+        drawBar(0);
+
+        // 퍼센트
+        let percentText = this.add
+            .text(cx, barY + barH + 34, "0%", {
+                fontFamily: "Galmuri11",
+                fontSize: "30px",
+                color: "#fff8e7",
+            })
+            .setOrigin(0.5);
+
+        this.load.on("progress", (value) => {
+            percentText.setText(`${Math.ceil(value * 100)}%`);
+            drawBar(value);
         });
 
-        this.load.on("complete", function () {
+        this.load.on("complete", () => {
             progressBar.destroy();
             loadingText.destroy();
             percentText.destroy();
