@@ -91,9 +91,7 @@ export class MenuScene extends Scene {
             width: 90,
             height: 52,
             fontSize: 24,
-            text: currentLanguage().toUpperCase().startsWith("en")
-                ? "EN"
-                : "KO",
+            text: currentLanguage().startsWith("en") ? "EN" : "KO",
             onClick: async () => {
                 const next = currentLanguage().startsWith("en") ? "ko" : "en";
                 await changeLanguage(next);
