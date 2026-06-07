@@ -1,4 +1,5 @@
 import { Scene } from "phaser";
+import { Button } from "../gameobjects/Button";
 
 export class GameOverScene extends Scene {
     constructor() {
@@ -11,6 +12,9 @@ export class GameOverScene extends Scene {
     }
 
     create() {
+        const w = this.scale.width;
+        const h = this.scale.height;
+
         // 병렬로 떠 있던 HUD 정리 (메뉴/게임오버 위에 잔상 방지)
         this.scene.stop("HudScene");
 
@@ -19,67 +23,57 @@ export class GameOverScene extends Scene {
         this.soundManager.stopCurrentBGM();
         this.soundManager.playSound("gameover", { volume: 0.5 });
 
-        // Backgrounds
-        const wallpaper = this.add
-            .image(this.x, this.y, "gameover")
-            .setOrigin(0, 0);
-        wallpaper.setDisplaySize(this.scale.width, this.scale.height);
-        wallpaper.setTint(0x808080);
+        // 배경 (단색 다크 톤 — 일러스트 제거)
+        this.add.rectangle(0, 0, w, h, 0x1c172e).setOrigin(0, 0);
 
-        // Rectangles to show the text
-        // Background rectangles
-        this.add
-            .rectangle(
-                0,
-                this.scale.height / 2,
-                this.scale.width,
-                120,
-                0xffffff
-            )
-            .setAlpha(0.8)
-            .setOrigin(0, 0.5);
-        this.add
-            .rectangle(
-                0,
-                this.scale.height / 2 + 105,
-                this.scale.width,
-                90,
-                0x000000
-            )
-            .setAlpha(0.8)
-            .setOrigin(0, 0.5);
+        // 크림색 패널 (메뉴/다이얼로그와 동일 톤)
+        const panelW = 440;
+        const panelH = 380;
+        const r = 22;
+        const panel = this.add.container(w / 2, h / 2);
 
-        // Game Over 텍스트
-        this.add
-            .text(this.scale.width / 2, this.scale.height / 2, "GAME\nOVER", {
+        const g = this.add.graphics();
+        g.fillStyle(0x8a5e10, 1);
+        g.fillRoundedRect(-panelW / 2, -panelH / 2 + 8, panelW, panelH, r);
+        g.fillStyle(0xfff8e7, 1);
+        g.fillRoundedRect(-panelW / 2, -panelH / 2, panelW, panelH, r);
+        g.lineStyle(5, 0xb9831a, 1);
+        g.strokeRoundedRect(-panelW / 2, -panelH / 2, panelW, panelH, r);
+        // 제목과 점수 사이 골든 구분선
+        g.lineStyle(3, 0xb9831a, 1);
+        g.lineBetween(-panelW / 2 + 40, 10, panelW / 2 - 40, 10);
+
+        const title = this.add
+            .text(0, -85, "GAME\nOVER", {
                 fontFamily: "Galmuri11",
-                fontSize: 62,
-                color: "#000000",
+                fontSize: 60,
+                color: "#4a2f00",
                 align: "center",
+                lineSpacing: 4,
             })
-            .setOrigin(0.5, 0.5);
+            .setOrigin(0.5);
 
-        // 점수 표시
-        this.add
-            .text(
-                this.scale.width / 2,
-                this.scale.height / 2 + 85,
-                `YOUR POINTS: ${this.end_points}`,
-                { fontSize: 24, color: "#ffffff" }
-            )
-            .setOrigin(0.5, 0.5);
+        const score = this.add
+            .text(0, 55, `YOUR POINTS: ${this.end_points}`, {
+                fontFamily: "Galmuri11",
+                fontSize: 24,
+                color: "#4a3a1a",
+            })
+            .setOrigin(0.5);
 
-        // 메뉴 복귀 안내
-        this.add
-            .text(
-                this.scale.width / 2,
-                this.scale.height / 2 + 130,
-                "CLICK TO MENU",
-                { fontSize: 24, color: "#ffffff" }
-            )
-            .setOrigin(0.5, 0.5);
+        const menuBtn = new Button({
+            scene: this,
+            primary: true,
+            x: 0,
+            y: 130,
+            width: 240,
+            text: "MENU",
+            onClick: () => this.scene.start("MenuScene"),
+        });
 
-        // 클릭 시 메뉴로 이동
+        panel.add([g, title, score, menuBtn.container]);
+
+        // 1초 뒤부터는 화면 아무 곳이나 클릭해도 메뉴로 이동
         this.time.addEvent({
             delay: 1000,
             callback: () => {
