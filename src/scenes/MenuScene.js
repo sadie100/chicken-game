@@ -108,6 +108,9 @@ export class MenuScene extends Scene {
             this.drawTitlePanel();
             this.playBtn.button.setText(t("menu.play"));
             this.helpBtn.button.setText(t("menu.help"));
+            if (this.dialogTitle) {
+                this.dialogTitle.setText(t("menu.help"));
+            }
             if (this.dialogContent) {
                 this.dialogContent.setText(t("menu.story"));
             }
@@ -141,40 +144,172 @@ export class MenuScene extends Scene {
     }
 
     createDialog() {
-        const width = 500;
-        const height = this.cameras.main.height * 0.8;
+        const w = this.scale.width;
+        const h = this.scale.height;
+        const panelW = 540;
+        const panelH = h * 0.74;
+        const r = 22;
+        const headerH = 62;
 
-        this.dialog = this.add.container(
-            this.cameras.main.centerX,
-            this.cameras.main.centerY,
-        );
+        this.dialog = this.add.container(w / 2, h / 2).setDepth(100);
 
-        const background = this.add.rectangle(0, 0, width, height, 0xffffff);
-        background.setStrokeStyle(2, 0x000000);
+        // 배경 스크림 — 바깥을 클릭하면 닫힌다
+        this.dialogScrim = this.add
+            .rectangle(0, 0, w, h, 0x000000, 0.55)
+            .setInteractive({ useHandCursor: false });
+        this.dialogScrim.on("pointerup", () => this.hideDialog());
 
-        const closeButton = this.add.image(
-            width / 2 - 20,
-            -height / 2 + 20,
-            "close",
-        );
-        closeButton.setInteractive({ useHandCursor: true });
-        closeButton.on("pointerdown", () => this.hideDialog());
+        // 팝 애니메이션 대상 (스크림 제외)
+        this.dialogPanel = this.add.container(0, 0);
 
-        this.dialogContent = this.add.text(0, 0, t("menu.story"), {
-            fontSize: "24px",
-            color: "#000000",
-            wordWrap: { width: width - 40, useAdvancedWrap: true },
-            lineSpacing: 10,
+        // 패널 (크림색 + 골든 테두리 + 드롭섀도우)
+        const panel = this.add.graphics();
+        panel.fillStyle(0x8a5e10, 1);
+        panel.fillRoundedRect(-panelW / 2, -panelH / 2 + 8, panelW, panelH, r);
+        panel.fillStyle(0xfff8e7, 1);
+        panel.fillRoundedRect(-panelW / 2, -panelH / 2, panelW, panelH, r);
+        panel.lineStyle(5, 0xb9831a, 1);
+        panel.strokeRoundedRect(-panelW / 2, -panelH / 2, panelW, panelH, r);
+
+        // 헤더 띠 (제목)
+        const header = this.add.graphics();
+        header.fillStyle(0xffcf3f, 1);
+        header.fillRoundedRect(-panelW / 2 + 5, -panelH / 2 + 5, panelW - 10, headerH, {
+            tl: r - 3,
+            tr: r - 3,
+            bl: 0,
+            br: 0,
         });
-        this.dialogContent.setOrigin(0.5);
+        header.lineStyle(3, 0xb9831a, 1);
+        header.lineBetween(
+            -panelW / 2 + 5,
+            -panelH / 2 + 5 + headerH,
+            panelW / 2 - 5,
+            -panelH / 2 + 5 + headerH,
+        );
 
-        this.dialog.add([background, closeButton, this.dialogContent]);
-        this.dialog.setSize(width, height);
+        this.dialogTitle = this.add
+            .text(0, -panelH / 2 + 5 + headerH / 2, t("menu.help"), {
+                fontFamily: "Galmuri11",
+                fontSize: 30,
+                color: "#4a2f00",
+            })
+            .setOrigin(0.5);
+
+        // 패널 안쪽 클릭이 스크림으로 새지 않도록 막는다
+        const blocker = this.add
+            .rectangle(0, 0, panelW, panelH, 0x000000, 0)
+            .setInteractive();
+
+        this.dialogContent = this.add
+            .text(0, headerH / 2, t("menu.story"), {
+                fontFamily: "Galmuri11",
+                fontSize: 22,
+                color: "#4a3a1a",
+                wordWrap: { width: panelW - 60, useAdvancedWrap: true },
+                lineSpacing: 12,
+            })
+            .setOrigin(0.5);
+
+        const closeBtn = this.createCloseButton(
+            panelW / 2 - 30,
+            -panelH / 2 + 30,
+        );
+
+        this.dialogPanel.add([
+            panel,
+            header,
+            blocker,
+            this.dialogTitle,
+            this.dialogContent,
+            closeBtn,
+        ]);
+        this.dialog.add([this.dialogScrim, this.dialogPanel]);
         this.dialog.setVisible(false);
+    }
+
+    // 빨간 픽셀 닫기 버튼 (hover 확대 / press 눌림)
+    createCloseButton(x, y) {
+        const size = 44;
+        const r = 12;
+        const offset = 4;
+        const c = this.add.container(x, y);
+
+        const shadow = this.add.graphics();
+        shadow.fillStyle(0x8f2b21, 1);
+        shadow.fillRoundedRect(-size / 2, -size / 2 + offset, size, size, r);
+
+        const face = this.add.graphics();
+        const draw = (fill) => {
+            face.clear();
+            face.fillStyle(fill, 1);
+            face.fillRoundedRect(-size / 2, -size / 2, size, size, r);
+            face.lineStyle(3, 0xc23b2e, 1);
+            face.strokeRoundedRect(-size / 2, -size / 2, size, size, r);
+            face.lineStyle(4, 0xffffff, 1);
+            face.beginPath();
+            face.moveTo(-8, -8);
+            face.lineTo(8, 8);
+            face.moveTo(8, -8);
+            face.lineTo(-8, 8);
+            face.strokePath();
+        };
+        draw(0xff6b5b);
+
+        c.add([shadow, face]);
+        c.setInteractive({
+            hitArea: new Phaser.Geom.Rectangle(
+                -size / 2,
+                -size / 2,
+                size,
+                size + offset,
+            ),
+            hitAreaCallback: Phaser.Geom.Rectangle.Contains,
+            useHandCursor: true,
+        });
+        c.on("pointerover", () => {
+            draw(0xff8779);
+            this.tweens.add({
+                targets: c,
+                scaleX: 1.12,
+                scaleY: 1.12,
+                duration: 100,
+                ease: "Back.out",
+            });
+        });
+        c.on("pointerout", () => {
+            draw(0xff6b5b);
+            face.y = 0;
+            this.tweens.add({ targets: c, scaleX: 1, scaleY: 1, duration: 100 });
+        });
+        c.on("pointerdown", () => {
+            draw(0xe5503f);
+            face.y = offset;
+        });
+        c.on("pointerup", () => {
+            draw(0xff8779);
+            face.y = 0;
+            this.hideDialog();
+        });
+        return c;
     }
 
     showDialog() {
         this.dialog.setVisible(true);
+        this.dialogScrim.setAlpha(0);
+        this.dialogPanel.setScale(0.92);
+        this.tweens.add({
+            targets: this.dialogScrim,
+            alpha: 0.55,
+            duration: 150,
+        });
+        this.tweens.add({
+            targets: this.dialogPanel,
+            scaleX: 1,
+            scaleY: 1,
+            duration: 200,
+            ease: "Back.out",
+        });
     }
 
     hideDialog() {
