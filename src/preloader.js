@@ -13,7 +13,6 @@ export class Preloader extends Phaser.Scene {
         this.load.setPath("assets");
         // 배경 에셋 로드
         this.loadBackgroundAssets();
-        this.loadIllustrations();
         this.load.image("life", "life.png");
         this.load.image("next-arrow", "next-arrow.png");
         this.load.image("enemy-bullet", "monsters/enemy-bullet.png");
@@ -53,7 +52,7 @@ export class Preloader extends Phaser.Scene {
         this.load.bitmapFont(
             "pixelfont",
             "fonts/pixelfont.png",
-            "fonts/pixelfont.xml"
+            "fonts/pixelfont.xml",
         );
 
         // Event to update the loading bar
@@ -205,18 +204,10 @@ export class Preloader extends Phaser.Scene {
                 // 각 배경 세트는 4개의 레이어
                 this.load.image(
                     `background${i}_${j}`,
-                    `backgrounds/background${i}/${j}.png`
+                    `backgrounds/background${i}/${j}.png`,
                 );
             }
         }
-    }
-
-    loadIllustrations() {
-        this.load.image("ending", "illusts/ending.jpg");
-        this.load.image("gameover", "illusts/gameover.png");
-        this.load.image("main", "illusts/main.jpg");
-        this.load.image("prologue", "illusts/prologue.jpg");
-        this.load.image("menu", "illusts/menu.png");
     }
 
     displayLoadingBar() {
@@ -230,7 +221,7 @@ export class Preloader extends Phaser.Scene {
                 fontFamily: "Impact",
                 fontSize: "48px",
                 color: "#ffffff",
-            }
+            },
         );
         loadingText.setOrigin(0.5, 0.5);
 
@@ -242,7 +233,7 @@ export class Preloader extends Phaser.Scene {
                 fontFamily: "Impact",
                 fontSize: "48px",
                 color: "#ffffff",
-            }
+            },
         );
         percentText.setOrigin(0.5, 0.5);
 
@@ -256,7 +247,7 @@ export class Preloader extends Phaser.Scene {
                 camera.width / 4,
                 camera.height / 2.5,
                 (value * camera.width) / 2,
-                camera.height / 20
+                camera.height / 20,
             );
         });
 
@@ -267,4 +258,3 @@ export class Preloader extends Phaser.Scene {
         });
     }
 }
-
