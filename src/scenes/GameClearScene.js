@@ -107,18 +107,31 @@ export class GameClearScene extends Scene {
             0x9775fa,
         ];
         const cx = w / 2;
-        const cy = h * 0.95;
-        const band = 18;
-        // 바깥 반지름을 화면 폭 절반보다 크게 잡아 양 끝이 좌우 가장자리에 닿게 한다
-        let radius = w / 2 + band;
+        // 중심을 화면 아래로, 반지름을 화면 폭보다 크게 잡아
+        // 양 다리가 좌우 가장자리를 통과해 내려가는 큰 아치를 만든다
+        const cy = h * 1.35;
+        const band = 22;
+        const outer = w * 0.68;
+        const steps = 96; // 호를 부드럽게
         const rainbow = this.add.graphics();
-        colors.forEach((col) => {
-            rainbow.lineStyle(band, col, 0.65);
-            rainbow.beginPath();
-            rainbow.arc(cx, cy, radius, Math.PI, 2 * Math.PI);
-            rainbow.strokePath();
-            radius -= band;
+        // 각 색 띠를 "채워진 링"으로 그린다 (두꺼운 stroke의 segment 틈새 방지).
+        // 띠끼리 1px 겹치고, 투명도는 그래픽 전체에 한 번만 적용한다.
+        colors.forEach((col, idx) => {
+            const rOut = outer - idx * band;
+            const rIn = rOut - band - 1;
+            const pts = [];
+            for (let i = 0; i <= steps; i++) {
+                const a = Math.PI + (Math.PI * i) / steps;
+                pts.push({ x: cx + rOut * Math.cos(a), y: cy + rOut * Math.sin(a) });
+            }
+            for (let i = steps; i >= 0; i--) {
+                const a = Math.PI + (Math.PI * i) / steps;
+                pts.push({ x: cx + rIn * Math.cos(a), y: cy + rIn * Math.sin(a) });
+            }
+            rainbow.fillStyle(col, 1);
+            rainbow.fillPoints(pts, true);
         });
+        rainbow.setAlpha(0.8);
 
         // 둥실 떠다니는 구름
         this.makeCloud(w * 0.16, h * 0.2, 1.3);
