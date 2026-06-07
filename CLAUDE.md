@@ -77,3 +77,4 @@ When adding an item: add a `ITEM_DEFS` entry, an `MAX_STACK` cap, a drop-table r
 - Code is **4-space indent, CRLF, UTF-8** (`.editorconfig`). Comments and commit messages are in Korean.
 - Assets are referenced by the keys registered in the Preloader, loaded relative to the `assets` path; physical files live in `public/assets/`.
 - `MenuScene` contains commented-out test shortcuts (jump straight to BossScene with maxed items) — useful for manual testing.
+- For QA, the Preloader can jump straight to a scene via URL query params ([src/debug/debugEntry.js](src/debug/debugEntry.js), `tryStartDebugScene`): `?scene=boss` (aliases `first`/`second`/`boss`/`menu`), and `?scene=boss&items=max` to also inject maxed-out effects. Gameplay scenes also start HudScene in parallel. Dev-build only (`import.meta.env.DEV`) — guarded so production is unaffected; unknown scene keys fall back to MenuScene.
