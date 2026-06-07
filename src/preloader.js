@@ -98,8 +98,22 @@ export class Preloader extends Phaser.Scene {
         this.soundManager = new SoundManager(this);
         this.game.registry.set("soundManager", this.soundManager);
 
-        if (!tryStartDebugScene(this)) {
-            this.scene.start("MenuScene");
+        const startGame = () => {
+            if (!tryStartDebugScene(this)) {
+                this.scene.start("MenuScene");
+            }
+        };
+
+        // Galmuri 웹폰트가 로드된 뒤 씬을 시작한다.
+        // (캔버스 Text는 생성 시점에 한 번만 렌더되므로 폰트가 준비되기 전에
+        //  그리면 폴백 폰트로 고정된다. 한글 글리프까지 받도록 한글 샘플을 넘긴다.)
+        if (document.fonts && document.fonts.load) {
+            document.fonts
+                .load('16px "Galmuri11"', "가힣0")
+                .then(startGame)
+                .catch(startGame);
+        } else {
+            startGame();
         }
     }
 

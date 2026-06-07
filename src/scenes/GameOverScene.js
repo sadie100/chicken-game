@@ -1,8 +1,6 @@
 import { Scene } from "phaser";
 
 export class GameOverScene extends Scene {
-    lastPlayedScene = "FirstScene"; // Default to FirstScene
-
     constructor() {
         super("GameOverScene");
     }
@@ -10,10 +8,12 @@ export class GameOverScene extends Scene {
     init(data) {
         this.cameras.main.fadeIn(1000, 0, 0, 0);
         this.end_points = data.points || 0;
-        this.lastPlayedScene = data.lastPlayedScene || "FirstScene";
     }
 
     create() {
+        // 병렬로 떠 있던 HUD 정리 (메뉴/게임오버 위에 잔상 방지)
+        this.scene.stop("HudScene");
+
         // Get SoundManager from registry
         this.soundManager = this.game.registry.get("soundManager");
         this.soundManager.stopCurrentBGM();
@@ -52,7 +52,7 @@ export class GameOverScene extends Scene {
         // Game Over 텍스트
         this.add
             .text(this.scale.width / 2, this.scale.height / 2, "GAME\nOVER", {
-                fontFamily: "pixel",
+                fontFamily: "Galmuri11",
                 fontSize: 62,
                 color: "#000000",
                 align: "center",
@@ -61,32 +61,30 @@ export class GameOverScene extends Scene {
 
         // 점수 표시
         this.add
-            .bitmapText(
+            .text(
                 this.scale.width / 2,
                 this.scale.height / 2 + 85,
-                "pixelfont",
                 `YOUR POINTS: ${this.end_points}`,
-                24
+                { fontSize: 24, color: "#ffffff" }
             )
             .setOrigin(0.5, 0.5);
 
-        // 재시작 안내
+        // 메뉴 복귀 안내
         this.add
-            .bitmapText(
+            .text(
                 this.scale.width / 2,
                 this.scale.height / 2 + 130,
-                "pixelfont",
-                "CLICK TO RESTART",
-                24
+                "CLICK TO MENU",
+                { fontSize: 24, color: "#ffffff" }
             )
             .setOrigin(0.5, 0.5);
 
-        // Modify the restart logic
+        // 클릭 시 메뉴로 이동
         this.time.addEvent({
             delay: 1000,
             callback: () => {
                 this.input.on("pointerdown", () => {
-                    this.scene.start(this.lastPlayedScene, { restart: true });
+                    this.scene.start("MenuScene");
                 });
             },
         });
